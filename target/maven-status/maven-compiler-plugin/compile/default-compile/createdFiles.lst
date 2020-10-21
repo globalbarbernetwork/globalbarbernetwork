@@ -1,6 +1,0 @@
-cat\xtec\ioc\firebase\ConnectionFirebase.class
-cat\xtec\ioc\firebase\CRUDFirebase.class
-cat\xtec\ioc\firebase\SmtpService.class
-cat\xtec\ioc\servlet\IndexServlet.class
-cat\xtec\ioc\servlet\UserServlet.class
-cat\xtec\ioc\entity\Hairdressing.class
