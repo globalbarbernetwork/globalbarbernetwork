@@ -21,13 +21,14 @@ public class UserServlet extends HttpServlet {
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        switch(action){
+        String path = request.getServletPath();
+        switch(path){
             case "formUser":
                 //formUser(request, response);
                 break;
-            case "newUser":
+            case "new":
                 //newUser(request, response);
+                System.out.println("HE ENTRADO");
                 break;
             default:
                 break;

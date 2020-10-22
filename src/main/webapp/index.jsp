@@ -20,6 +20,11 @@
     <body>
         <div id='map' style='width: 400px; height: 300px;'></div>
         
+    <ul>
+        <li><a href="Login">Iniciar sessión</a></li>
+        <li><a href="Register">Registrar</a></li>
+    </ul>                
+        
     </body>
     <script src="js/index_mapbox.js"></script>
 </html>

@@ -7,6 +7,7 @@ package cat.xtec.ioc.servlet;
 
 import cat.xtec.ioc.entity.Hairdressing;
 import cat.xtec.ioc.firebase.CRUDFirebase;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,32 +45,32 @@ public class IndexServlet extends HttpServlet {
     }
 
     private void getListHairdressing(HttpServletRequest request, HttpServletResponse response) {
-        CRUDFirebase firebaseDAO = new CRUDFirebase();
-
-        JSONObject json = new JSONObject();
-        JSONArray array = new JSONArray();
-
-        List<Hairdressing> listHairdressings = firebaseDAO.getAllBarbers();
-
-        if (listHairdressings != null && !listHairdressings.isEmpty()) {
-            JSONObject member = new JSONObject(listHairdressings);
-            array.put(member);
-            try {
-                json.put("jsonArray", member);
-            } catch (JSONException ex) {
-                ex.printStackTrace();
+            CRUDFirebase firebaseDAO = new CRUDFirebase();
+            
+            JSONObject json = new JSONObject();
+            JSONArray array = new JSONArray();
+            
+            List<Hairdressing> listHairdressings = firebaseDAO.getAllBarbers();
+            
+            if (listHairdressings != null && !listHairdressings.isEmpty()) {
+                JSONObject member = new JSONObject(listHairdressings);
+                array.put(member);
+                try {
+                    json.put("jsonArray", member);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                }
+                
+                try {
+                    PrintWriter out = response.getWriter();
+                    out.println(json.toString());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
-
-            try {
-                PrintWriter out = response.getWriter();
-                out.println(json.toString());
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
-
+            
         request.setAttribute("listHairdressings", listHairdressings.get(0));
-        
+            
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher("/index.jsp");
         try {

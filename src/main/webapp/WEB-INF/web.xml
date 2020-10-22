@@ -4,7 +4,7 @@
     <servlet-mapping>
         <servlet-name>UserServlet</servlet-name>
         <url-pattern>/user/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>    
     <servlet-mapping>
         <servlet-name>IndexServlet</servlet-name>
         <url-pattern>/index/*</url-pattern>
