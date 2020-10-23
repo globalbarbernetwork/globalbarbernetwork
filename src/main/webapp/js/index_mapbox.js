@@ -17,7 +17,7 @@ function renderMap (){
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
         center: [long, lat], // starting position [lng, lat]
-        zoom: 4.2 // starting zoom
+        zoom: 5.7 // starting zoom
     });
 
     var options = {
@@ -25,6 +25,74 @@ function renderMap (){
         timeout: 5000, // Tiempo que tiene para buscar la posicion actual.
         maximumAge: 0 // Define si se coge o no la posicion del cache. 0 = No cogera la posicion de cache y te calculara la actual. 1 = Cogerá la posicion de cache
     };        
+    
+    //Añadir un marker
+    /*var marker = new mapboxgl.Marker()
+        .setLngLat([-3.7, 40.2])
+        .addTo(map);*/
+
+
+    map.on('load', function () {
+        map.addSource('places', {
+            'type': 'geojson',
+            'data': {
+            'type': 'FeatureCollection',
+            'features': [
+                            {
+                                'type': 'Feature',
+                                'properties': {
+                                    'description': 'Perruqueria Rey Juan Carlos I',
+                                    'icon': 'theatre'
+                                },
+                                'geometry':{
+                                    'type':'Point',
+                                    'coordinates': [-3.7, 40.2]
+                                }
+                            }
+                        ]
+            }
+        });
+        
+        map.addLayer({
+            'id': 'places',
+            'type': 'symbol',
+            'source': 'places',
+            'layout': {
+                'icon-image': '{icon}-15',
+                'icon-allow-overlap': true
+            }
+        });
+        
+        map.on('click', 'places', function (e) {
+            var coordinates = e.features[0].geometry.coordinates.slice();
+            var description = e.features[0].properties.description;
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(description)
+            .addTo(map);
+        });
+
+        // Change the cursor to a pointer when the mouse is over the places layer.
+        map.on('mouseenter', 'places', function () {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        // Change it back to a pointer when it leaves.
+        map.on('mouseleave', 'places', function () {
+            map.getCanvas().style.cursor = '';
+        });
+        
+    });
+
+    
     
     showHairDressing();
 
@@ -42,7 +110,7 @@ function success(pos) {
     lat =  crd.latitude;
     long = crd.longitude;
 
-    map.jumpTo({'center': [long, lat], 'zoom': 12 });
+    map.jumpTo({'center': [long, lat], 'zoom': 14 });
 };
 
 function error(err) {

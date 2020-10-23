@@ -14,17 +14,47 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
         <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet' />
-        <title>Global Barber Network</title>  
-        
+        <title>Global Barber Network</title>
+        <style>
+            body { margin: 0; padding: 0; }
+            #map { position: absolute; top: 50px; bottom: 50px; width: 100%; }
+            .mapboxgl-popup {
+                max-width: 400px;
+                font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            }
+        </style>
     </head>
     <body>
-        <div id='map' style='width: 400px; height: 300px;'></div>
+        <header>
+            <nav class="navbar navbar-dark bg-dark">
+                <a class="navbar-brand" href="#">
+                    <img src="img/barber-pole.svg" width="30" height="30" class="d-inline-block align-top" alt="iconWeb">
+                    Global Barber Network
+                </a>
+                <form class="form-inline">
+                    <a href="Login">
+                        <button class="btn btn-sm btn-outline-secondary" type="button">Iniciar sessión</button>
+                    </a>
+                    &nbsp;
+                    <a href="Register">
+                        <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se</button>
+                    </a>
+                </form>
+            </nav>
+        </header>
+
         
-    <ul>
-        <li><a href="Login">Iniciar sessión</a></li>
-        <li><a href="Register">Registrar</a></li>
-    </ul>                
+        <main>
+            <div id='map'></div>
+        </main>
         
+
+        
+        <footer class="page-footer font-small bg-dark">
+            <div class="footer-copyright text-center py-3">
+                © 2020 Copyright: Global Barber Network Corp.
+            </div>
+        </footer>
     </body>
     <script src="js/index_mapbox.js"></script>
 </html>

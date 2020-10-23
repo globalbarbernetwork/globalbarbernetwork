@@ -21,7 +21,8 @@ import java.io.IOException;
 public class ConnectionFirebase {    
     public Firestore initFirebase() {
         try{
-            FileInputStream serviceAccount = new FileInputStream("./firebase/global-barber-network-java-firebase-adminsdk-jmudk-8c8c34cb95.json");
+            FileInputStream serviceAccount = new FileInputStream("D:/tmp/global-barber-network-java-firebase-adminsdk-jmudk-8c8c34cb95.json");
+            //FileInputStream serviceAccount = new FileInputStream("./firebase/global-barber-network-java-firebase-adminsdk-jmudk-8c8c34cb95.json");
             //FileInputStream serviceAccount = new FileInputStream("./src/main/resources/global-barber-network-java-firebase-adminsdk-jmudk-8c8c34cb95.json");
             
             FirebaseOptions options = new FirebaseOptions.Builder()
