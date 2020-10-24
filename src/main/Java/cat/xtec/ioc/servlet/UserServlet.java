@@ -7,9 +7,11 @@ package cat.xtec.ioc.servlet;
 
 import cat.xtec.ioc.firebase.MyFirebaseAuth;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,21 +27,32 @@ public class UserServlet extends HttpServlet {
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
+                
+        String action = request.getParameter("action");  
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        RequestDispatcher rd = null;                              
+        
         switch(action){
-            case "login":                                
-            {
+            case "login":                                            
+                JsonObject user = null;                
                 try {
-                    String token =MyFirebaseAuth.getInstance().auth("adrian98ma@gmail.com", "1");
-                    System.out.println(token);
+                    user = MyFirebaseAuth.getInstance().auth(email, password);                    
                 } catch (Exception ex) {
                     Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                }                                
                 
-                System.out.println("He entrado");
+                if(user == null){
+                    
+                    String error = "Usuari o contrasenya incorrectes";
+                    request.setAttribute("error", error);
+                    rd = request.getRequestDispatcher("/Login");
+                    rd.forward(request, response);
+                    
+                }else{
+                    response.sendRedirect(request.getContextPath() + "/index.jsp");
+                }                                
                 
-            }
-                //formUser(request, response);
                 break;
 
             case "new":                
@@ -48,7 +61,7 @@ public class UserServlet extends HttpServlet {
                 break;
             default:
                 break;
-        }
+        }                        
     }
     
     

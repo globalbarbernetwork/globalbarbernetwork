@@ -24,37 +24,10 @@
             }
         </style>
     </head>
-    <body>
-        <header>
-            <nav class="navbar navbar-dark bg-dark">
-                <a class="navbar-brand" href="#">
-                    <img src="img/barber-pole.svg" width="30" height="30" class="d-inline-block align-top" alt="iconWeb">
-                    Global Barber Network
-                </a>
-                <form class="form-inline">
-                    <a href="Login">
-                        <button class="btn btn-sm btn-outline-secondary" type="button">Iniciar sessión</button>
-                    </a>
-                    &nbsp;
-                    <a href="Register">
-                        <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se</button>
-                    </a>
-                </form>
-            </nav>
-        </header>
-
-        
+    <body>              
         <main>
             <div id='map'></div>
-        </main>
-        
-
-        
-        <footer class="page-footer font-small bg-dark">
-            <div class="footer-copyright text-center py-3">
-                © 2020 Copyright: Global Barber Network Corp.
-            </div>
-        </footer>
+        </main>       
     </body>
     <script src="js/index_mapbox.js"></script>
 </html>

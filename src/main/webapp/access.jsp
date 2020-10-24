@@ -13,15 +13,18 @@
         <link rel="stylesheet" href="./css/styles.css" >
     </head>
     <body>        
-
-        <div class="card">
-            <div class="card-header">
-                <%= request.getAttribute("title")%>
-            </div>
-            <div class="card-body">
-                <%= request.getAttribute("form")%>
-            </div>
-        </div>
+        <main class="content">
+            <div class="card">
+                <div class="card-header">
+                    <%= request.getAttribute("title")%>
+                </div>
+                <div class="card-body">
+                    <%= request.getAttribute("form")%>
+                </div>
+                <c:set var="value" scope="request" value="<%= request.getAttribute("error")%>"/>
+                <c:out default="None" escapeXml="true" value="${not empty value ? value : ''}" />
+            </div>                        
+        </main>
 
     </div>
 </body>

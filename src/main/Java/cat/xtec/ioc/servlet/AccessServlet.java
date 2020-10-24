@@ -44,8 +44,8 @@ public class AccessServlet extends HttpServlet {
         switch (path) {
             case LOGIN:
                 String formLogin = "<form action='UserServlet/?action=login' method='post'>"                       
-                        + "<input type='email' class='form-control' id='email' placeholder='Correu electrònic'/>"
-                        + "<input type='password' class='form-control' id='password' placeholder='Contrasenya'/>"                        
+                        + "<input type='email' class='form-control' name='email' placeholder='Correu electrònic'/>"
+                        + "<input type='password' class='form-control' name='password' placeholder='Contrasenya'/>"                        
                         + "<button type='submit' class='btn btn-primary'>Inicia</button>"
                         + "</form>";
                 request.setAttribute("title", "Inicia sessió");
@@ -55,10 +55,10 @@ public class AccessServlet extends HttpServlet {
                 break;
             case REGISTER:
                 String formRegister = "<form action='UserServlet/?action=new' method='post'>"
-                        + "<input type='text' class='form-control' id='nom' placeholder='Nom'/>"
-                        + "<input type='text' class='form-control' id='cognom' placeholder='Cognom'/>"
-                        + "<input type='email' class='form-control' id='email' placeholder='Correu electrònic'/>"
-                        + "<input type='text' class='form-control' id='phone_number' placeholder='Movil'/>"
+                        + "<input type='text' class='form-control' name='nom' placeholder='Nom'/>"
+                        + "<input type='text' class='form-control' name='cognom' placeholder='Cognom'/>"
+                        + "<input type='email' class='form-control' name='email' placeholder='Correu electrònic'/>"
+                        + "<input type='text' class='form-control' name='phone_number' placeholder='Movil'/>"
                         + "<button type='submit' class='btn btn-primary p-t-5'>Registra</button>"
                         + "</form>";
                 request.setAttribute("title", "Registrar-me");

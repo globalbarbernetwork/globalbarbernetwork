@@ -41,10 +41,10 @@ public class MyFirebaseAuth {
         return instance;
     }
 
-    public String auth(String username, String password) throws Exception {
+    public JsonObject auth(String username, String password) throws Exception {
 
         HttpURLConnection urlRequest = null;
-        String token = null;
+        JsonObject token = null;
 
         try {
             URL url = new URL(BASE_URL + OPERATION_AUTH + "?key=" + firebaseKey);
@@ -63,7 +63,7 @@ public class MyFirebaseAuth {
             JsonElement root = jp.parse(new InputStreamReader((InputStream) urlRequest.getContent())); //Convert the input stream to a json element
             JsonObject rootobj = root.getAsJsonObject(); //May be an array, may be an object. 
 
-            token = rootobj.get("idToken").getAsString();
+            token = rootobj;
 
         } catch (Exception e) {
             return null;
