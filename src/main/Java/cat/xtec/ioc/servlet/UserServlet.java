@@ -5,7 +5,11 @@
  */
 package cat.xtec.ioc.servlet;
 
+import cat.xtec.ioc.firebase.MyFirebaseAuth;
+import com.google.firebase.auth.FirebaseAuth;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,17 +20,29 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author DAW IOC
  */
-
+@WebServlet (name = "UserServlet", urlPatterns = {"/UserServlet/*"})
 public class UserServlet extends HttpServlet {
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String path = request.getServletPath();
-        switch(path){
-            case "formUser":
+        String action = request.getParameter("action");
+        switch(action){
+            case "login":                                
+            {
+                try {
+                    String token =MyFirebaseAuth.getInstance().auth("adrian98ma@gmail.com", "1");
+                    System.out.println(token);
+                } catch (Exception ex) {
+                    Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                System.out.println("He entrado");
+                
+            }
                 //formUser(request, response);
                 break;
-            case "new":
+
+            case "new":                
                 //newUser(request, response);
                 System.out.println("HE ENTRADO");
                 break;
