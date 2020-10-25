@@ -21,15 +21,27 @@
                 <a class="navbar-brand" href="#">
                     <img src="img/barber-pole.svg" width="30" height="30" class="d-inline-block align-top" alt="iconWeb">
                     Global Barber Network
-                </a>                
-                <form class="form-inline">
-                    <a href="Login">
-                        <button class="btn btn-sm btn-outline-secondary" type="button">Iniciar sessión</button>
-                    </a>
-                    &nbsp;
-                    <a href="Register">
-                        <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se</button>
-                    </a>
+                </a> 
+                <form class="form-inline">                    
+                    <c:set var = "user" scope = "session" value="<%= request.getAttribute("user") %>"/>                
+                    <%= request.getAttribute("user") %>
+                    <c:choose>
+                        <c:when test="${user}">
+                            <img src="img/user-circle-regular.svg" width="30" height="30" class="d-inline-block align-top" alt="iconWeb">
+                        </c:when>                   
+                        <c:otherwise>
+                            <a href="Login">
+                                <button class="btn btn-sm btn-outline-secondary" type="button">Iniciar sessión</button>
+                            </a>
+                            &nbsp;
+                            <a href="Register">
+                                <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se</button>
+                            </a>                        
+                            <a href="RegisterHaridressing">
+                                <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se com empresa</button>
+                            </a>                        
+                        </c:otherwise>
+                    </c:choose>                
                 </form>
             </nav>
         </header>

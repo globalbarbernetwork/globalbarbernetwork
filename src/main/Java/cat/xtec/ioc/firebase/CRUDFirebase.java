@@ -34,18 +34,27 @@ public class CRUDFirebase {
     private static Firestore db;
 
     public CRUDFirebase() {
-        ConnectionFirebase connectFb = new ConnectionFirebase();
-        db = connectFb.initFirebase();
+    }       
+    
+    public static CRUDFirebase getInstance(){
+        if(db == null){
+            ConnectionFirebase connectFb = new ConnectionFirebase();
+            db = connectFb.initFirebase();
+            return new CRUDFirebase();
+            
+        }else{
+            return new CRUDFirebase();
+        }        
     }
 
-    public void createUser() throws FirebaseAuthException {
+    public void createUser(String email, String password) throws FirebaseAuthException {
         CreateRequest request = new CreateRequest()
-                .setEmail("user@example.com")
+                .setEmail(email)
                 .setEmailVerified(false)
-                .setPassword("secretPassword")
-                .setPhoneNumber("+11234567890")
-                .setDisplayName("John Doe")
-                .setPhotoUrl("http://www.example.com/12345678/photo.png")
+                .setPassword(password)
+//                .setPhoneNumber("+11234567890")
+                .setDisplayName(email)
+//                .setPhotoUrl("http://www.example.com/12345678/photo.png")
                 .setDisabled(false);
 
         UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);

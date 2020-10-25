@@ -12,7 +12,7 @@ $(document).ready(function () {
         async: true,
         url: servletURL,
         success: function (data) {
-            // Insertar la lista de peluqerias en el mapa
+            console.dir(data);
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.info('in error');

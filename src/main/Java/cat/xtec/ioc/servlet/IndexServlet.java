@@ -25,11 +25,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 /**
  *
  * @author DAW IOC
  */
+@WebServlet(name = "IndexServlet", urlPatterns = {"/index/*"})
 public class IndexServlet extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -37,49 +37,47 @@ public class IndexServlet extends HttpServlet {
         String action = request.getParameter("action");
         switch (action) {
             case "loadPage":
-                getListHairdressing(request, response);
+                Hairdressing hd = getListHairdressing(request, response);
+                request.setAttribute("listHairdressings", hd);
                 break;
             default:
                 break;
         }
+
+//        String user = (String)request.getAttribute("user");
+//        request.setAttribute("user", user);        
+//        RequestDispatcher rd = request.getRequestDispatcher("index.jsp");
+//        rd.forward(request, response);
+        response.sendRedirect(request.getContextPath() + "/index.jsp");
+
     }
 
-    private void getListHairdressing(HttpServletRequest request, HttpServletResponse response) {
-            CRUDFirebase firebaseDAO = new CRUDFirebase();
-            
-            JSONObject json = new JSONObject();
-            JSONArray array = new JSONArray();
-            
-            List<Hairdressing> listHairdressings = firebaseDAO.getAllBarbers();
-            
-            if (listHairdressings != null && !listHairdressings.isEmpty()) {
-                JSONObject member = new JSONObject(listHairdressings);
-                array.put(member);
-                try {
-                    json.put("jsonArray", member);
-                } catch (JSONException ex) {
-                    ex.printStackTrace();
-                }
-                
-                try {
-                    PrintWriter out = response.getWriter();
-                    out.println(json.toString());
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
+    private Hairdressing getListHairdressing(HttpServletRequest request, HttpServletResponse response) {
+        CRUDFirebase firebaseDAO = CRUDFirebase.getInstance();
+
+        JSONObject json = new JSONObject();
+        JSONArray array = new JSONArray();
+
+        List<Hairdressing> listHairdressings = firebaseDAO.getAllBarbers();
+
+        if (listHairdressings != null && !listHairdressings.isEmpty()) {
+            JSONObject member = new JSONObject(listHairdressings);
+            array.put(member);
+            try {
+                json.put("jsonArray", member);
+            } catch (JSONException ex) {
+                ex.printStackTrace();
             }
-            
-        request.setAttribute("listHairdressings", listHairdressings.get(0));
-            
-        ServletContext sc = getServletContext();
-        RequestDispatcher rd = sc.getRequestDispatcher("/index.jsp");
-        try {
-            rd.forward(request,response);
-        } catch (ServletException ex) {
-            Logger.getLogger(IndexServlet.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(IndexServlet.class.getName()).log(Level.SEVERE, null, ex);
+
+            try {
+                PrintWriter out = response.getWriter();
+                out.println(json.toString());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
+
+        return listHairdressings.get(0);
     }
 
     /**

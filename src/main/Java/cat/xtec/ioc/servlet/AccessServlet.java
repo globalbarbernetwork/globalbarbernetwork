@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Adrian
  */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/Login", "/Register"})
+@WebServlet(name = "LoginServlet", urlPatterns = {"/Login", "/Register", "/RegisterHairdressing"})
 public class AccessServlet extends HttpServlet {
 
     final String LOGIN = "/Login";
@@ -54,15 +54,33 @@ public class AccessServlet extends HttpServlet {
                 rd.forward(request, response);
                 break;
             case REGISTER:
-                String formRegister = "<form action='UserServlet/?action=new' method='post'>"
+                String formRegister = "<form action='UserServlet/?action=newClient' method='post'>"
                         + "<input type='text' class='form-control' name='nom' placeholder='Nom'/>"
                         + "<input type='text' class='form-control' name='cognom' placeholder='Cognom'/>"
                         + "<input type='email' class='form-control' name='email' placeholder='Correu electrònic'/>"
+                        + "<input type='password' class='form-control' name='password' placeholder='Contrasenya'/>"
+                        + "<input type='password' class='form-control' placeholder='Confirma contrasenya'/>"
                         + "<input type='text' class='form-control' name='phone_number' placeholder='Movil'/>"
                         + "<button type='submit' class='btn btn-primary p-t-5'>Registra</button>"
                         + "</form>";
                 request.setAttribute("title", "Registrar-me");
                 request.setAttribute("form", formRegister);
+                rd = request.getRequestDispatcher("access.jsp");
+                rd.forward(request, response);
+                
+                break;
+            case REGISTER_HAIRDRESSING:
+                String formRegisterHairdressing = "<form action='UserServlet/?action=newClient' method='post'>"
+                        + "<input type='text' class='form-control' name='nom' placeholder='Nom'/>"
+                        + "<input type='text' class='form-control' name='cognom' placeholder='Cognom'/>"
+                        + "<input type='email' class='form-control' name='email' placeholder='Correu electrònic'/>"
+                        + "<input type='password' class='form-control' name='password' placeholder='Contrasenya'/>"
+                        + "<input type='password' class='form-control' placeholder='Confirma contrasenya'/>"
+                        + "<input type='text' class='form-control' name='phone_number' placeholder='Movil'/>"
+                        + "<button type='submit' class='btn btn-primary p-t-5'>Registra</button>"
+                        + "</form>";
+                request.setAttribute("title", "Registrar-me");
+                request.setAttribute("form", formRegisterHairdressing);
                 rd = request.getRequestDispatcher("access.jsp");
                 rd.forward(request, response);
                 
