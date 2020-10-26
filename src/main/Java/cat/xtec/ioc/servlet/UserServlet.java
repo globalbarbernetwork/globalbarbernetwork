@@ -50,13 +50,12 @@ public class UserServlet extends HttpServlet {
                     Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                if (userRecord != null) {
-                    if (userRecord.isEmailVerified()) {
-                        String error = "Pendent de validació del mail";
-                        request.setAttribute("error", error);
-                        rd = request.getRequestDispatcher("/Login");
-                        rd.forward(request, response);
-                    }
+                if (userRecord != null && !userRecord.isEmailVerified()) {
+                    String error = "Pendent de validació del mail";
+                    request.setAttribute("error", error);
+                    rd = request.getRequestDispatcher("/Login");
+                    rd.forward(request, response);
+
                 } else if (user == null) {
                     String error = "Usuari o contrasenya incorrectes";
                     request.setAttribute("error", error);
