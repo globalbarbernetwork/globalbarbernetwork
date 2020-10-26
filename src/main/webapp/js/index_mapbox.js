@@ -41,12 +41,12 @@ function renderMap (){
                             {
                                 'type': 'Feature',
                                 'properties': {
-                                    'description': 'Perruqueria Rey Juan Carlos I',
+                                    'description': '<strong>Monclús Barber Shop</strong><p><a href="https://www.instagram.com/monclus_barbershop/" target="_blank" title="Obre en una nova finestra">Instagram Monclús Barber Shop</a></p><p>Horari -> 10:00-20:00 p.m.</p>',
                                     'icon': 'theatre'
                                 },
                                 'geometry':{
                                     'type':'Point',
-                                    'coordinates': [-3.7, 40.2]
+                                    'coordinates': [2.156955, 41.502085]
                                 }
                             }
                         ]
