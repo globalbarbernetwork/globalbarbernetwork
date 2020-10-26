@@ -9,6 +9,7 @@ import cat.xtec.ioc.firebase.CRUDFirebase;
 import cat.xtec.ioc.firebase.MyFirebaseAuth;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.UserRecord;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.HashMap;
@@ -41,19 +42,24 @@ public class UserServlet extends HttpServlet {
         switch (action) {
             case "login":
                 JsonObject user = null;
+                UserRecord userRecord = null;
                 try {
+                    userRecord = FirebaseAuth.getInstance().getUserByEmail(email);
                     user = MyFirebaseAuth.getInstance().auth(email, password);
                 } catch (Exception ex) {
                     Logger.getLogger(UserServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                if (user == null) {
-
+                if (!userRecord.isEmailVerified()) {
+                    String error = "Pendent de validació del mail";
+                    request.setAttribute("error", error);
+                    rd = request.getRequestDispatcher("/Login");
+                    rd.forward(request, response);
+                } else if (user == null) {
                     String error = "Usuari o contrasenya incorrectes";
                     request.setAttribute("error", error);
                     rd = request.getRequestDispatcher("/Login");
                     rd.forward(request, response);
-
                 } else {
                     request.setAttribute("user", true);
 //                    response.sendRedirect(request.getContextPath()+"/index.jsp");
@@ -72,7 +78,7 @@ public class UserServlet extends HttpServlet {
 
                 response.sendRedirect(request.getContextPath() + "/index.jsp");
                 break;
-            case "newHairdressing":                
+            case "newHairdressing":
                 try {
                     cf.createUser(email, password);
                 } catch (FirebaseAuthException ex) {
