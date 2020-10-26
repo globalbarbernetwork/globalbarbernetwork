@@ -26,7 +26,7 @@ public class SmtpService {
     public SmtpService() {
         props = new Properties();
         try {
-            InputStream is = new FileInputStream("./src/main/resources/config.properties");
+            InputStream is = new FileInputStream("D:/tmp/config.properties");
             props.load(is);
         } catch (IOException ex) {
             ex.printStackTrace();

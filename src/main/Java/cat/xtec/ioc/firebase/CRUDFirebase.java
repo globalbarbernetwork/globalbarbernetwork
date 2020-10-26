@@ -32,6 +32,17 @@ import java.util.logging.Logger;
 public class CRUDFirebase {
 
     private static Firestore db;
+    private static String BODY_MAIL_VERIFICATION = "Hola,\n" +
+"\n" +
+"Segueix aquest enllaç per verificar la teva adreça electrònica.\n" +
+"\n" +
+"?\n" +
+"\n" +
+"Si no has demanat verificar aquesta adreça, pots ignorar aquest correu.\n" +
+"\n" +
+"Gràcies,\n" +
+"\n" +
+"L'equip de: Global Barber Network";
 
     public CRUDFirebase() {
     }       
@@ -60,6 +71,7 @@ public class CRUDFirebase {
         UserRecord userRecord = FirebaseAuth.getInstance().createUser(request);
         System.out.println("Successfully created new user: " + userRecord.getUid());
 
+        sendEmailVerificationAccount(email);
     }
 
     public List<Hairdressing> getAllBarbers() {
@@ -83,12 +95,24 @@ public class CRUDFirebase {
         return listBarbers;
     }
 
-    public String generateLink() throws FirebaseAuthException {
-        String link = FirebaseAuth.getInstance().generateEmailVerificationLink("user@example.com");
+    private String generateLink(String email) throws FirebaseAuthException {
+        String link = FirebaseAuth.getInstance().generateEmailVerificationLink(email);
         // Construct email verification template, embed the link and send
         // using custom SMTP server.
         //sendCustomEmail(email, displayName, link);
         return link;
+    }
+    
+    private void sendEmailVerificationAccount(String email) {
+        
+        try {
+            String linkVerification = generateLink(email);
+            SmtpService smtpService = new SmtpService();
+            BODY_MAIL_VERIFICATION = BODY_MAIL_VERIFICATION.replace("?", linkVerification);
+            smtpService.sendEmail(email, "Verifica l'adreça electrònica de l'aplicació Global Barber Network", BODY_MAIL_VERIFICATION);
+        } catch (FirebaseAuthException ex) {
+            Logger.getLogger(CRUDFirebase.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void atrEmailVerifiedUser() throws FirebaseAuthException {
