@@ -17,7 +17,7 @@
         <title>Global Barber Network</title>
         <style>
             body { margin: 0; padding: 0; }
-            #map { position: absolute; top: 50px; bottom: 50px; width: 100%; }
+            #map { position: absolute; top: 55px; bottom: 55px; width: 100%; }
             .mapboxgl-popup {
                 max-width: 400px;
                 font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;

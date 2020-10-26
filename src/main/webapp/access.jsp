@@ -25,7 +25,5 @@
                 <c:out default="None" escapeXml="true" value="${not empty value ? value : ''}" />
             </div>                        
         </main>
-
-    </div>
 </body>
 </html>

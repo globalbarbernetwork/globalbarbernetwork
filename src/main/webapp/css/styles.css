@@ -13,3 +13,7 @@ and open the template in the editor.
   align-items: center;
   justify-content: center;
 }
+
+#footer {
+    top:250px;
+}
