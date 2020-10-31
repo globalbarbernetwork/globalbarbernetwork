@@ -1,0 +1,19 @@
+
+####################################
+# Global Barber Network            #
+# © 2020 Els testimonis de Java    #
+#                                  #
+# Fitxer de configuració           #
+####################################
+
+# Service Account Firebase
+pathServiceAccount = 
+
+# Parametres servidor SMTP
+mail.smtp.host = 
+mail.smtp.starttls.enable = 
+mail.smtp.port = 
+mail.smtp.auth = 
+mail.smtp.user = 
+mail.smtp.password = 
+

@@ -1,3 +1,4 @@
 # Ignore files
 
 target/
+src/main/resources/config.properties
