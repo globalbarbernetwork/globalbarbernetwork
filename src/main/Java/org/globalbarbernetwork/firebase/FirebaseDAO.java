@@ -16,7 +16,6 @@
  */
 package org.globalbarbernetwork.firebase;
 
-import cat.xtec.ioc.firebase.ConnectionFirebase;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -28,11 +27,11 @@ import com.google.firebase.auth.UserRecord.CreateRequest;
  * @author Grup 3
  */
 public class FirebaseDAO {
-    private static Firestore db;
+    private static Firestore db;    
 
     public FirebaseDAO() {
          if (db == null) {
-            ConnectionFirebase connectFb = new ConnectionFirebase();
+            ConnectFirebase connectFb = new ConnectFirebase();
             db = connectFb.initFirebase();
         }
     }
