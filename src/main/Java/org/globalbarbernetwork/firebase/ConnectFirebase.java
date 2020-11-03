@@ -39,7 +39,7 @@ public class ConnectFirebase {
     public ConnectFirebase() {
         props = new Properties();
         try {
-            InputStream is = new FileInputStream("../../../resources/config.properties");
+            InputStream is = new FileInputStream("D:/tmp/config.properties");
             props.load(is);
         } catch (IOException ex) {
             ex.printStackTrace();

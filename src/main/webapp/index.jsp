@@ -15,9 +15,13 @@
         <link rel="stylesheet" href="./css/index.css">        
         <script src="js/mapbox.js"></script>
     </head>
-    <body>              
+    <body>
+        <%
+            String listHairdressingsJSON = (String) request.getAttribute("listHairdressingsJSON");
+        %>
         <main>
             <div id='map'></div>
-        </main>       
+        </main>
+        <input id="listHairdressingsJSON" name="listHairdressingsJSON" type="hidden" value='<%=listHairdressingsJSON%>'/>
     </body>
 </html>

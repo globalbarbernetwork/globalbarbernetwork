@@ -16,11 +16,18 @@
  */
 package org.globalbarbernetwork.firebase;
 
+import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import org.globalbarbernetwork.entities.Hairdressing;
 
 /**
  *
@@ -30,7 +37,7 @@ public class FirebaseDAO {
     private static Firestore db;    
 
     public FirebaseDAO() {
-         if (db == null) {
+        if (db == null) {
             ConnectFirebase connectFb = new ConnectFirebase();
             db = connectFb.initFirebase();
         }
@@ -50,5 +57,26 @@ public class FirebaseDAO {
         System.out.println("Successfully created new user: " + userRecord.getUid());
 
         //sendEmailVerificationAccount(email);
+    }
+    
+    public List<Hairdressing> getAllHairdressings(){
+        List<Hairdressing> listHairdressings = new ArrayList<>();
+        ApiFuture<QuerySnapshot> future = db.collection("hairdressings").get();
+        List<QueryDocumentSnapshot> documents;
+        try {
+            documents = future.get().getDocuments();
+
+            if (documents.size() > 0) {
+                for (QueryDocumentSnapshot document : documents) {
+                    listHairdressings.add(document.toObject(Hairdressing.class));
+                }
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
+
+        return listHairdressings;
     }
 }

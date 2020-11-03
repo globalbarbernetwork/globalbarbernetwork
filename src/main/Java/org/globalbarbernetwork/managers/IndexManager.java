@@ -17,30 +17,81 @@
 package org.globalbarbernetwork.managers;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.globalbarbernetwork.entities.Hairdressing;
+import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.Manager;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
  * @author Grup 3
  */
 public class IndexManager implements Manager {
-
+    private final FirebaseDAO firebaseDAO = new FirebaseDAO();
+        
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
         try {
             RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
-            // Recoger lista peluquerias
+            String listHairdressingsJSON = getListHairdressingsToJSON();
+            request.setAttribute("listHairdressingsJSON", listHairdressingsJSON);
             rd.forward(request, response);
         } catch (ServletException ex) {
             Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private String getListHairdressingsToJSON() {
+        List<Hairdressing> hairdressings = firebaseDAO.getAllHairdressings();
+        JSONObject json = new JSONObject();
+        JSONArray array = new JSONArray();
+        
+        LinkedHashMap<String,Object> jsonOrderedMap;
+        LinkedHashMap<String,Double> jsonCoords;
+        for (Hairdressing hairdressing : hairdressings) {
+            jsonOrderedMap = new LinkedHashMap<>();
+            jsonCoords = new LinkedHashMap<>();
+            
+            jsonOrderedMap.put("UID", hairdressing.getUID());
+            jsonOrderedMap.put("address", hairdressing.getAddress());
+            jsonOrderedMap.put("city", hairdressing.getCity());
+            jsonOrderedMap.put("companyName", hairdressing.getCompanyName());
+            
+            jsonCoords.put("lat", hairdressing.getCoordinates().getLatitude());
+            jsonCoords.put("lng", hairdressing.getCoordinates().getLongitude());
+            
+            jsonOrderedMap.put("coordinates", new JSONObject(jsonCoords));
+            jsonOrderedMap.put("country", hairdressing.getCountry());
+            jsonOrderedMap.put("displayName", hairdressing.getDisplayName());
+            jsonOrderedMap.put("email", hairdressing.getEmail());
+            jsonOrderedMap.put("instagram", hairdressing.getInstagram());
+            jsonOrderedMap.put("phoneNumber", hairdressing.getPhoneNumber());
+            jsonOrderedMap.put("province", hairdressing.getProvince());
+            jsonOrderedMap.put("website", hairdressing.getWebsite());
+            jsonOrderedMap.put("zipCode", hairdressing.getZipCode());
+     
+            JSONObject member = new JSONObject(jsonOrderedMap);
+            array.put(member);
+            
+            try {
+                json.put("jsonArray", array);
+            } catch (JSONException ex) {
+                Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        return json.toString();
     }
 }
