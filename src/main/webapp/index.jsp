@@ -7,8 +7,8 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
-    <head>
-        <jsp:include page="./templates/base.jsp"/>
+    <jsp:include page="./templates/base.jsp"/>
+    <head>        
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
         <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet'>
@@ -19,9 +19,11 @@
         <%
             String listHairdressingsJSON = (String) request.getAttribute("listHairdressingsJSON");
         %>
+        <jsp:include page="./templates/header.jsp"/>
         <main>
             <div id='map'></div>
-        </main>
+        </main>       
+        <jsp:include page="./templates/footer.jsp"/>
         <input id="listHairdressingsJSON" name="listHairdressingsJSON" type="hidden" value='<%=listHairdressingsJSON%>'/>
     </body>
 </html>
