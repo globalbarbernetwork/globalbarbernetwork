@@ -5,13 +5,12 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <h1>Hello Login!</h1>
-    </body>
-</html>
+<jsp:include page="./templates/base.jsp"/>
+<jsp:include page="./templates/header.jsp"/>
+
+<div class="container">
+
+</div>
+
+<jsp:include page="./templates/footer.jsp"/>
+
