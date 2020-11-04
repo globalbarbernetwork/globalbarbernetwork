@@ -1,7 +1,7 @@
 <%-- 
     Document   : footer
     Created on : 04-nov-2020, 22:15:33
-    Author     : Adrian
+    Author     : Grup 3
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>  
