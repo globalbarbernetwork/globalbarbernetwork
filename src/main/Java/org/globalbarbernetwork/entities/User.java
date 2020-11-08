@@ -21,19 +21,22 @@ package org.globalbarbernetwork.entities;
  * @author Grup 3
  */
 public class User {
+
     private String UID;
     private String email;
     private String phoneNumber;
     private String displayName;
+    private String type;
 
     public User() {
     }
 
-    public User(String UID, String email, String phoneNumber, String displayName) {
+    public User(String UID, String email, String phoneNumber, String displayName, String type) {
         this.UID = UID;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.displayName = displayName;
+        this.type = type;
     }
 
     public String getUID() {
@@ -66,5 +69,13 @@ public class User {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }   
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

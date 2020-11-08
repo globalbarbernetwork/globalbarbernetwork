@@ -25,10 +25,10 @@
                     <a href="${contextPath}/login.jsp">
                         <button class="btn btn-sm btn-outline-secondary" type="button">Iniciar sessión</button>
                     </a>
-                    <a href="${contextPath}/ManagementServlet/access/register">
+                    <a href="${contextPath}/register.jsp">
                         <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se</button>
                     </a>                        
-                    <a href="${contextPath}/ManagementServlet/access/registerHairdressing">
+                    <a href="${contextPath}/registerHairdressing.jsp">
                         <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se com empresa</button>
                     </a>                        
                 </c:otherwise>

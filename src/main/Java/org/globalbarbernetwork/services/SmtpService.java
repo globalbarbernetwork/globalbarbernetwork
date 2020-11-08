@@ -37,7 +37,7 @@ public class SmtpService {
     public SmtpService() {
         props = new Properties();
         try {
-            InputStream is = new FileInputStream("../../../resources/config.properties");
+            InputStream is = new FileInputStream("D:/tmp/config.properties");
             props.load(is);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -57,7 +57,7 @@ public class SmtpService {
             message.setText(body);
 
             transport = session.getTransport("smtp");
-            transport.connect("smtp.gmail.com", sender, props.getProperty("mail.smtp.password"));
+            transport.connect(props.getProperty("mail.smtp.host"), sender, props.getProperty("mail.smtp.password"));
             transport.sendMessage(message, message.getAllRecipients());
         } catch (MessagingException e) {
             e.printStackTrace();   //Si se produce un error

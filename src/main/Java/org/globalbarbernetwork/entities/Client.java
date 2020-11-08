@@ -20,15 +20,16 @@ package org.globalbarbernetwork.entities;
  *
  * @author Grup 3
  */
-public class Client extends User{
+public class Client extends User {
+
     private String name;
     private String surname;
 
     public Client() {
     }
-    
-    public Client(String name, String surname, String UID, String email, String phoneNumber, String displayName) {
-        super(UID, email, phoneNumber, displayName);
+
+    public Client(String name, String surname, String UID, String email, String phoneNumber, String displayName, String type) {
+        super(UID, email, phoneNumber, displayName, type);
         this.name = name;
         this.surname = surname;
     }
