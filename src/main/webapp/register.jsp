@@ -29,7 +29,7 @@
                 <small id="errorInput" class="text-danger"></small>
             </div>
             <div class="form-group">
-                <input type="email" class="form-control" name="email" id="email" placeholder="Correu Electrónic" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$" title="Omple aquest camp" value="${client.email}" required>
+                <input type="email" class="form-control <%= !msgErrorEmail.isEmpty() ? "is-invalid" : " " %>" name="email" id="email" placeholder="Correu Electrónic" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$" title="Omple aquest camp" value="${client.email}" required>
                 <small id="errorInput" class="text-danger">${ msgErrorEmail }</small>
             </div>
             <div class="form-group">
