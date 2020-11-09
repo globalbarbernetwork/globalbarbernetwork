@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/core" prefix = "c" %>
 <c:set var="contextPath" scope="request" value="${pageContext.request.contextPath}"/>
+<c:set var="user" scope="session" value="<%= request.getSession().getAttribute("user") %>"/>
 
 <header>
     <nav class="navbar navbar-dark bg-dark">
@@ -15,11 +16,11 @@
             Global Barber Network
         </a> 
 
-        <form class="form-inline">                    
-            <c:set var = "user" scope = "session" value="<%= session.getAttribute("user")%>"/>                                    
+        <form class="form-inline">                     
             <c:choose>
-                <c:when test="${user}">
-                    <img src="${contextPath}/img/user.svg" width="30" height="30" class="d-inline-block align-top" alt="iconUser">
+                <c:when test="${not empty user}">
+                    <img src="${contextPath}/img/user.svg" width="30" height="30" class="d-inline-block align-top" alt="iconUser">            
+                    <span class="displayName">${user.displayName}</span>
                 </c:when>                   
                 <c:otherwise>
                     <a href="${contextPath}/login.jsp">
@@ -30,7 +31,7 @@
                     </a>                        
                     <a href="${contextPath}/registerHairdressing.jsp">
                         <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se com empresa</button>
-                    </a>                        
+                    </a>                                    
                 </c:otherwise>
             </c:choose>                
         </form>

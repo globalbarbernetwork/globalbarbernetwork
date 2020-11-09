@@ -16,13 +16,21 @@
  */
 package org.globalbarbernetwork.firebase;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.globalbarbernetwork.entities.Client;
@@ -34,10 +42,11 @@ import org.globalbarbernetwork.entities.User;
  * @author Grup 3
  */
 public class FirebaseDAO {
-    private static Firestore db;    
+
+    private static Firestore db;
 
     public FirebaseDAO() {
-         if (db == null) {
+        if (db == null) {
             ConnectFirebase connectFb = new ConnectFirebase();
             db = connectFb.initFirebase();
         }
@@ -116,5 +125,61 @@ public class FirebaseDAO {
         newUser.put("website", "");
         newUser.put("zipCode", hairDrsg.getZipCode());
         db.collection("hairdressings").document().set(newUser);
+    }
+
+    public User getUser(String uid) {
+
+        List<User> usersList = new ArrayList<>();
+        CollectionReference users = db.collection("users");
+        Query query = users.whereEqualTo("UID", uid);
+
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        try {
+            for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+                usersList.add(document.toObject(User.class));
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return usersList.get(0);
+    }
+
+    public Hairdressing getHairdressing(String uid) {
+        List<Hairdressing> hairdressingList = new ArrayList<>();
+        CollectionReference hairdressings = db.collection("hairdressings");
+        Query query = hairdressings.whereEqualTo("UID", uid);
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        try {
+            for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+                hairdressingList.add(document.toObject(Hairdressing.class));
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return hairdressingList.get(0);
+    }
+
+    public Client getClient(String uid) {
+        List<Client> clientList = new ArrayList<>();
+        CollectionReference clients = db.collection("clients");
+        Query query = clients.whereEqualTo("UID", uid);
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+        try {
+            for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+                clientList.add(document.toObject(Client.class));
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return clientList.get(0);
     }
 }

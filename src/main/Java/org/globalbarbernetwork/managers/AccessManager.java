@@ -18,6 +18,7 @@ package org.globalbarbernetwork.managers;
 
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,18 +29,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import static org.globalbarbernetwork.constants.Constants.*;
+import org.globalbarbernetwork.bo.UserBO;
 import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
-import org.globalbarbernetwork.interfaces.Manager;
 import org.globalbarbernetwork.services.SmtpService;
+import org.globalbarbernetwork.firebase.MyFirebaseAuth;
+import org.globalbarbernetwork.interfaces.ManagerInterface;
 
 /**
  *
  * @author Grup 3
  */
-public class AccessManager implements Manager {
+public class AccessManager extends Manager implements ManagerInterface {
 
     final static String LOGIN = "login";
     final static String REGISTER = "register";
@@ -53,8 +56,23 @@ public class AccessManager implements Manager {
 
         switch (action) {
             case LOGIN:
-                rd = request.getRequestDispatcher("/" + LOGIN);
+
+                if ("POST".equals(request.getMethod())) {
+                    String email = request.getParameter("email");
+                    String password = request.getParameter("password");
+
+                    Map<String, String> errorsInAuth = authUser(request, email, password);
+                    if (!errorsInAuth.isEmpty()) {
+                        request.setAttribute("errors", errorsInAuth);
+                        rd = request.getRequestDispatcher("/login.jsp");
+                    } else {
+                        rd = request.getRequestDispatcher("/index.jsp");
+                    }
+                } else {
+                    rd = request.getRequestDispatcher("/index.jsp");
+                }
                 break;
+
             case REGISTER:
                 if (POST.equals(request.getMethod())) {
                     rd = registerUser(request);
@@ -67,16 +85,15 @@ public class AccessManager implements Manager {
                 break;
         }
 
-        if (rd != null) {
-            try {
+        try {
+            if (rd != null) {
                 rd.forward(request, response);
-            } catch (ServletException ex) {
-                Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
             }
+        } catch (ServletException ex) {
+            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     private RequestDispatcher registerUser(HttpServletRequest request) {
@@ -122,7 +139,7 @@ public class AccessManager implements Manager {
         } catch (FirebaseAuthException ex) {
             Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }   
 
     private void insertUser(User user) {
         firebaseDAO.insertUser(user);
@@ -138,4 +155,48 @@ public class AccessManager implements Manager {
                 break;
         }
     }
+    
+    private Map authUser(HttpServletRequest request, String email, String password) {
+
+        Map<String, String> errors = new HashMap<String, String>();
+
+        try {
+            FirebaseDAO firebaseDAO = new FirebaseDAO();
+            UserRecord userRecord = firebaseDAO.getUserByEmail(email);
+
+            if (userRecord != null) {
+                if (!userRecord.isEmailVerified()) {
+                    errors.put("403", "Has de confirmar el correu");
+                    return errors;
+                }
+            }
+
+            JsonObject userJson = MyFirebaseAuth.getInstance().auth(email, password);
+
+            if (userJson == null) {
+                errors.put("401", "Email o contrasenya incorrecte");
+                return errors;
+            }
+
+            UserBO userBO = new UserBO();
+            User user = userBO.getUserByType(userRecord.getUid());
+
+            if (user instanceof Hairdressing) {
+                //Opciones de menu para hairdressing                
+            } else if (user instanceof Client) {
+                //Opciones de menu para hairdressing
+            }
+
+            String options = "";
+            request.getSession().setAttribute("user", user);
+            request.getSession().setAttribute("options", options);
+
+        } catch (FirebaseAuthException ex) {
+            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return errors;
+    }   
 }

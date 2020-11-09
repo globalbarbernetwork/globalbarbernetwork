@@ -23,13 +23,13 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.globalbarbernetwork.interfaces.Manager;
+import org.globalbarbernetwork.interfaces.ManagerInterface;
 
 /**
  *
  * @author Grup 3
  */
-public class IndexManager implements Manager {
+public class IndexManager extends Manager implements ManagerInterface{
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {

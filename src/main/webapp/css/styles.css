@@ -38,3 +38,9 @@ footer{
     margin-top: auto;
     color: white;
 }
+
+.displayName{
+    color: #FFF;
+    font-weight: bold;
+    margin-left: 10px;
+}
