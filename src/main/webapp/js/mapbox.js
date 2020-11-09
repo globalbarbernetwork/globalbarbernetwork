@@ -140,7 +140,7 @@ function loadHairdressings() {
             .setHTML(HTMLPopup)
             .setMaxWidth("200px")
             .addTo(map);
-        });s
+        });
 
         // Cambia el cursor a puntero cuando se pasa por encima del icono de peluqueria.
         map.on('mouseenter', 'places', function () {

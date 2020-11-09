@@ -43,24 +43,21 @@ public class ManagementServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String contextPath = request.getPathInfo();
-        
+        String contextPath = request.getPathInfo() != null ? request.getPathInfo() : request.getServletPath();
+
         if (contextPath != null) {
             String[] tmpAction = contextPath.split("/");
             String action = tmpAction.length > 2 ? tmpAction[2] : "";
-            if ("/".startsWith(contextPath)) {
-                IndexManager gestoraIndex = new IndexManager();
-                gestoraIndex.execute(request, response, action);
+            if (contextPath.startsWith("/ManagementServlet")) {
+                IndexManager indexManager = new IndexManager();
+                indexManager.execute(request, response, action);
             } else if (contextPath.startsWith("/access")) {
-                AccessManager gestoraAcces = new AccessManager();
-                gestoraAcces.execute(request, response, action);
+                AccessManager accessManager = new AccessManager();
+                accessManager.execute(request, response, action);
             } else if (contextPath.startsWith("/schedule")) {
                 ScheduleManager scheduleManager = new ScheduleManager();
                 scheduleManager.execute(request, response, action);
             }
-        } else {
-            IndexManager gestoraIndex = new IndexManager();
-            gestoraIndex.execute(request, response, null);
         }
     }
 
