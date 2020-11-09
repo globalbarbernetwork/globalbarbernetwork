@@ -23,6 +23,6 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Grup 3
  */
-public interface Manager {
+public interface ManagerInterface {
     public void execute (HttpServletRequest request, HttpServletResponse response, String action);
 }

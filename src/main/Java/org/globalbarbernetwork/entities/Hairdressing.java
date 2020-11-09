@@ -22,7 +22,8 @@ import com.google.cloud.firestore.GeoPoint;
  *
  * @author Grup 3
  */
-public class Hairdressing extends User{
+public class Hairdressing extends User {
+
     private String companyName;
     private String website;
     private String city;
@@ -30,15 +31,15 @@ public class Hairdressing extends User{
     private String country;
     private String province;
     private Integer zipCode;
-    private GeoPoint coordinates;       
+    private GeoPoint coordinates;
     private String instagram;
     private String description;
 
     public Hairdressing() {
     }
 
-    public Hairdressing(String companyName, String website, String city, String address, String country, String province, Integer zipCode, GeoPoint coordinates, String UID, String email, String phoneNumber, String displayName, String instagram, String description) {
-        super(UID, email, phoneNumber, displayName);
+    public Hairdressing(String companyName, String website, String city, String address, String country, String province, Integer zipCode, GeoPoint coordinates, String instagram, String description, String UID, String email, String phoneNumber, String displayName, String type) {
+        super(UID, email, phoneNumber, displayName, type);
         this.companyName = companyName;
         this.website = website;
         this.city = city;

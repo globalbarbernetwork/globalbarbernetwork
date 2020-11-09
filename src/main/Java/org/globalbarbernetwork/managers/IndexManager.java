@@ -28,7 +28,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
-import org.globalbarbernetwork.interfaces.Manager;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +36,7 @@ import org.json.JSONObject;
  *
  * @author Grup 3
  */
-public class IndexManager implements Manager {
+public class IndexManager extends Manager implements ManagerInterface{
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
         
     @Override

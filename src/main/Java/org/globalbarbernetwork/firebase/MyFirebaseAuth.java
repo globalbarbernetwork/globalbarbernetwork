@@ -31,21 +31,33 @@ import java.net.URL;
  * @author Grup 3
  */
 public class MyFirebaseAuth {
-    private static final String FIREBASE_KEY = "AIzaSyCdxvdJ6PudEb3bAF7rFrwdTyJHck88bfg";
+
     private static final String BASE_URL = "https://www.googleapis.com/identitytoolkit/v3/relyingparty/";
     private static final String OPERATION_AUTH = "verifyPassword";
     private static final String OPERATION_REFRESH_TOKEN = "token";
     private static final String OPERATION_ACCOUNT_INFO = "getAccountInfo";
 
-    public MyFirebaseAuth() {
+    private final String firebaseKey = "AIzaSyCdxvdJ6PudEb3bAF7rFrwdTyJHck88bfg";
+
+    private static MyFirebaseAuth instance = null;
+
+    protected MyFirebaseAuth() {        
+    }
+
+    public static MyFirebaseAuth getInstance() {
+        if (instance == null) {
+            instance = new MyFirebaseAuth();
+        }
+        return instance;
     }
 
     public JsonObject auth(String username, String password) throws Exception {
+
         HttpURLConnection urlRequest = null;
         JsonObject token = null;
 
         try {
-            URL url = new URL(BASE_URL + OPERATION_AUTH + "?key=" + FIREBASE_KEY);
+            URL url = new URL(BASE_URL + OPERATION_AUTH + "?key=" + firebaseKey);
             urlRequest = (HttpURLConnection) url.openConnection();
             urlRequest.setDoOutput(true);
             urlRequest.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
@@ -63,6 +75,8 @@ public class MyFirebaseAuth {
 
             token = rootobj;
 
+        } catch (Exception e) {
+            return null;
         } finally {
             urlRequest.disconnect();
         }
@@ -71,11 +85,12 @@ public class MyFirebaseAuth {
     }
 
     public String getAccountInfo(String token) throws Exception {
+
         HttpURLConnection urlRequest = null;
         String email = null;
 
         try {
-            URL url = new URL(BASE_URL + OPERATION_ACCOUNT_INFO + "?key=" + FIREBASE_KEY);
+            URL url = new URL(BASE_URL + OPERATION_ACCOUNT_INFO + "?key=" + firebaseKey);
             urlRequest = (HttpURLConnection) url.openConnection();
             urlRequest.setDoOutput(true);
             urlRequest.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
@@ -99,5 +114,7 @@ public class MyFirebaseAuth {
         }
 
         return email;
+
     }
+
 }

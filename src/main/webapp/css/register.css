@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2020 Grup 3
+Copyright (C) 2020 IOC DAW
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,32 +15,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 /* 
-    Created on : 31 oct. 2020, 19:35:28
-    Author     : Grup 3
+    Created on : Nov 7, 2020, 12:59:14 AM
+    Author     : IOC DAW
 */
 
-html {
-    height: 100%;
+:invalid {
+  box-shadow: none;
 }
 
-body { 
-    margin: 0;
-    padding: 0;
+:-moz-submit-invalid {
+  box-shadow: none;
 }
 
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100%;
-}
-
-footer{
-    margin-top: auto;
-    color: white;
-}
-
-.displayName{
-    color: #FFF;
-    font-weight: bold;
-    margin-left: 10px;
+:-moz-ui-invalid {
+  box-shadow: none;
 }
