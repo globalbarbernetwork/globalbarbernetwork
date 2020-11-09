@@ -17,7 +17,6 @@
 package org.globalbarbernetwork.managers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
+import org.globalbarbernetwork.interfaces.ManagerInterface;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
