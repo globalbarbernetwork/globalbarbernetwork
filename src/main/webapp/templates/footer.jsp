@@ -5,7 +5,7 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>  
-<!DOCTYPE html>
+
 <footer class="bg-dark">    
     <div class="footer-copyright text-center py-3">
         © 2020 Copyright: Global Barber Network Corp.

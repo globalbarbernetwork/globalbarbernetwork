@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.managers.AccessManager;
 import org.globalbarbernetwork.managers.IndexManager;
+import org.globalbarbernetwork.managers.ScheduleManager;
 
 /**
  *
@@ -53,6 +54,9 @@ public class ManagementServlet extends HttpServlet {
             } else if (contextPath.startsWith("/access")) {
                 AccessManager gestoraAcces = new AccessManager();
                 gestoraAcces.execute(request, response, action);
+            } else if (contextPath.startsWith("/schedule")) {
+                ScheduleManager scheduleManager = new ScheduleManager();
+                scheduleManager.execute(request, response, action);
             }
         } else {
             IndexManager gestoraIndex = new IndexManager();

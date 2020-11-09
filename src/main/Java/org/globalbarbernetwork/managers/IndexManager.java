@@ -17,6 +17,7 @@
 package org.globalbarbernetwork.managers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
@@ -81,6 +82,7 @@ public class IndexManager implements Manager {
             jsonOrderedMap.put("province", hairdressing.getProvince());
             jsonOrderedMap.put("website", hairdressing.getWebsite());
             jsonOrderedMap.put("zipCode", hairdressing.getZipCode());
+            jsonOrderedMap.put("description", hairdressing.getDescription());
      
             JSONObject member = new JSONObject(jsonOrderedMap);
             array.put(member);

@@ -22,38 +22,31 @@ $(document).ready(function() {
 
 var map;
 function renderMap () {
-    var lat = 40.2;
-    var lng = -3.7;
+    if (!mapboxgl.supported()) {
+        alert('El teu navegador no suporta Mapbox GL');
+    } else {
+        var lat = 40.2;
+        var lng = -3.7;
 
-    // Permiso para ir hasta la ubicación del cliente
-    navigator.geolocation.getCurrentPosition(success, error, options);           
-    function success(position) {
-        var coords = position.coords;
-
-        lat =  coords.latitude;
-        lng = coords.longitude;
-
-        map.jumpTo({'center': [lng, lat], 'zoom': 14 });
-    };
-
-    function error(err) {
-        console.warn('ERROR(' + err.code + '): ' + err.message);
-    };
-    
-    var options = {
-        enableHighAccuracy: true, // Mejora la presicion si el dispositivo lo permite. 
-        timeout: 5000, // Tiempo que tiene para buscar la posicion actual.
-        maximumAge: 0 // Define si se coge o no la posicion del cache. 0 = No cogera la posicion de cache y te calculara la actual. 1 = Cogerá la posicion de cache
-    };
-
-    // Config mapa
-    mapboxgl.accessToken = 'pk.eyJ1IjoiZ2xvYmFsLWJhcmJlci1uZXR3b3JrIiwiYSI6ImNrZ2R1MWZneDBtZGwycW83aHU0anZ5MmMifQ.WXb5-N15u4z2pcL-qKR3ig';
-    map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11', // Style aplicado al mapa
-        center: [lng, lat], // Posición inicial [lng, lat]
-        zoom: 5.7 // Zoom inicial
-    });
+        // Config mapa
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZ2xvYmFsLWJhcmJlci1uZXR3b3JrIiwiYSI6ImNrZ2R1MWZneDBtZGwycW83aHU0anZ5MmMifQ.WXb5-N15u4z2pcL-qKR3ig';
+        map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/global-barber-network/ckh6xvale0gy719mw6jxuvgjy', // Style aplicado al mapa
+            center: [lng, lat], // Posición inicial [lng, lat]
+            zoom: 5.7 // Zoom inicial
+        });
+        
+        // Botón de geolocalización del cliente
+        map.addControl(
+            new mapboxgl.GeolocateControl({
+                positionOptions: {
+                    enableHighAccuracy: true // Indica si deseamos recibir la posición más precisa posible con conseqüencia de consumir más recursos.
+                },
+                trackUserLocation: true
+            })
+        );
+    }
 }
 
 function loadHairdressings() {
@@ -61,8 +54,11 @@ function loadHairdressings() {
     var hairdressingsJSONArray = hairdressingsJSON.jsonArray;
     var jsonFeatures = [];
     for (var i in hairdressingsJSONArray) {
-        var json = '{"type":"Feature", "properties":{"description":"<strong>'+ hairdressingsJSONArray[i].companyName +'</strong>';
-        json += '<p><a href=\''+ hairdressingsJSONArray[i].instagram +'\' target=\'_blank\' title=\'Obre en una nova finestra\'>Instagram</a></p>", "icon":"theatre"},';
+        var json = '{"type":"Feature", "properties":{"companyName":"'+ hairdressingsJSONArray[i].companyName +'",';
+        json += '"UID":"' + hairdressingsJSONArray[i].UID + '",';
+        json += '"description":"' + hairdressingsJSONArray[i].description + '",';
+        json += '"urlInstagram":"'+ hairdressingsJSONArray[i].instagram +'",';
+        json += '"icon":"scissors"},';
         json += '"geometry":{"type":"Point", "coordinates":['+ hairdressingsJSONArray[i].coordinates.lng +','+ hairdressingsJSONArray[i].coordinates.lat +']}}';
         jsonFeatures[i] = JSON.parse(json);
     }
@@ -75,12 +71,17 @@ function loadHairdressings() {
             'features': jsonFeatures
             }
         });
-        
+                
         map.addLayer({
             'id': 'places',
             'type': 'symbol',
             'source': 'places',
             'layout': {
+                'text-field':'{companyName}',
+                'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
+                'text-radial-offset': 1,
+                'text-justify': 'auto',
+                'text-size': 10,
                 'icon-image': '{icon}-15',
                 'icon-allow-overlap': true
             }
@@ -88,29 +89,72 @@ function loadHairdressings() {
         
         map.on('click', 'places', function (e) {
             var coordinates = e.features[0].geometry.coordinates.slice();
-            var description = e.features[0].properties.description;
 
             // Ensure that if the map is zoomed out such that multiple
             // copies of the feature are visible, the popup appears
             // over the copy being pointed to.
             while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
             }
 
-            new mapboxgl.Popup()
+            // Config popup
+            var markerHeight = 10, markerRadius = 10, linearOffset = 25;
+            var popupOffsets = {
+                'top': [0, 0],
+                'top-left': [0,0],
+                'top-right': [0,0],
+                'bottom': [0, -markerHeight],
+                'bottom-left': [linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
+                'bottom-right': [-linearOffset, (markerHeight - markerRadius + linearOffset) * -1],
+                'left': [markerRadius, (markerHeight - markerRadius) * -1],
+                'right': [-markerRadius, (markerHeight - markerRadius) * -1]
+            };
+            
+            // Variables hairdressing a mostrar en Popup
+            var companyName = e.features[0].properties.companyName;
+            var UID = e.features[0].properties.UID;
+            var description = e.features[0].properties.description;
+            var urlInstagram = e.features[0].properties.urlInstagram;
+            
+            // Llamada ajax para obtener horarios de apertura de la peluqueria
+            $.ajax({
+                url: 'ManagementServlet/schedule/timetable',
+                success: function(data) {
+                    console.log(data);
+                    //Tratar rangos horarios
+                },
+                error: function() {
+                    console.log("No se ha podido obtener la información");
+                }
+            });
+            
+            // HTML del Popup
+            var HTMLPopup = "<strong style='text-align:center'>" + companyName + "</strong>";
+            HTMLPopup += "<p><a href=" + urlInstagram + " target='_blank' title='Obre en una nova finestra'>Instagram</a></p>";
+            HTMLPopup += "<p>" + description + "</p>";
+            HTMLPopup += "Horari:";
+            HTMLPopup += "<button id='reserva' onclick='modalReserve(this);' type='button' class='btn btn-success' data-uid='" + UID + "' data-toggle='modal' data-target='#exampleModalCenter'>Fer una reserva</button>";
+            
+            new mapboxgl.Popup({offset: popupOffsets})
             .setLngLat(coordinates)
-            .setHTML(description)
+            .setHTML(HTMLPopup)
+            .setMaxWidth("200px")
             .addTo(map);
-        });
+        });s
 
-        // Change the cursor to a pointer when the mouse is over the places layer.
+        // Cambia el cursor a puntero cuando se pasa por encima del icono de peluqueria.
         map.on('mouseenter', 'places', function () {
             map.getCanvas().style.cursor = 'pointer';
         });
 
-        // Change it back to a pointer when it leaves.
+        // Cambia el puntero a cursor cuando se sale del icono.
         map.on('mouseleave', 'places', function () {
             map.getCanvas().style.cursor = '';
         });
     });
+}
+
+function modalReserve(btn) {
+    //alert($(btn).data("uid"));
+    
 }

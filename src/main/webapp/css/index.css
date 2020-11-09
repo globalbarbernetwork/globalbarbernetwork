@@ -19,7 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Author     : Grup 3
 */
 
-#map { 
+.navbar {
+    z-index: 1;
+}
+
+#map {
     position: absolute;
     top: 55px;
     bottom: 55px;
@@ -27,6 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 .mapboxgl-popup {
-    max-width: 400px;
+    width: 175px;
     font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 }

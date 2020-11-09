@@ -32,11 +32,12 @@ public class Hairdressing extends User{
     private Integer zipCode;
     private GeoPoint coordinates;       
     private String instagram;
+    private String description;
 
     public Hairdressing() {
     }
 
-    public Hairdressing(String companyName, String website, String city, String address, String country, String province, Integer zipCode, GeoPoint coordinates, String UID, String email, String phoneNumber, String displayName, String instagram) {
+    public Hairdressing(String companyName, String website, String city, String address, String country, String province, Integer zipCode, GeoPoint coordinates, String UID, String email, String phoneNumber, String displayName, String instagram, String description) {
         super(UID, email, phoneNumber, displayName);
         this.companyName = companyName;
         this.website = website;
@@ -47,6 +48,7 @@ public class Hairdressing extends User{
         this.zipCode = zipCode;
         this.coordinates = coordinates;
         this.instagram = instagram;
+        this.description = description;
     }
 
     public String getCompanyName() {
@@ -120,5 +122,12 @@ public class Hairdressing extends User{
     public void setInstagram(String instagram) {
         this.instagram = instagram;
     }
-            
+
+    public String getDescription() {
+        return description;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+}
