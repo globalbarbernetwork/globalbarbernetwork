@@ -48,7 +48,7 @@ public class ManagementServlet extends HttpServlet {
         if (contextPath != null) {
             String[] tmpAction = contextPath.split("/");
             String action = tmpAction.length > 2 ? tmpAction[2] : "";
-            if (contextPath.startsWith("/ManagementServlet")) {
+            if ("/".equals(contextPath) || contextPath.startsWith("/ManagementServlet")) {
                 IndexManager indexManager = new IndexManager();
                 indexManager.execute(request, response, action);
             } else if (contextPath.startsWith("/access")) {
