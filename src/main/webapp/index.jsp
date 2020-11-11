@@ -8,18 +8,21 @@
 
 <jsp:useBean id="listHairdressingsJSON" scope="request" class="java.lang.String"/>
 
-
-    <jsp:include page="./templates/base.jsp"/>
+<!DOCTYPE html>
+<html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Scripts comunes -->
+        <%@include file="/WEB-INF/jspf/base_head.jspf"%>
         <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
         <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet'>
         <link rel="stylesheet" href="${contextPath}/css/index.css">
         <script src="${contextPath}/js/mapbox.js"></script>
-        
     </head>
-    
-        <jsp:include page="./templates/header.jsp"/>
+    <body>
+        <!-- Header -->
+        <%@include file="/WEB-INF/jspf/header.jspf"%>
+        
+        <!-- Mapbox -->
         <main>
             <div id='map'></div>
         </main>
@@ -44,6 +47,12 @@
             </div>
           </div>
         </div>
-        <jsp:include page="./templates/footer.jsp"/>
+        
         <input id="listHairdressingsJSON" name="listHairdressingsJSON" type="hidden" value='<%=listHairdressingsJSON%>'/>
-
+        
+        <!-- Footer -->
+        <%@include file="/WEB-INF/jspf/footer.jspf"%>
+        <!-- Scripts comunes -->
+        <%@include file="/WEB-INF/jspf/base_body.jspf"%>
+    </body>
+</html>
