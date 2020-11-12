@@ -26,14 +26,14 @@ $(document).ready(function () {
             $(this).addClass("is-invalid");
         }
 
-        passwOk = checkPasswords();
+        passwOk = checkPasswords(); 
         controlBtnRegister(allInputsOk, passwOk);
         msgErrorInputs($(this));
     });
-
+    
     $("#terms").change(function () {
         controlBtnRegister(allInputsOk, passwOk);
-    });
+     });
 
     $(".show_hide_password i").on('click', function (event) {
         event.preventDefault();
@@ -85,9 +85,10 @@ function checkPasswords() {
     return false;
 }
 
-//Funciona para mostrar u ocualtar las contraseñas mediante el ojo
+//Funcion para mostrar u ocultar las contraseñas mediante el ojo
 function showHidePasswords(input) {
     var inputPass = input.parents(".show_hide_password").children().first();
+    
     if (inputPass.attr("type") === "text") {
         inputPass.attr('type', 'password');
         input.addClass("fa-eye-slash");
