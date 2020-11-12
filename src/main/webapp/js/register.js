@@ -20,24 +20,19 @@ $(document).ready(function () {
     var passwOk = false;
 
     $("input").blur(function () {
-        allInputsOk = $("input:invalid").length == 0 && !$("input").hasClass("is-invalid");
-
-        if (allInputsOk && passwOk) {
-            $("#btnRegister").removeAttr('disabled');
-        } else {
-            $("#btnRegister").attr('disabled', true);
-        }
-
         if ($(this)[0].validity.valid) {
             $(this).removeClass("is-invalid");
         } else {
             $(this).addClass("is-invalid");
         }
+
+        passwOk = checkPasswords();
+        controlBtnRegister(allInputsOk, passwOk);
         msgErrorInputs($(this));
     });
 
-    $("#confirmPassword, #password").blur(function () {
-        passwOk = checkPasswords();
+    $("#terms").change(function () {
+        controlBtnRegister(allInputsOk, passwOk);
     });
 
     $(".show_hide_password i").on('click', function (event) {
@@ -46,13 +41,14 @@ $(document).ready(function () {
     });
 });
 
+//Funcion para controlar los diferentes mensajes de error que mostraremos por pantalla
 function msgErrorInputs(input) {
     var value = input.val();
     var pattern = new RegExp(input[0].pattern);
     var name = input.attr('name');
-    var type = input.attr('type');
-
-    if (type !== "password" && type !== "checkbox") {
+    var id = input.attr('id');
+    
+    if (id !== "password" && id !== "confirmPassword" && id !== "terms") {
         if (value === "") {
             input.next().text("* Aquest camp es obligatori i no pot estar buit.");
         } else if (pattern !== null && !pattern.test(value)) {
@@ -67,6 +63,7 @@ function msgErrorInputs(input) {
     }
 }
 
+//Funcion para controlar si las contraseñas son iguales
 function checkPasswords() {
     var pass = $("#password").val();
     var confPass = $("#confirmPassword").val();
@@ -76,6 +73,7 @@ function checkPasswords() {
             $("#confirmPassword").addClass('is-invalid');
             $("#password").addClass('is-invalid');
             $("#passwordHelp").removeAttr('hidden');
+            $("#passwordHelp").text("Les contrasenyes no coincideixen");
             return false;
         } else {
             $("#confirmPassword").removeClass('is-invalid');
@@ -84,8 +82,10 @@ function checkPasswords() {
             return true;
         }
     }
+    return false;
 }
 
+//Funciona para mostrar u ocualtar las contraseñas mediante el ojo
 function showHidePasswords(input) {
     var inputPass = input.parents(".show_hide_password").children().first();
     if (inputPass.attr("type") === "text") {
@@ -96,5 +96,16 @@ function showHidePasswords(input) {
         inputPass.attr('type', 'text');
         input.removeClass("fa-eye-slash");
         input.addClass("fa-eye");
+    }
+}
+
+//Funcion para activar o desactivar el boton de registrar
+function controlBtnRegister(allInputsOk, passwOk) {
+    allInputsOk = $("input:invalid").length == 0 && !$("input").hasClass("is-invalid") && $("#terms").prop('checked');
+
+    if (allInputsOk && passwOk) {
+        $("#btnRegister").removeAttr('disabled');
+    } else {
+        $("#btnRegister").attr('disabled', true);
     }
 }

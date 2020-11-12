@@ -34,11 +34,11 @@
                         <small id="errorInput" class="text-danger"></small>
                     </div>
                     <div class="form-group">
-                        <input type="email" class="form-control <%= !msgErrorEmail.isEmpty() ? "is-invalid" : " " %>" name="email" id="email" placeholder="Correu Electrónic" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$" title="Omple aquest camp" value="${client.email}" required>
+                        <input type="email" class="form-control <%= !msgErrorEmail.isEmpty() ? "is-invalid" : " "%>" name="email" id="email" placeholder="Correu Electrònic" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$" title="Omple aquest camp" value="${client.email}" required>
                         <small id="errorInput" class="text-danger">${ msgErrorEmail }</small>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" name="phoneNumber" pattern="^\d{9}$" id="phoneNumber" placeholder="Telèfon Móbil" title="Omple aquest camp" value="${client.phoneNumber}" required>
+                        <input type="text" class="form-control" name="phoneNumber" pattern="^\d{9}$" id="phoneNumber" placeholder="Telèfon Mòbil" title="Omple aquest camp" value="${client.phoneNumber}" required>
                         <small id="errorInput" class="text-danger"></small>
                     </div>
                     <div class="form-group">
@@ -46,7 +46,7 @@
                             <input type="password" class="form-control" id="password" name="password" placeholder="Contrasenya" title="Omple aquest camp" minlength="6" required>
                             <div class="input-group-append">
                                 <span class="input-group-text" id="password" title="Visualitza la contrasenya">
-                                    <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                    <a href="#" id="eye"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                                 </span>
                             </div>
                         </div>
@@ -56,17 +56,17 @@
                             <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirmar Contrasenya" title="Omple aquest camp" minlength="6" required>
                             <div class="input-group-append">
                                 <span class="input-group-text" id="confirmPassword">
-                                    <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                    <a href="#" id="eye"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
                                 </span>
                             </div>
                         </div>
-                        <small id="passwordHelp" class="text-danger" hidden>Les contrasenyes no coincideixen</small>
+                        <small id="passwordHelp" class="text-danger" hidden></small>
                     </div>
                     <div class="form-group">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="terms" title="Omple aquest camp" required>
                             <label class="form-check-label" for="terms">
-                                Acceptar <a href="#">termes del servei</a> i <a href="#">política de privacitat</a>
+                                Acceptar <a href="#">termes del servei</a> i <a href="#">polí­tica de privacitat</a>
                             </label>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                 </form>
             </div>
         </div>
-        
+
         <!-- Footer -->
         <%@include file="/WEB-INF/jspf/footer.jspf"%>
         <!-- Scripts comunes -->
