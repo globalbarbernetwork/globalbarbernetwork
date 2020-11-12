@@ -144,16 +144,8 @@ public class AccessManager extends Manager implements ManagerInterface {
     private void insertUser(User user) {
         firebaseDAO.insertUser(user);
 
-        switch (user.getType()) {
-            case "client":
-                firebaseDAO.insertClient((Client) user);
-                break;
-            case "hairdressing":
-                firebaseDAO.insertHairdressing((Hairdressing) user);
-                break;
-            default:
-                break;
-        }
+        UserBO userBO = new UserBO();
+        userBO.insertUserByType(user);
     }
     
     private Map authUser(HttpServletRequest request, String email, String password) {
