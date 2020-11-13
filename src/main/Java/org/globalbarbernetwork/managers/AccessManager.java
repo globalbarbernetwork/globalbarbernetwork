@@ -16,19 +16,25 @@
  */
 package org.globalbarbernetwork.managers;
 
+import static org.globalbarbernetwork.constants.Constants.*;
+
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.google.gson.JsonObject;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import static org.globalbarbernetwork.constants.Constants.*;
+
 import org.globalbarbernetwork.bo.UserBO;
 import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.Hairdressing;
@@ -139,7 +145,7 @@ public class AccessManager extends Manager implements ManagerInterface {
         } catch (FirebaseAuthException ex) {
             Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }   
+    }
 
     private void insertUser(User user) {
         firebaseDAO.insertUser(user);
@@ -155,7 +161,7 @@ public class AccessManager extends Manager implements ManagerInterface {
                 break;
         }
     }
-    
+
     private Map authUser(HttpServletRequest request, String email, String password) {
 
         Map<String, String> errors = new HashMap<String, String>();
@@ -181,13 +187,8 @@ public class AccessManager extends Manager implements ManagerInterface {
             UserBO userBO = new UserBO();
             User user = userBO.getUserByType(userRecord.getUid());
 
-            if (user instanceof Hairdressing) {
-                //Opciones de menu para hairdressing                
-            } else if (user instanceof Client) {
-                //Opciones de menu para hairdressing
-            }
+            List options = this.buildMenuOptionsByUser(user);
 
-            String options = "";
             request.getSession().setAttribute("user", user);
             request.getSession().setAttribute("options", options);
 
@@ -198,5 +199,29 @@ public class AccessManager extends Manager implements ManagerInterface {
         }
 
         return errors;
-    }   
+    }
+
+    private List buildMenuOptionsByUser(User user) {
+
+        List<Map> options = new ArrayList<Map>();        
+
+        if (user instanceof Hairdressing) {
+
+            addMenuOption("Editar perfil", "ServletX", "", options);
+            addMenuOption("Gestio calendari", "ServletX", "", options);
+
+        } else if (user instanceof Client) {
+            addMenuOption("Editar perfil", "ServletX", "", options);
+        }
+
+        return options;
+    }
+
+    private void addMenuOption(String label, String url, String params, List<Map> options) {
+        Map<String, String> option = new HashMap<>();
+        option.put("label", label);
+        option.put("url", url);
+        option.put("params", params);
+        options.add(option);
+    }
 }

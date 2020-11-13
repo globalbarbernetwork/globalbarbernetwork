@@ -3,35 +3,42 @@
 <c:set var="contextPath" scope="request" value="${pageContext.request.contextPath}"/>
 <c:set var="user" scope="session" value="<%= request.getSession().getAttribute("user")%>"/>
 
-        <header>
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <a class="navbar-brand" href="${contextPath}/ManagementServlet">
-                    <img src="${contextPath}/img/barber-pole.svg" width="30" height="30" class="d-inline-block align-top" alt="logoWeb">
-                    Global Barber Network
-                </a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                    <div class="navbar-nav">
-                        <c:choose>
-                            <c:when test="${not empty user}">
-                                <img src="${contextPath}/img/user.svg" width="30" height="30" class="d-inline-block align-top" alt="iconUser">
-                                <span class="displayName">${user.displayName}</span>
-                            </c:when>
-                            <c:otherwise>
-                                <a href="${contextPath}/login.jsp">
-                                    <button class="btn btn-sm btn-outline-secondary" type="button">Iniciar sessión</button>
-                                </a>
-                                <a href="${contextPath}/register.jsp">
-                                    <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se</button>
-                                </a>
-                                <a href="${contextPath}/registerHairdressing.jsp">
-                                    <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se com empresa</button>
-                                </a>
-                            </c:otherwise>
-                        </c:choose>
-                    </div>
-                </div>
-            </nav>
-        </header>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="${contextPath}/ManagementServlet">
+            <img src="${contextPath}/img/barber-pole.svg" width="30" height="30" class="d-inline-block align-top" alt="logoWeb">
+            Global Barber Network
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <div class="navbar-nav">
+                <c:choose>
+                    <c:when test="${not empty user}">
+                        <img src="${contextPath}/img/user.svg" width="30" height="30" class="d-inline-block align-top" alt="iconUser">
+                        <span class="displayName">${user.displayName}</span>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="${contextPath}/login.jsp">
+                            <button class="btn btn-sm btn-outline-secondary" type="button">Iniciar sessión</button>
+                        </a>
+                        <a href="${contextPath}/register.jsp">
+                            <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se</button>
+                        </a>
+                        <a href="${contextPath}/registerHairdressing.jsp">
+                            <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se com empresa</button>
+                        </a>
+                    </c:otherwise>
+                </c:choose>
+                <ul>                    
+                    <c:forEach items="${options}" var="option">
+                        <li>
+                            <a href="${option.url}">${option.label}</a>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
