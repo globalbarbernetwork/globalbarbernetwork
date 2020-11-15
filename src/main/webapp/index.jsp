@@ -13,10 +13,8 @@
     <head>
         <!-- Scripts comunes -->
         <%@include file="/WEB-INF/jspf/base_head.jspf"%>
-        <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
         <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet'>
         <link rel="stylesheet" href="${contextPath}/css/index.css">
-        <script src="${contextPath}/js/mapbox.js"></script>
     </head>
     <body>
         <!-- Header -->
@@ -54,5 +52,7 @@
         <%@include file="/WEB-INF/jspf/footer.jspf"%>
         <!-- Scripts comunes -->
         <%@include file="/WEB-INF/jspf/base_body.jspf"%>
+        <script src='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.js'></script>
+        <script src="${contextPath}/js/mapbox.js"></script>
     </body>
 </html>

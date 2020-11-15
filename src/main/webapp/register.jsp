@@ -14,7 +14,6 @@
     <head>
         <!-- Scripts comunes -->
         <%@include file="/WEB-INF/jspf/base_head.jspf"%>
-        <script src="${contextPath}/js/register.js"></script>
         <link rel="stylesheet" href="${contextPath}/css/register.css">
     </head>
     <body>
@@ -82,5 +81,6 @@
         <%@include file="/WEB-INF/jspf/footer.jspf"%>
         <!-- Scripts comunes -->
         <%@include file="/WEB-INF/jspf/base_body.jspf"%>
+        <script src="${contextPath}/js/register.js"></script>
     </body>
 </html>
