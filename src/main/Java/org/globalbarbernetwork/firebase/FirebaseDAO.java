@@ -53,25 +53,25 @@ public class FirebaseDAO {
         }
     }
     
-    public UserRecord createUser(Client client, String password) {
-        UserRecord newUser = null;
+    public UserRecord createUser(User user, String password) {
+        UserRecord userRecord = null;
         try {
-            CreateRequest user = new CreateRequest()
-                    .setEmail(client.getEmail())
+            CreateRequest newUser = new CreateRequest()
+                    .setEmail(user.getEmail())
                     .setEmailVerified(false)
                     .setPassword(password)
-                    .setPhoneNumber("+34 "+client.getPhoneNumber())
-                    .setDisplayName(client.getDisplayName())
+                    .setPhoneNumber("+34 "+user.getPhoneNumber())
+                    .setDisplayName(user.getDisplayName())
                     .setDisabled(false);
             
-            newUser = FirebaseAuth.getInstance().createUser(user);
+            userRecord = FirebaseAuth.getInstance().createUser(newUser);
         } catch (FirebaseAuthException ex) {
             //Crear una clase de excepciones para controlar los diferentes errores de firebase
             Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
             ex.getAuthErrorCode();
         }
         
-        return newUser;
+        return userRecord;
     }
     
     public String generateLink(String email) throws FirebaseAuthException {
@@ -120,10 +120,10 @@ public class FirebaseDAO {
         newUser.put("country", hairDrsg.getCountry());
         newUser.put("displayName", hairDrsg.getDisplayName());
         newUser.put("email", hairDrsg.getEmail());
-        newUser.put("instagram", "");
+        newUser.put("instagram", hairDrsg.getInstagram());
         newUser.put("phoneNumber", hairDrsg.getPhoneNumber());
         newUser.put("province", hairDrsg.getProvince());
-        newUser.put("website", "");
+        newUser.put("website", hairDrsg.getWebsite());
         newUser.put("zipCode", hairDrsg.getZipCode());
         db.collection("hairdressings").document().set(newUser);
     }

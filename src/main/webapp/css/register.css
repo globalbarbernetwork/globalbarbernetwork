@@ -19,14 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Author     : IOC DAW
 */
 
-:invalid {
-  box-shadow: none;
+input[type=text]:invalid , input[type=password]:invalid, input[type=email]:invalid{
+    box-shadow: none;
 }
 
-:-moz-submit-invalid {
-  box-shadow: none;
+#eye:hover {
+    color: #000;
 }
 
-:-moz-ui-invalid {
-  box-shadow: none;
+#eye {
+    color: #000;
 }

@@ -16,6 +16,7 @@
  */
 package org.globalbarbernetwork.bo;
 
+import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
@@ -48,5 +49,21 @@ public class UserBO {
             }
         }
         return user;
+    }
+
+    public void insertUserByType(User user) {
+
+        if (user != null) {
+            switch (user.getType()) {
+                case "client":
+                    firebaseDAO.insertClient((Client) user);
+                    break;
+                case "hairdressing":
+                    firebaseDAO.insertHairdressing((Hairdressing) user);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }
