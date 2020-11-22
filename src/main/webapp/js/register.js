@@ -15,25 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 $(document).ready(function () {
     var allInputsOk = false;
     var passwOk = false;
 
     $("input").blur(function () {
-        if ($(this)[0].validity.valid) {
-            $(this).removeClass("is-invalid");
-        } else {
-            $(this).addClass("is-invalid");
+
+        if ($(this).attr('id') !== "terms") {
+            if ($(this)[0].validity.valid) {
+                $(this).removeClass("is-invalid");
+            } else {
+                $(this).addClass("is-invalid");
+            }
         }
 
-        passwOk = checkPasswords(); 
+        passwOk = checkPasswords();
         controlBtnRegister(allInputsOk, passwOk);
         msgErrorInputs($(this));
     });
-    
+
     $("#terms").change(function () {
         controlBtnRegister(allInputsOk, passwOk);
-     });
+    });
 
     $(".show_hide_password i").on('click', function (event) {
         event.preventDefault();
@@ -47,7 +51,7 @@ function msgErrorInputs(input) {
     var pattern = new RegExp(input[0].pattern);
     var name = input.attr('name');
     var id = input.attr('id');
-    
+
     if (id !== "password" && id !== "confirmPassword" && id !== "terms") {
         if (value === "") {
             input.next().text("* Aquest camp es obligatori i no pot estar buit.");
@@ -88,7 +92,7 @@ function checkPasswords() {
 //Funcion para mostrar u ocultar las contraseñas mediante el ojo
 function showHidePasswords(input) {
     var inputPass = input.parents(".show_hide_password").children().first();
-    
+
     if (inputPass.attr("type") === "text") {
         inputPass.attr('type', 'password');
         input.addClass("fa-eye-slash");

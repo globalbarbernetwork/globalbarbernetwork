@@ -22,7 +22,7 @@
 
         <div id="container">
             <div class="signup-form center">
-                <form id="form" style="margin:auto;" action="${contextPath}/ManagementServlet/access/register"  class="form-horizontal col-lg-4 col-md-4 col-sm-4 col-xs-12" method="post">
+                <form id="form" style="margin:auto;" action="${contextPath}/ManagementServlet/access/register"  class="form-horizontal col-sm-4" method="post">
                     <h2>Registre</h2>
                     <div class="form-group">
                         <input type="text" class="form-control" name="name" id="name" placeholder="Nom" title="Omple aquest camp" maxlength="30" value="${client.name}" required>      	
@@ -37,7 +37,7 @@
                         <small id="errorInput" class="text-danger">${ msgErrorEmail }</small>
                     </div>
                     <div class="form-group">
-                        <input type="text" class="form-control" name="phoneNumber" pattern="^\d{9}$" id="phoneNumber" placeholder="Telèfon Mòbil" title="Omple aquest camp" value="${client.phoneNumber}" required>
+                        <input type="text" class="form-control" name="mobilePhone" pattern="^\d{9}$" id="mobilePhone" placeholder="Telèfon Mòbil" title="Omple aquest camp" value="${client.phoneNumber}" required>
                         <small id="errorInput" class="text-danger"></small>
                     </div>
                     <div class="form-group">
