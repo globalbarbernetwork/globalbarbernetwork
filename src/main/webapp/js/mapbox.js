@@ -119,27 +119,62 @@ function loadHairdressings() {
             // Llamada ajax para obtener horarios de apertura de la peluqueria
             $.ajax({
                 url: 'ManagementServlet/schedule/timetable',
+                data: {
+                    uidHairdressing: UID
+                },
                 success: function(data) {
-                    console.log(data);
-                    //Tratar rangos horarios
+                    var horari = "";
+                    var horari2 = "<div class='collapse' id='collapseOtherDays'> <p>";
+                    
+                    var date = new Date();
+                    var dayOfWeek = date.getDay() !== 0 ? date.getDay() : 7;
+                    if (data !== "") {
+                        var timetableJSONArray = JSON.parse(data).jsonArray[0];
+                        var restartCount = true;
+                        var totalDays = 7;
+                        for (var i = dayOfWeek; i <= totalDays; i++) {
+                            if (dayOfWeek === i) {
+                                horari += "<div class='dropdown-toggle' data-toggle='collapse' href='#collapseOtherDays' aria-expanded='false' aria-controls='collapseOtherDays'>";
+                                if (i === 7) {
+                                    horari += "<strong>" + timetableJSONArray[0] + "</strong>";
+                                } else {
+                                    horari += "<strong>" + timetableJSONArray[i] + "</strong>";
+                                }
+                                horari += "</div>";
+                            } else {
+                                if (i === 7) {
+                                    horari2 += timetableJSONArray[0] + "<br>";
+                                } else {
+                                    horari2 += timetableJSONArray[i] + "<br>";
+                                }
+                            }
+
+                            if (restartCount && i === totalDays) {
+                                i = 0;
+                                totalDays = dayOfWeek - 1;
+                                restartCount = false;
+                            }
+                        }
+                    }
+                    horari2 += "</p> </div>";
+                    
+                    // HTML del Popup
+                    var HTMLPopup = "<strong style='text-align:center'>" + companyName + "</strong>";
+                    HTMLPopup += "<p>" + description + "</p>";
+                    HTMLPopup += "<p><a href=" + urlInstagram + " target='_blank' title='Obre en una nova finestra'>Instagram</a></p>";
+                    if(horari !== "") HTMLPopup += "Horari:<br>" + horari + horari2;
+                    HTMLPopup += "<button id='reserva' onclick='modalReserve(this);' type='button' class='btn btn-success' data-uid='" + UID + "' data-toggle='modal' data-target='#modalReserve'>Fer una reserva</button>";
+
+                    new mapboxgl.Popup({offset: popupOffsets})
+                            .setLngLat(coordinates)
+                            .setHTML(HTMLPopup)
+                            .setMaxWidth("250px")
+                            .addTo(map);
                 },
                 error: function() {
                     console.log("No se ha podido obtener la información");
                 }
             });
-            
-            // HTML del Popup
-            var HTMLPopup = "<strong style='text-align:center'>" + companyName + "</strong>";
-            HTMLPopup += "<p><a href=" + urlInstagram + " target='_blank' title='Obre en una nova finestra'>Instagram</a></p>";
-            HTMLPopup += "<p>" + description + "</p>";
-            HTMLPopup += "Horari:";
-            HTMLPopup += "<button id='reserva' onclick='modalReserve(this);' type='button' class='btn btn-success' data-uid='" + UID + "' data-toggle='modal' data-target='#exampleModalCenter'>Fer una reserva</button>";
-            
-            new mapboxgl.Popup({offset: popupOffsets})
-            .setLngLat(coordinates)
-            .setHTML(HTMLPopup)
-            .setMaxWidth("200px")
-            .addTo(map);
         });
 
         // Cambia el cursor a puntero cuando se pasa por encima del icono de peluqueria.

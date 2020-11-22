@@ -15,7 +15,7 @@
     <body>
         <!-- Header -->
         <%@include file="/WEB-INF/jspf/header.jspf"%>
-        
+
         <!-- Login -->
         <div class="col-4">
             <div class="card">
@@ -41,7 +41,7 @@
                 </div>
             </div>
         </div>
-                
+
         <!-- Footer -->
         <%@include file="/WEB-INF/jspf/footer.jspf"%>
         <!-- Scripts comunes -->

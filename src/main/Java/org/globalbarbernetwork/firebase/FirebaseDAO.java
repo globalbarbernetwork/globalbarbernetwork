@@ -184,17 +184,13 @@ public class FirebaseDAO {
         return clientList.get(0);
     }
     
-    public List<Hairdressing> getAllHairdressings(){
+    public List<Hairdressing> getAllHairdressings() {
         List<Hairdressing> listHairdressings = new ArrayList<>();
         ApiFuture<QuerySnapshot> future = db.collection("hairdressings").get();
-        List<QueryDocumentSnapshot> documents;
-        try {
-            documents = future.get().getDocuments();
 
-            if (documents.size() > 0) {
-                for (QueryDocumentSnapshot document : documents) {
-                    listHairdressings.add(document.toObject(Hairdressing.class));
-                }
+        try {
+            for (QueryDocumentSnapshot document : future.get().getDocuments()) {
+                listHairdressings.add(document.toObject(Hairdressing.class));
             }
         } catch (InterruptedException ex) {
             ex.printStackTrace();
@@ -203,5 +199,19 @@ public class FirebaseDAO {
         }
 
         return listHairdressings;
+    }
+    
+    public Map<String, Object> getTimetableHairdressing(String uid) {
+        CollectionReference hairdressings = db.collection("schedule");
+        Query query = hairdressings.whereEqualTo("UID", uid);
+        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+        try {
+            for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+                return document.getData();
+            }
+        } catch (InterruptedException | ExecutionException ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 }
