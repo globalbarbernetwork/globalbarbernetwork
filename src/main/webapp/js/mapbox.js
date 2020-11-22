@@ -128,31 +128,32 @@ function loadHairdressings() {
                     
                     var date = new Date();
                     var dayOfWeek = date.getDay() !== 0 ? date.getDay() : 7;
-                    
-                    var timetableJSONArray = JSON.parse(data).jsonArray[0];
-                    var restartCount = true;
-                    var totalDays = 7;
-                    for (var i = dayOfWeek; i <= totalDays; i++) {
-                        if (dayOfWeek === i) {
-                            horari += "<div class='dropdown-toggle' data-toggle='collapse' href='#collapseOtherDays' aria-expanded='false' aria-controls='collapseOtherDays'>";
-                            if (i === 7) {
-                                horari += "<strong>" + timetableJSONArray[0] + "</strong>";
+                    if (data !== "") {
+                        var timetableJSONArray = JSON.parse(data).jsonArray[0];
+                        var restartCount = true;
+                        var totalDays = 7;
+                        for (var i = dayOfWeek; i <= totalDays; i++) {
+                            if (dayOfWeek === i) {
+                                horari += "<div class='dropdown-toggle' data-toggle='collapse' href='#collapseOtherDays' aria-expanded='false' aria-controls='collapseOtherDays'>";
+                                if (i === 7) {
+                                    horari += "<strong>" + timetableJSONArray[0] + "</strong>";
+                                } else {
+                                    horari += "<strong>" + timetableJSONArray[i] + "</strong>";
+                                }
+                                horari += "</div>";
                             } else {
-                                horari += "<strong>" + timetableJSONArray[i] + "</strong>";
+                                if (i === 7) {
+                                    horari2 += timetableJSONArray[0] + "<br>";
+                                } else {
+                                    horari2 += timetableJSONArray[i] + "<br>";
+                                }
                             }
-                            horari += "</div>";
-                        } else {
-                            if (i === 7) {
-                                horari2 += timetableJSONArray[0] + "<br>";
-                            } else {
-                                horari2 += timetableJSONArray[i] + "<br>";
+
+                            if (restartCount && i === totalDays) {
+                                i = 0;
+                                totalDays = dayOfWeek - 1;
+                                restartCount = false;
                             }
-                        }
-                        
-                        if (restartCount && i === totalDays) {
-                            i = 0;
-                            totalDays = dayOfWeek - 1;
-                            restartCount = false;
                         }
                     }
                     horari2 += "</p> </div>";
@@ -161,7 +162,7 @@ function loadHairdressings() {
                     var HTMLPopup = "<strong style='text-align:center'>" + companyName + "</strong>";
                     HTMLPopup += "<p>" + description + "</p>";
                     HTMLPopup += "<p><a href=" + urlInstagram + " target='_blank' title='Obre en una nova finestra'>Instagram</a></p>";
-                    HTMLPopup += "Horari:<br>" + horari + horari2;
+                    if(horari !== "") HTMLPopup += "Horari:<br>" + horari + horari2;
                     HTMLPopup += "<button id='reserva' onclick='modalReserve(this);' type='button' class='btn btn-success' data-uid='" + UID + "' data-toggle='modal' data-target='#modalReserve'>Fer una reserva</button>";
 
                     new mapboxgl.Popup({offset: popupOffsets})
