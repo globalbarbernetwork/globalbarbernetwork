@@ -95,9 +95,14 @@ public class AccessManager extends Manager implements ManagerInterface {
             case LOGOUT:
 
                 request.getSession().removeAttribute("user");
-                rd = request.getRequestDispatcher("/index.jsp");
+            {
+                try {
+                    response.sendRedirect(request.getContextPath()+"/ManagementServlet/");
+                } catch (IOException ex) {
+                    Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
                 break;
-
         }
 
         try {

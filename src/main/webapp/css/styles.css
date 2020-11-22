@@ -44,3 +44,11 @@ footer{
     font-weight: bold;
     margin-left: 10px;
 }
+
+.navbar-nav{
+    margin-left:auto !important; margin-right:0 !important;
+}
+
+.dropdown-menu{
+    margin: .5rem 0 0 -8rem !important;
+}

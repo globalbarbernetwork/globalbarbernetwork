@@ -11,20 +11,20 @@
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="d-flex flex-row-reverse collapse navbar-collapse" id="navbarNavDropdown">
+        </button>                
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">            
             <div class="navbar-nav">
                 <c:choose>
-                    <c:when test="${not empty user}">                       
+                    <c:when test="${not empty user}">
+                        <span class="displayName mr-3">${user.displayName}</span>
                         <div class="dropdown">
-                            <img class="dropdown-toggle ml-3" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="${contextPath}/img/user.svg" width="30" height="30" class="d-inline-block align-top" alt="iconUser">
+                            <img class="dropdown-toggle mr-5" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="${contextPath}/img/user.svg" width="30" height="30" class="d-inline-block align-top" alt="iconUser">
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <c:forEach items="${options}" var="option">
                                     <a class="dropdown-item" href="${contextPath}${option.url}">${option.label}</a>
                                 </c:forEach>
                             </div>
                         </div>
-                        <span class="displayName">${user.displayName}</span>                        
                     </c:when>
                     <c:otherwise>
                         <a href="${contextPath}/login.jsp">
@@ -37,8 +37,7 @@
                             <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se com empresa</button>
                         </a>
                     </c:otherwise>
-                </c:choose>
-
+                </c:choose>                
             </div>
         </div>
     </nav>
