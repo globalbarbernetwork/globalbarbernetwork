@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 .navbar {
-    z-index: 1;
+    z-index: 3;
 }
 
 #map {
@@ -31,6 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 .mapboxgl-popup {
-    width: 175px;
+    width: 250px;
     font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 }
