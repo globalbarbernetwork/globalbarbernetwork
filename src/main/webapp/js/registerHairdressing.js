@@ -92,10 +92,18 @@ function putValuesInFields(values, putValues) {
         $("#city").val(values[0]);
         $("#province").val(values[1]);
         $("#country").val(values[2]);
+        
+        $("#cityHidden").val(values[0]);
+        $("#provinceHidden").val(values[1]);
+        $("#countryHidden").val(values[2]);
     } else {
         $("#city").val("");
         $("#province").val("");
         $("#country").val("");
+        
+        $("#cityHidden").val("");
+        $("#provinceHidden").val("");
+        $("#countryHidden").val("")
     }
 }
 
