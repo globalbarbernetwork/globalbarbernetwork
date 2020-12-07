@@ -124,7 +124,7 @@ function loadHairdressings() {
                 },
                 success: function(data) {
                     var horari = "";
-                    var horari2 = "<div class='collapse' id='collapseOtherDays'> <p>";
+                    var horari2 = "<div class='collapse' id='collapseOtherDays'> <table>";
                     
                     var date = new Date();
                     var dayOfWeek = date.getDay() !== 0 ? date.getDay() : 7;
@@ -136,17 +136,21 @@ function loadHairdressings() {
                             if (dayOfWeek === i) {
                                 horari += "<div class='dropdown-toggle' data-toggle='collapse' href='#collapseOtherDays' aria-expanded='false' aria-controls='collapseOtherDays'>";
                                 if (i === 7) {
-                                    horari += "<strong>" + timetableJSONArray[0] + "</strong>";
+                                    horari += "<strong>" + timetableJSONArray[0].dayOfWeek + " " + timetableJSONArray[0].rangesHours + "</strong>";
                                 } else {
-                                    horari += "<strong>" + timetableJSONArray[i] + "</strong>";
+                                    horari += "<strong>" + timetableJSONArray[i].dayOfWeek + " " + timetableJSONArray[i].rangesHours + "</strong>";
                                 }
                                 horari += "</div>";
                             } else {
+                                horari2 += "<tr>";
                                 if (i === 7) {
-                                    horari2 += timetableJSONArray[0] + "<br>";
+                                    horari2 += "<td>" + timetableJSONArray[0].dayOfWeek + "</td>";
+                                    horari2 += "<td>" + timetableJSONArray[0].rangesHours + "</td>";
                                 } else {
-                                    horari2 += timetableJSONArray[i] + "<br>";
+                                    horari2 += "<td>" + timetableJSONArray[i].dayOfWeek + "</td>";
+                                    horari2 += "<td>" + timetableJSONArray[i].rangesHours + "</td>";
                                 }
+                                horari2 += "</tr>";
                             }
 
                             if (restartCount && i === totalDays) {
@@ -156,7 +160,7 @@ function loadHairdressings() {
                             }
                         }
                     }
-                    horari2 += "</p> </div>";
+                    horari2 += "</table> </div>";
                     
                     // HTML del Popup
                     var HTMLPopup = "<strong style='text-align:center'>" + companyName + "</strong>";

@@ -56,25 +56,29 @@ public class ScheduleManager implements ManagerInterface {
                 JSONObject json = new JSONObject();
                 JSONArray array = new JSONArray();
 
-                LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
                 try ( PrintWriter out = response.getWriter()) {
                     if (timetable != null) {
+                        LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
                         for (Map.Entry<String, Object> entry : timetable.entrySet()) {
                             String dayOfWeek = entry.getKey();
-                            Map<String, Map<String, String>> rangeHours = (Map<String, Map<String, String>>) entry.getValue();
-
-                            jsonOrderedMap.put(dayOfWeek, formatTimetable(dayOfWeek, rangeHours));
+                            Map<String, Map<String, String>> rangesHours = (Map<String, Map<String, String>>) entry.getValue();
+                            
+                            LinkedHashMap<String, Object> jsonOrderedMap2 = new LinkedHashMap<>();
+                            jsonOrderedMap2.put("dayOfWeek", getNameOfDayOfWeek(dayOfWeek) + ":");
+                            jsonOrderedMap2.put("rangesHours", formatTimetable(rangesHours));
+                            
+                            jsonOrderedMap.put(dayOfWeek, new JSONObject(jsonOrderedMap2));
                         }
+                        JSONObject member = new JSONObject(jsonOrderedMap);
+                        array.put(member);
                     }
-                    JSONObject member = new JSONObject(jsonOrderedMap);
-                    array.put(member);
                     try {
                         json.put("jsonArray", array);
                     } catch (JSONException ex) {
                         Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
 
-                    out.print(json);
+                    out.print(!array.isNull(0) ? json : "");
                 } catch (IOException ex) {
                     Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -93,13 +97,7 @@ public class ScheduleManager implements ManagerInterface {
         }
     }
 
-    private String formatTimetable(String dayOfWeek, Map<String, Map<String, String>> timetable) {
-        String nameOfDay = getNameOfDayOfWeek(dayOfWeek);
-        String space = "";
-        for (int i = nameOfDay.length(); i <= 10; i++) {
-            space += "&nbsp;";
-        }
-
+    private String formatTimetable(Map<String, Map<String, String>> timetable) {
         String range1Start = timetable.get("rangeHour1").get("startHour");
         String range1End = timetable.get("rangeHour1").get("endHour");
         String range2Start = timetable.get("rangeHour2").get("startHour");
@@ -116,7 +114,7 @@ public class ScheduleManager implements ManagerInterface {
             range = range1Start + "-" + range1End + " / " + range2Start + "-" + range2End;
         }
 
-        return nameOfDay + ":" + space + range;
+        return range;
     }
 
     private String getNameOfDayOfWeek(String dayOfWeek) {
