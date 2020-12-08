@@ -18,6 +18,7 @@ package org.globalbarbernetwork.firebase;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
@@ -35,6 +36,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.globalbarbernetwork.entities.Client;
+import org.globalbarbernetwork.entities.Employee;
 import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.entities.User;
 
@@ -52,7 +54,7 @@ public class FirebaseDAO {
             db = connectFb.initFirebase();
         }
     }
-    
+
     public UserRecord createUser(User user, String password) {
         UserRecord userRecord = null;
         try {
@@ -60,25 +62,25 @@ public class FirebaseDAO {
                     .setEmail(user.getEmail())
                     .setEmailVerified(false)
                     .setPassword(password)
-                    .setPhoneNumber("+34 "+user.getPhoneNumber())
+                    .setPhoneNumber("+34 " + user.getPhoneNumber())
                     .setDisplayName(user.getDisplayName())
                     .setDisabled(false);
-            
+
             userRecord = FirebaseAuth.getInstance().createUser(newUser);
         } catch (FirebaseAuthException ex) {
             //Crear una clase de excepciones para controlar los diferentes errores de firebase
             Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
             ex.getAuthErrorCode();
         }
-        
+
         return userRecord;
     }
-    
+
     public String generateLink(String email) throws FirebaseAuthException {
         String link = FirebaseAuth.getInstance().generateEmailVerificationLink(email);
         return link;
     }
-    
+
     public UserRecord getUserByEmail(String email) {
         UserRecord userRecord = null;
         try {
@@ -88,8 +90,8 @@ public class FirebaseDAO {
         }
         return userRecord;
     }
-    
-    public void insertUser(User user){
+
+    public void insertUser(User user) {
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("UID", user.getUID());
         newUser.put("displayName", user.getDisplayName());
@@ -98,8 +100,8 @@ public class FirebaseDAO {
         newUser.put("type", user.getType());
         db.collection("users").document().set(newUser);
     }
-    
-    public void insertClient(Client client){
+
+    public void insertClient(Client client) {
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("UID", client.getUID());
         newUser.put("displayName", client.getDisplayName());
@@ -109,8 +111,8 @@ public class FirebaseDAO {
         newUser.put("surname", client.getSurname());
         db.collection("clients").document().set(newUser);
     }
-    
-    public void insertHairdressing(Hairdressing hairDrsg){
+
+    public void insertHairdressing(Hairdressing hairDrsg) {
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("UID", hairDrsg.getUID());
         newUser.put("address", hairDrsg.getAddress());
@@ -118,6 +120,7 @@ public class FirebaseDAO {
         newUser.put("companyName", hairDrsg.getCompanyName());
         newUser.put("coordinates", hairDrsg.getCoordinates());
         newUser.put("country", hairDrsg.getCountry());
+        newUser.put("description", hairDrsg.getDescription());
         newUser.put("displayName", hairDrsg.getDisplayName());
         newUser.put("email", hairDrsg.getEmail());
         newUser.put("instagram", hairDrsg.getInstagram());
@@ -183,7 +186,7 @@ public class FirebaseDAO {
         }
         return clientList.get(0);
     }
-    
+
     public List<Hairdressing> getAllHairdressings() {
         List<Hairdressing> listHairdressings = new ArrayList<>();
         ApiFuture<QuerySnapshot> future = db.collection("hairdressings").get();
@@ -200,7 +203,7 @@ public class FirebaseDAO {
 
         return listHairdressings;
     }
-    
+
     public Map<String, Object> getTimetableHairdressing(String uid) {
         CollectionReference hairdressings = db.collection("schedule");
         Query query = hairdressings.whereEqualTo("UID", uid);
@@ -213,5 +216,21 @@ public class FirebaseDAO {
             ex.printStackTrace();
         }
         return null;
+    }
+
+    public List<Employee> getAllEmployeesByHairdressing(String idHairdressing) {
+        List<Employee> listEmployees = new ArrayList<>();
+        ApiFuture<QuerySnapshot> hairdressings = db.collection("employeesHairdressing").document(idHairdressing).collection("employees").get();
+        try {
+            for (QueryDocumentSnapshot document : hairdressings.get().getDocuments()) {
+                listEmployees.add(document.toObject(Employee.class));
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
+
+        return listEmployees;
     }
 }

@@ -173,9 +173,9 @@ public class AccessManager extends Manager implements ManagerInterface {
         String password = request.getParameter("password");
 
         String address = request.getParameter("address");
-        String city = request.getParameter("city");
-        String country = request.getParameter("country");
-        String province = request.getParameter("province");
+        String city = request.getParameter("cityHidden");
+        String country = request.getParameter("countryHidden");
+        String province = request.getParameter("provinceHidden");
         Integer zipCode = Integer.parseInt(request.getParameter("zipCode"));
 
         String[] geolocation = request.getParameter("coordHairdressing").split(",");

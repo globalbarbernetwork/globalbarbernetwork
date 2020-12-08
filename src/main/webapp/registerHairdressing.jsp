@@ -53,8 +53,9 @@
                             <small id="errorInput" class="text-danger"></small>
                         </div>
                         <div class="form-group col-6">
-                            <input type="text" class="form-control" name="city" id="city" placeholder="Ciutat" value="${hairdrsg.city}" readonly>
+                            <input type="text" class="form-control" name="city" id="city" placeholder="Ciutat" value="${hairdrsg.city}" disabled>
                             <small id="errorInput" class="text-danger"></small>
+                            <input type="hidden" id="cityHidden" name="cityHidden" value="${hairdrsg.city}"/>
                         </div>
                     </div>
 
@@ -70,8 +71,9 @@
                             </div>
                         </div>
                         <div class="form-group col-6">
-                            <input type="text" class="form-control" name="province" id="province" placeholder="Província" value="${hairdrsg.province}" readonly>
+                            <input type="text" class="form-control" name="province" id="province" placeholder="Província" value="${hairdrsg.province}" disabled>
                             <small id="errorInput" class="text-danger"></small>
+                            <input type="hidden" id="provinceHidden" name="provinceHidden" value="${hairdrsg.province}"/>
                         </div>
                     </div>
 
@@ -89,8 +91,9 @@
                             <small id="passwordHelp" class="text-danger" hidden></small>
                         </div>
                         <div class="form-group col-6">
-                            <input type="text" class="form-control" name="country" id="country" placeholder="País" value="${hairdrsg.country}" readonly>
+                            <input type="text" class="form-control" name="country" id="country" placeholder="País" value="${hairdrsg.country}" disabled>
                             <small id="errorInput" class="text-danger"></small>
+                            <input type="hidden" id="countryHidden" name="countryHidden" value="${hairdrsg.country}"/>
                         </div>
                     </div>
 
