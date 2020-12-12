@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.managers.AccessManager;
 import org.globalbarbernetwork.managers.IndexManager;
+import org.globalbarbernetwork.managers.ManageHairdressingManager;
 import org.globalbarbernetwork.managers.ScheduleManager;
 
 /**
@@ -57,6 +58,15 @@ public class ManagementServlet extends HttpServlet {
             } else if (contextPath.startsWith("/schedule")) {
                 ScheduleManager scheduleManager = new ScheduleManager();
                 scheduleManager.execute(request, response, action);
+            } else if (contextPath.startsWith("/menuOption")) {
+                switch (action) {
+                    case "manageHaird" :
+                        action = tmpAction.length > 3 ? tmpAction[3] : "";
+                        ManageHairdressingManager menuOptionManager = new ManageHairdressingManager();
+                        menuOptionManager.execute(request, response, action);
+                        break;
+                }
+                
             }
         }
     }

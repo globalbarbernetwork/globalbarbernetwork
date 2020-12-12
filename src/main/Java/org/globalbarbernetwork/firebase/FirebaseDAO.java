@@ -109,7 +109,7 @@ public class FirebaseDAO {
         newUser.put("phoneNumber", client.getPhoneNumber());
         newUser.put("name", client.getName());
         newUser.put("surname", client.getSurname());
-        db.collection("clients").document().set(newUser);
+        db.collection("clients").document(client.getUID()).set(newUser);
     }
 
     public void insertHairdressing(Hairdressing hairDrsg) {
@@ -128,7 +128,7 @@ public class FirebaseDAO {
         newUser.put("province", hairDrsg.getProvince());
         newUser.put("website", hairDrsg.getWebsite());
         newUser.put("zipCode", hairDrsg.getZipCode());
-        db.collection("hairdressings").document().set(newUser);
+        db.collection("hairdressings").document(hairDrsg.getUID()).set(newUser);
     }
 
     public User getUser(String uid) {
@@ -232,5 +232,44 @@ public class FirebaseDAO {
         }
 
         return listEmployees;
+    }
+
+    public void insertEmployee(Employee newEmployee) {
+        db.collection("employeesHairdressing").document(newEmployee.getIdHairdressing()).collection("employees").document().set(newEmployee);
+    }
+
+    public void deleteEmployee(String nationalIdentity, String idHairdressing) {
+        ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(idHairdressing).collection("employees").whereEqualTo("nationalIdentity", nationalIdentity).get();
+        try {
+            for (QueryDocumentSnapshot document : future.get().getDocuments()) {
+                document.getReference().delete();
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void modifyEmployee(Employee newEmployee) {
+        ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(newEmployee.getIdHairdressing()).collection("employees").whereEqualTo("nationalIdentity", newEmployee.getNationalIdentity()).get();
+        try {
+            for (QueryDocumentSnapshot document : future.get().getDocuments()) {
+                document.getReference().update(
+                        "address", newEmployee.getAddress(),
+                        "age", newEmployee.getAge(),
+                        "idHairdressing", newEmployee.getIdHairdressing(),
+                        "name", newEmployee.getName(),
+                        "nationalIdentity", newEmployee.getNationalIdentity(),
+                        "phoneNumber", newEmployee.getPhoneNumber(),
+                        "surname", newEmployee.getSurname()
+                );
+            }
+
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
     }
 }

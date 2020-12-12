@@ -21,25 +21,25 @@ package org.globalbarbernetwork.entities;
  * @author Grup 3
  */
 public class Employee {
-    private String uid;
     private String name;
+    private String surname;
+    private String nationalIdentity;
+    private String age;
+    private String address;
+    private String phoneNumber;
     private String idHairdressing;
 
     public Employee() {
     }
 
-    public Employee(String uid, String name, String id_hairDressing) {
-        this.uid = uid;
+    public Employee(String name, String surname, String nationalIdentity, String age, String address, String phoneNumber, String idHairdressing) {
         this.name = name;
-        this.idHairdressing = id_hairDressing;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
+        this.surname = surname;
+        this.nationalIdentity = nationalIdentity;
+        this.age = age;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.idHairdressing = idHairdressing;
     }
 
     public String getName() {
@@ -50,6 +50,46 @@ public class Employee {
         this.name = name;
     }
 
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getNationalIdentity() {
+        return nationalIdentity;
+    }
+
+    public void setNationalIdentity(String nationalIdentity) {
+        this.nationalIdentity = nationalIdentity;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getIdHairdressing() {
         return idHairdressing;
     }
@@ -57,4 +97,6 @@ public class Employee {
     public void setIdHairdressing(String idHairdressing) {
         this.idHairdressing = idHairdressing;
     }
+
+    
 }
