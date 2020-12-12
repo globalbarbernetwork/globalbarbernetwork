@@ -114,7 +114,7 @@ public class IndexManager extends Manager implements ManagerInterface {
         if (user instanceof Hairdressing) {
             options.add(addMenuOption("Editar perfil", "ServletX", ""));
             options.add(addMenuOption("Gestio calendari", "ServletX", ""));
-            options.add(addMenuOption("Gestio ", "ServletX", ""));
+            options.add(addMenuOption("Gestio ", "/ManagementServlet/menuOption/manageHaird", ""));
             options.add(addMenuOption("Cerrar sesión", "/ManagementServlet/access/logout", ""));
         } else if (user instanceof Client) {
             options.add(addMenuOption("Editar perfil", "ServletX", ""));
