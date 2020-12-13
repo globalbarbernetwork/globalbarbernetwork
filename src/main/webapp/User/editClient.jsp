@@ -23,32 +23,32 @@
     </style>
     <body>
         <%@include file="/WEB-INF/jspf/header.jspf"%>
-        <div class="container mt-5">
+        <div class="container-fluid mt-5">
             <div class="row">
-                <div class="col-4 mr-5 mb-5">
+                <div class="col-2 offset-3 mr-5 mb-5">
                     <div class="container card bg-dark" style="color: white;">
                         <h3 class="mb-5 mt-3 text-center"><%=client.getDisplayName()%></h3>
                         <div class="text-center">
                             <img src="${contextPath}/img/avatar.png" alt="Avatar" class="avatar">
                         </div>
-                        <button type="button" class="btn btn-success mt-5 mb-3" style="width: 100%">Cambiar foto</button>
+                        <button type="button" class="btn btn-success mt-5 mb-3" style="width: 100%">Cambiar imatge</button>
                     </div>
                 </div>
 
-                <div class="col">
-                    <div class="card bg-dark mb-3" style="color: white;">
+                <div class="col-5">
+                    <div class="card bg-dark mb-3 pt-2" style="color: white;">
                         <div class="card-header" style="border-color: white;">
                             <h3 class="mb-3">Editar Perfil</h3>                    
                         </div>
                         <div class="card-body">
-                            <form action="post">                                  
+                            <form action="${contextPath}/ManagementServlet/menuOption/editProfile/client" method="post">                                  
                                 <div class="form-group">
                                     <label for="labelEmail">Correu electronic</label>
                                     <div class="input-group">
                                         <div class="input-group-prepend">
-                                            <div class="input-group-text">@</div>
+                                            <div class="input-group-text"><i class="fas fa-envelope"></i></div>
                                         </div>
-                                        <input type="text" class="form-control" id="email" placeholder="Correu electronic" value="<%=client.getEmail()%>">
+                                        <input type="text" class="form-control" name="email" placeholder="Correu electronic" value="<%=client.getEmail()%>">
                                     </div>
                                 </div>                                                              
                                 <div class="form-group">
@@ -87,7 +87,7 @@
                                         <input name="phoneNumber" type="text" placeholder="Numero de telefon" class="form-control" value="<%=client.getPhoneNumber()%>">
                                     </div>
                                 </div>                    
-                                <button type="button" class="btn btn-success mt-4" style="width: 100%">Actualitza</button>
+                                <button class="btn btn-success mt-4" style="width: 100%">Actualitza</button>
                             </form>
                         </div>   
                     </div>

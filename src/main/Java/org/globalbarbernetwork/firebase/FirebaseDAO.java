@@ -93,28 +93,29 @@ public class FirebaseDAO {
 
     public void insertUser(User user) {
         Map<String, Object> newUser = new HashMap<>();
-        newUser.put("UID", user.getUID());
+        newUser.put("uid", user.getUID());
         newUser.put("displayName", user.getDisplayName());
         newUser.put("email", user.getEmail());
         newUser.put("phoneNumber", user.getPhoneNumber());
         newUser.put("type", user.getType());
-        db.collection("users").document().set(newUser);
+        db.collection("users").document(user.getUID()).set(newUser);
     }
 
     public void insertClient(Client client) {
         Map<String, Object> newUser = new HashMap<>();
-        newUser.put("UID", client.getUID());
+        newUser.put("uid", client.getUID());
         newUser.put("displayName", client.getDisplayName());
         newUser.put("email", client.getEmail());
         newUser.put("phoneNumber", client.getPhoneNumber());
         newUser.put("name", client.getName());
         newUser.put("surname", client.getSurname());
+        newUser.put("type", "client");
         db.collection("clients").document(client.getUID()).set(newUser);
     }
 
     public void insertHairdressing(Hairdressing hairDrsg) {
         Map<String, Object> newUser = new HashMap<>();
-        newUser.put("UID", hairDrsg.getUID());
+        newUser.put("uid", hairDrsg.getUID());
         newUser.put("address", hairDrsg.getAddress());
         newUser.put("city", hairDrsg.getCity());
         newUser.put("companyName", hairDrsg.getCompanyName());
@@ -128,6 +129,7 @@ public class FirebaseDAO {
         newUser.put("province", hairDrsg.getProvince());
         newUser.put("website", hairDrsg.getWebsite());
         newUser.put("zipCode", hairDrsg.getZipCode());
+        newUser.put("type", "hairdressing");
         db.collection("hairdressings").document(hairDrsg.getUID()).set(newUser);
     }
 
@@ -135,7 +137,7 @@ public class FirebaseDAO {
 
         List<User> usersList = new ArrayList<>();
         CollectionReference users = db.collection("users");
-        Query query = users.whereEqualTo("UID", uid);
+        Query query = users.whereEqualTo("uid", uid);
 
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
@@ -154,7 +156,7 @@ public class FirebaseDAO {
     public Hairdressing getHairdressing(String uid) {
         List<Hairdressing> hairdressingList = new ArrayList<>();
         CollectionReference hairdressings = db.collection("hairdressings");
-        Query query = hairdressings.whereEqualTo("UID", uid);
+        Query query = hairdressings.whereEqualTo("uid", uid);
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
         try {
@@ -172,7 +174,7 @@ public class FirebaseDAO {
     public Client getClient(String uid) {
         List<Client> clientList = new ArrayList<>();
         CollectionReference clients = db.collection("clients");
-        Query query = clients.whereEqualTo("UID", uid);
+        Query query = clients.whereEqualTo("uid", uid);
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
         try {
@@ -206,7 +208,7 @@ public class FirebaseDAO {
 
     public Map<String, Object> getTimetableHairdressing(String uid) {
         CollectionReference hairdressings = db.collection("schedule");
-        Query query = hairdressings.whereEqualTo("UID", uid);
+        Query query = hairdressings.whereEqualTo("uid", uid);
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
         try {
             for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
@@ -272,4 +274,10 @@ public class FirebaseDAO {
             ex.printStackTrace();
         }
     }
+
+    public void updateClient(Client client) {
+        DocumentReference docRef = db.collection("clients").document(client.getUID());
+        docRef.set(client);
+    }
+
 }

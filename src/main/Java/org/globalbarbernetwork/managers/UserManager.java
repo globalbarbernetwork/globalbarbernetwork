@@ -23,7 +23,9 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.User;
+import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
 
 /**
@@ -32,6 +34,8 @@ import org.globalbarbernetwork.interfaces.ManagerInterface;
  */
 public class UserManager extends Manager implements ManagerInterface {
 
+    private final FirebaseDAO firebaseDAO = new FirebaseDAO();
+
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
 
@@ -39,12 +43,31 @@ public class UserManager extends Manager implements ManagerInterface {
 
         switch (action) {
             case "client":
-                
-                User client = this.getCurrentUser(request);
+
+                Client client = null;
+
+                if (request.getMethod().equals("POST")) {
+
+                    //To do
+                    String email = request.getParameter("email");
+
+                    User user = this.getCurrentUser(request);
+                    client = firebaseDAO.getClient(user.getUID());
+
+                    client.setDisplayName(request.getParameter("displayName"));
+                    client.setName(request.getParameter("name"));
+                    client.setSurname(request.getParameter("surname"));
+                    client.setPhoneNumber(request.getParameter("phoneNumber"));
+
+                    firebaseDAO.updateClient(client);
+
+                } else {
+                    client = (Client) this.getCurrentUser(request);
+                }
+
                 request.setAttribute("client", client);
-                
                 rd = request.getRequestDispatcher("/User/editClient.jsp");
-                
+
                 break;
             case "hairdressing":
                 rd = request.getRequestDispatcher("/User/editHairdressing.jsp");
