@@ -112,12 +112,12 @@ public class IndexManager extends Manager implements ManagerInterface {
         List<Map> options = new ArrayList<Map>();
 
         if (user instanceof Hairdressing) {
-            options.add(addMenuOption("Editar perfil", "ServletX", ""));
+            options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/hairdressing", ""));
             options.add(addMenuOption("Gestio calendari", "ServletX", ""));
             options.add(addMenuOption("Gestio ", "/ManagementServlet/menuOption/manageHaird", ""));
             options.add(addMenuOption("Cerrar sesión", "/ManagementServlet/access/logout", ""));
         } else if (user instanceof Client) {
-            options.add(addMenuOption("Editar perfil", "ServletX", ""));
+            options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/client", ""));
             options.add(addMenuOption("Historial de reserves", "ServletX", ""));
             options.add(addMenuOption("Cerrar sesión", "/ManagementServlet/access/logout", ""));
         }

@@ -14,22 +14,53 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.globalbarbernetwork.managers;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
 
 /**
  *
  * @author Adrian
  */
-public class UserManager extends Manager implements ManagerInterface{
+public class UserManager extends Manager implements ManagerInterface {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
-        System.out.println(action);
+
+        RequestDispatcher rd = null;
+
+        switch (action) {
+            case "client":
+                
+                User client = this.getCurrentUser(request);
+                request.setAttribute("client", client);
+                
+                rd = request.getRequestDispatcher("/User/editClient.jsp");
+                
+                break;
+            case "hairdressing":
+                rd = request.getRequestDispatcher("/User/editHairdressing.jsp");
+                break;
+        }
+
+        try {
+            if (rd != null) {
+                rd.forward(request, response);
+            }
+        } catch (ServletException ex) {
+            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
 }
