@@ -53,9 +53,7 @@ public class ScheduleManager implements ManagerInterface {
                     timetable.remove("UID");
                 }
 
-                JSONObject json = new JSONObject();
-                JSONArray array = new JSONArray();
-
+                JSONObject json = null;
                 try ( PrintWriter out = response.getWriter()) {
                     if (timetable != null) {
                         LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
@@ -69,16 +67,9 @@ public class ScheduleManager implements ManagerInterface {
                             
                             jsonOrderedMap.put(dayOfWeek, new JSONObject(jsonOrderedMap2));
                         }
-                        JSONObject member = new JSONObject(jsonOrderedMap);
-                        array.put(member);
+                        json = new JSONObject(jsonOrderedMap);
                     }
-                    try {
-                        json.put("jsonArray", array);
-                    } catch (JSONException ex) {
-                        Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-
-                    out.print(!array.isNull(0) ? json : "");
+                    out.print(json != null ? json : "");
                 } catch (IOException ex) {
                     Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
                 }

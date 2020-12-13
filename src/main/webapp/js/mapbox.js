@@ -50,6 +50,7 @@ function renderMap () {
 }
 
 function loadHairdressings() {
+    console.log($("#listHairdressingsJSON").val());
     var hairdressingsJSON = JSON.parse($("#listHairdressingsJSON").val());
     var hairdressingsJSONArray = hairdressingsJSON.jsonArray;
     var jsonFeatures = [];
@@ -129,26 +130,26 @@ function loadHairdressings() {
                     var date = new Date();
                     var dayOfWeek = date.getDay() !== 0 ? date.getDay() : 7;
                     if (data !== "") {
-                        var timetableJSONArray = JSON.parse(data).jsonArray[0];
+                        var timetableJSON = JSON.parse(data);
                         var restartCount = true;
                         var totalDays = 7;
                         for (var i = dayOfWeek; i <= totalDays; i++) {
                             if (dayOfWeek === i) {
                                 horari += "<div class='dropdown-toggle' data-toggle='collapse' href='#collapseOtherDays' aria-expanded='false' aria-controls='collapseOtherDays'>";
                                 if (i === 7) {
-                                    horari += "<strong>" + timetableJSONArray[0].dayOfWeek + " " + timetableJSONArray[0].rangesHours + "</strong>";
+                                    horari += "<strong>" + timetableJSON[0].dayOfWeek + " " + timetableJSON[0].rangesHours + "</strong>";
                                 } else {
-                                    horari += "<strong>" + timetableJSONArray[i].dayOfWeek + " " + timetableJSONArray[i].rangesHours + "</strong>";
+                                    horari += "<strong>" + timetableJSON[i].dayOfWeek + " " + timetableJSON[i].rangesHours + "</strong>";
                                 }
                                 horari += "</div>";
                             } else {
                                 horari2 += "<tr>";
                                 if (i === 7) {
-                                    horari2 += "<td>" + timetableJSONArray[0].dayOfWeek + "</td>";
-                                    horari2 += "<td>" + timetableJSONArray[0].rangesHours + "</td>";
+                                    horari2 += "<td>" + timetableJSON[0].dayOfWeek + "</td>";
+                                    horari2 += "<td>" + timetableJSON[0].rangesHours + "</td>";
                                 } else {
-                                    horari2 += "<td>" + timetableJSONArray[i].dayOfWeek + "</td>";
-                                    horari2 += "<td>" + timetableJSONArray[i].rangesHours + "</td>";
+                                    horari2 += "<td>" + timetableJSON[i].dayOfWeek + "</td>";
+                                    horari2 += "<td>" + timetableJSON[i].rangesHours + "</td>";
                                 }
                                 horari2 += "</tr>";
                             }
@@ -163,11 +164,11 @@ function loadHairdressings() {
                     horari2 += "</table> </div>";
                     
                     // HTML del Popup
-                    var HTMLPopup = "<strong style='text-align:center'>" + companyName + "</strong>";
+                    var HTMLPopup = "<h6><strong style='text-align:center'>" + companyName + "</strong></h6>";
                     HTMLPopup += "<p>" + description + "</p>";
                     HTMLPopup += "<p><a href=" + urlInstagram + " target='_blank' title='Obre en una nova finestra'>Instagram</a></p>";
                     if(horari !== "") HTMLPopup += "Horari:<br>" + horari + horari2;
-                    HTMLPopup += "<button id='reserva' onclick='modalReserve(this);' type='button' class='btn btn-success' data-uid='" + UID + "' data-toggle='modal' data-target='#modalReserve'>Fer una reserva</button>";
+                    HTMLPopup += "<button id='reserva' onclick='loadInfoModalReserve(this);' type='button' class='btn btn-success' data-uid='" + UID + "' data-company='" + companyName + "' data-toggle='modal' data-target='#modalReserve'>Fer una reserva</button>";
 
                     new mapboxgl.Popup({offset: popupOffsets})
                             .setLngLat(coordinates)
@@ -191,9 +192,4 @@ function loadHairdressings() {
             map.getCanvas().style.cursor = '';
         });
     });
-}
-
-function modalReserve(btn) {
-    //alert($(btn).data("uid"));
-    
 }
