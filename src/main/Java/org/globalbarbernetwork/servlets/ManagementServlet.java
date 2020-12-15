@@ -45,6 +45,7 @@ public class ManagementServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         String contextPath = request.getPathInfo() != null ? request.getPathInfo() : request.getServletPath();
 
         if (contextPath != null) {

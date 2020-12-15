@@ -161,11 +161,6 @@ public class AccessManager extends Manager implements ManagerInterface {
         // True - Lo mandamos de vuelta a la pantalla de registro
         // False - Creamos el usuario y vamos a login
 
-        try {
-            request.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
         String email = request.getParameter("email");
         String companyName = request.getParameter("name");
         String displayName = companyName;

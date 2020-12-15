@@ -23,7 +23,7 @@ $(document).ready(function () {
     $('#dataTable').DataTable({
         "pagingType": "numbers",
         "order": [],
-        "columnDefs": [{orderable: false, targets: [0, 1, 2]}]
+        "columnDefs": [{orderable: false, targets: [0,7]}]
     });
 
     $("#btnAdd").click(function () {
@@ -102,6 +102,27 @@ $(document).ready(function () {
             $("#btnConfirmAddEdit").attr('disabled', true);
         }
     });
+    
+    $('#datepicker').datepicker({
+          multidate: true,
+        language: "ca",
+        clearBtn: true,
+        format: "dd/mm/yyyy",
+        autoclose: true,
+        daysOfWeekDisabled: [0, 6],
+        daysOfWeekHighlighted: [0, 6],
+        todayHighlight: true
+    });
+
+
+    // FOR DEMO PURPOSE
+    $('#datepicker').on('changeDate', function () {
+        $('#my_hidden_input').val(
+                $('#datepicker').datepicker('getFormattedDate')
+                );
+    });
+    
+    
 });
 
 function editEmployee(btnEdit) {
@@ -113,7 +134,7 @@ function editEmployee(btnEdit) {
     h4TitleModal.text("Modifica un treballador");
 
     var row = $(btnEdit).parents("tr").children();
-    var td = 3;
+    var td = 1;
     $("#modalEditEmployee").find("input").each(function () {
         $(this).val($(row.get(td)).text());
         td++;
@@ -139,7 +160,7 @@ function addEmployee() {
 function getNatIdenEmployeeToDelete(btnDelete) {
     var row = $(btnDelete).parents("tr").children();
     console.log(row);
-    $("#natIdenEmployee").val($(row.get(5)).text());
+    $("#natIdenEmployee").val($(row.get(3)).text());
 }
 
 function validFormEmployee() {

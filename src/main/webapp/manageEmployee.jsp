@@ -9,29 +9,23 @@
     <table id="dataTable" class="table table-striped" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th class="th-sm" width="5%"></th>
-                <th class="th-sm" width="5%"></th>
-                <th class="th-sm" width="5%"></th>
+                <th class="th-sm"></th>
                 <th class="th-sm">Nom</th>
                 <th class="th-sm">Cognoms</th>
                 <th class="th-sm">DNI</th>
                 <th class="th-sm">Edat</th>
                 <th class="th-sm">Direcció</th>
                 <th class="th-sm">Telèfon Mòbil</th>
+                <th class="th-sm"></th>
             </tr>
         </thead>
         <tbody>
         <c:set var="contador" value="${0}"/>
         <c:forEach items="${employees}" var="employee">
             <tr>
-                <td>
-                    <p data-placement="top" data-toggle="tooltip" title="Edit"><button id="btnEdit${contador}" class="btn btn-primary btn-xs" data-title="Edit" data-toggle="modal" data-target="#modalEditEmployee" onclick="editEmployee(this)"><span class="fal fa-pencil"></span></button></p>
-                </td>
-                <td>
-                    <p data-placement="top" data-toggle="tooltip" title="Delete"><button id="btnDelete${contador}" class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#modalDeleteEmployee" onclick="getNatIdenEmployeeToDelete(this)"><span class="fal fa-trash"></span></button></p>
-                </td>
-                <td>
-                    <p data-placement="top" data-toggle="tooltip" title="Delete"><button id="btnDelete${contador}" class="btn btn-danger btn-xs" data-title="Delete" data-toggle="modal" data-target="#modalDeleteEmployee"><span class="fal fa-trash"></span></button></p>
+                <td class="inline">
+                    <button id="btnEdit${contador}" class="btn btn-primary btn-sm" title="Editar dades" data-title="Edit" data-toggle="modal" data-target="#modalEditEmployee" onclick="editEmployee(this)"><span class="fal fa-pencil"></span></button>
+                    <button id="btnHolidays${contador}" class="btn btn-warning btn-sm" title="Gestionar de vacances" data-title="Manage" data-toggle="modal" data-target="#modalManageHolidaysEmployee"><i class="fal fa-calendar-alt"></i></button>
                 </td>
                 <td>${employee.name}</td>
                 <td>${employee.surname}</td>
@@ -39,6 +33,9 @@
                 <td>${employee.age}</td>
                 <td>${employee.address}</td>
                 <td>${employee.phoneNumber}</td>
+                <td>
+                    <button id="btnDelete${contador}" class="btn btn-danger btn-sm" title="Esborrar treballador" data-title="Delete" data-toggle="modal" data-target="#modalDeleteEmployee" onclick="getNatIdenEmployeeToDelete(this)"><span class="fal fa-trash"></span></button>
+                </td>
             <c:set var="contador" value="${contador + 1}" />
             </tr>
         </c:forEach>
@@ -106,5 +103,28 @@
         </div>
     </div>
 </div>
+                    
 
-
+<div class="modal fade" id="modalManageHolidaysEmployee" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title custom_align" id="Heading">Gestionar vacances treballador</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fas fa-times" aria-hidden="true"></span></button>
+            </div>
+            <div class="modal-body">
+                <div class="datepicker date input-group shadow-sm">
+                    <div id="datepicker" data-date=""></div>
+                    <input type="hidden" id="my_hidden_input">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <form method="post" action="${contextPath}/ManagementServlet/menuOption/manageHaird/deleteEmployee">
+                    <input type="hidden" id="natIdenEmployee" name="natIdenEmployee">
+                    <button id="confirmDelete" type="submit" class="btn btn-success"><i class="fas fa-check"></i> Si</button>
+                </form>
+                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i> No</button>
+            </div>
+        </div>
+    </div>
+</div>
