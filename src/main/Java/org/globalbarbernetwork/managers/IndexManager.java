@@ -48,15 +48,15 @@ public class IndexManager extends Manager implements ManagerInterface {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
         try {
-            RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
-            String listHairdressingsJSON = getListHairdressingsToJSON();
-            
-            User user = this.getCurrentUser(request);
-            List options = this.buildMenuOptionsByUser(user);
-            
-            request.setAttribute("listHairdressingsJSON", listHairdressingsJSON);            
-            request.setAttribute("options", options);            
-            rd.forward(request, response);
+                RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+                String listHairdressingsJSON = getListHairdressingsToJSON();
+
+                User user = this.getCurrentUser(request);
+                List options = this.buildMenuOptionsByUser(user);
+
+                request.setAttribute("listHairdressingsJSON", listHairdressingsJSON);            
+                request.setAttribute("options", options);
+                rd.forward(request, response);
         } catch (ServletException ex) {
             Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -96,12 +96,12 @@ public class IndexManager extends Manager implements ManagerInterface {
 
             JSONObject member = new JSONObject(jsonOrderedMap);
             array.put(member);
-
-            try {
-                json.put("jsonArray", array);
-            } catch (JSONException ex) {
-                Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        }
+        
+        try {
+            json.put("jsonArray", array);
+        } catch (JSONException ex) {
+            Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return json.toString();

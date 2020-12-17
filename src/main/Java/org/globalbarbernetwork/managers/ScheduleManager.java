@@ -50,7 +50,7 @@ public class ScheduleManager implements ManagerInterface {
                 String uid = request.getParameter("uidHairdressing");
                 Map<String, Object> timetable = firebaseDAO.getTimetableHairdressing(uid);
                 if (timetable != null) {
-                    timetable.remove("UID");
+                    timetable.remove("uid");
                 }
 
                 JSONObject json = null;
@@ -73,7 +73,7 @@ public class ScheduleManager implements ManagerInterface {
                 } catch (IOException ex) {
                     Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                break;
+            break;
 
         }
 
