@@ -18,91 +18,24 @@
 var contextPath = $("#contextPath").val();
 
 $(document).ready(function () {
-    var allInputsOk = true;
+
+    initializeDataTable();
+
     $("#btnConfirmAddEdit").attr('disabled', true);
-    $('#dataTable').DataTable({
-        "pagingType": "numbers",
-        "order": [],
-        "columnDefs": [{orderable: false, targets: [0,7]}]
-    });
 
     $("#btnAdd").click(function () {
         addEmployee();
     });
 
-    $("#modalEditEmployee").find("input").blur(function () {
-
-        //Miramos que ningun campo este vacio.
-        $("#modalEditEmployee").find("input").each(function () {
-            if ($(this).val() === '') {
-                allInputsOk = false;
-            }
-        });
-
-
-        if ($(this).val() === '') {
-            $(this).addClass('is-invalid');
-        } else {
-            switch ($(this).attr('name')) {
-                case "name" :
-                    if ($(this).val().length > 30) {
-                        $(this).addClass('is-invalid');
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                    break;
-                case "surname" :
-                    if ($(this).val().length > 50) {
-                        $(this).addClass('is-invalid');
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                    break;
-                case "nationalIdentity" :
-                    var correctNatIdent = checkIfDniNieCorrect($(this));
-                    if (!correctNatIdent) {
-                        $(this).addClass('is-invalid');
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                    break;
-                case "age" :
-                    var isCorrectAge = ($(this).val()).match(/^[0-9]{1,2}$/);
-                    if (!isCorrectAge) {
-                        $(this).addClass('is-invalid');
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                    break;
-                case "address" :
-                    if ($(this).val().length > 50) {
-                        $(this).addClass('is-invalid');
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                    break;
-                case "phoneNumber" :
-                    var isCorrectPhone = ($(this).val()).match(/^\d{9}$/);
-                    if (!isCorrectPhone) {
-                        $(this).addClass('is-invalid');
-                    } else {
-                        $(this).removeClass('is-invalid');
-                    }
-                    break;
-            }
-            ;
-            allInputsOk = !$("#modalEditEmployee").find("input").hasClass("is-invalid");
-        }
-
-
-
-        if (allInputsOk) {
-            $("#btnConfirmAddEdit").removeAttr('disabled');
-        } else {
-            $("#btnConfirmAddEdit").attr('disabled', true);
-        }
+    $("#modalEditEmployee").on('hidden.bs.modal', function () {
+        cleanModalClose();
     });
-    
+
+    $("#modalEditEmployee").find("input[type=text]").blur(function () {
+        validFieldsEmployee($(this));
+    });
+
+
     initializeDatepicker();
     $("#modalHolidaysEmployee").on('hidden.bs.modal', function () {
         cleanModalGestioVacances();
@@ -112,22 +45,40 @@ $(document).ready(function () {
     });
 });
 
+function initializeDataTable() {
+    $('#dataTable').DataTable({
+        "pagingType": "numbers",
+        "order": [],
+        "columnDefs": [{orderable: false, targets: [0, 7]}],
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Catalan.json"
+        }
+    });
+}
+
 function editEmployee(btnEdit) {
     var btnAddModal = $("#modalEditEmployee").find(".modal-footer").children();
     btnAddModal.removeClass("btn-info");
     btnAddModal.addClass("btn-warning");
     btnAddModal.text("Modificar");
-    var h4TitleModal = $("#modalEditEmployee").find("h4");
-    h4TitleModal.text("Modifica un treballador");
+
 
     var row = $(btnEdit).parents("tr").children();
     var td = 1;
-    $("#modalEditEmployee").find("input").each(function () {
+    $("#modalEditEmployee").find("input[type=text]").each(function () {
         $(this).val($(row.get(td)).text());
         td++;
     });
 
-    $("#formEmployee").attr("action", contextPath + "/ManagementServlet/menuOption/manageHaird/editEmployee");
+    var name = $(btnEdit).data("name");
+    var surname = $(btnEdit).data("surname");
+    var idNumber = $(btnEdit).data("idnumber");
+
+    var h4TitleModal = $("#modalEditEmployee").find("h4");
+    h4TitleModal.text("Modificant a " + name + " " + surname);
+    $("#formEmployee").attr("action", contextPath + "/ManagementServlet/menuOption/manageHairdressing/editEmployee");
+    $("#idNumberEmployeeToEdit").val(idNumber);
+    $("#idNumber").prop('disabled', true);
 }
 
 function addEmployee() {
@@ -135,45 +86,45 @@ function addEmployee() {
     btnAddModal.removeClass("btn-warning");
     btnAddModal.addClass("btn-info");
     btnAddModal.text("Afegir");
-    $("#formEmployee").attr("action", contextPath + "/ManagementServlet/menuOption/manageHaird/addEmployee");
+    $("#formEmployee").attr("action", contextPath + "/ManagementServlet/menuOption/manageHairdressing/addEmployee");
 
     var h4TitleModal = $("#modalEditEmployee").find("h4");
     h4TitleModal.text("Afegeix un nou treballador");
-
-    $("#modalEditEmployee").find("input").each(function () {
-        $(this).val("");
-    });
-}
-function getNatIdenEmployeeToDelete(btnDelete) {
-    var row = $(btnDelete).parents("tr").children();
-    console.log(row);
-    $("#natIdenEmployee").val($(row.get(3)).text());
 }
 
-function validFormEmployee() {
+function deleteEmployee(btnDelete) {
+    var name = $(btnDelete).data("name");
+    var surname = $(btnDelete).data("surname");
+    var idNumber = $(btnDelete).data("idnumber");
 
-    $("#modalEditEmployee").find("input").each(function () {
-        console.log($(this).val());
-    });
+    $("#idNumberEmployeeToDelete").val(idNumber);
+    $("#modalDeleteEmployee").find("h4").text("Eliminar a " + name + " " + surname);
 }
 
-function checkIfDniNieCorrect(fieldNationalIdent) {
+
+function checkIfDniNieCorrect(fieldIdNumber) {
     //Comprobamos que el dni o nie introducido sea correcto
     var number;
     var letter;
     var possLetters;
-    var natIdent = fieldNationalIdent.val();
+    var idNumber = fieldIdNumber.val();
     //Comprobamos DNI
-    if ((/^\d{8}[a-zA-Z]$/).test(natIdent) === true) {
-        number = natIdent.substr(0, natIdent.length - 1);
-        letter = natIdent.substr(natIdent.length - 1, 1);
+    if ((/^\d{8}[a-zA-Z]$/).test(idNumber) === true) {
+        number = idNumber.substr(0, idNumber.length - 1);
+        letter = idNumber.substr(idNumber.length - 1, 1);
         number = number % 23;
         possLetters = 'TRWAGMYFPDXBNJZSQVHLCKE';
         possLetters = possLetters.substring(number, number + 1);
         return possLetters === letter.toUpperCase();
-    } else if ((/^[T|X|Y|Z]\d{8}[a-zA-Z]$/).test(natIdent) === true) { //Comprobamos NIE
-        number = natIdent.substr(1, natIdent.length - 2);
-        letter = natIdent.substr(natIdent.length - 1, 1);
+    } else if ((/^[X|Y|Z]\d{7}[a-zA-Z]$/).test(idNumber) === true) { //Comprobamos NIE
+        number = idNumber.substr(1, idNumber.length - 2);
+        letter = idNumber.substr(idNumber.length - 1, 1);
+        var firstLetter = idNumber.substr(0, 1);
+        if (firstLetter === "Y") {
+            number = "1" + number;
+        } else if (firstLetter === "Z") {
+            number = "2" + number;
+        }
         number = number % 23;
         possLetters = 'TRWAGMYFPDXBNJZSQVHLCKE';
         possLetters = possLetters.substring(number, number + 1);
@@ -181,6 +132,112 @@ function checkIfDniNieCorrect(fieldNationalIdent) {
     }
     return false;
 }
+
+function checkIfIdNumberExists(inputIdNumber) {
+    var idNumber = inputIdNumber.val();
+    $.ajax({
+        url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/checkEmployee',
+        data: {
+            idNumberEmployee: idNumber
+        },
+        success: function (data) {
+            var resultJSON = JSON.parse(data);
+            var idNumberExists = resultJSON["idNumberExistInHairdressing"];
+
+            if (idNumberExists) {
+                inputIdNumber.addClass('is-invalid');
+                inputIdNumber.next().text("* Aquest identificador ja hi és a la perruqueria");
+            } else {
+                inputIdNumber.removeClass('is-invalid');
+                inputIdNumber.next().text("");
+            }
+                    },
+        error: function () {
+            console.log("No se ha podido obtener la información");
+        }
+    }
+    );
+}
+
+function cleanModalClose() {
+    $("#modalEditEmployee").find("input[type=text]").each(function () {
+        $(this).val("");
+        $(this).removeClass("is-invalid");
+        $(this).next().text("");
+        $("#idNumber").prop('disabled', false);
+        $("#idNumberEmployeeToEdit").val("");
+    });
+}
+
+function validFieldsEmployee(input) {
+    var inputValue = input.val();
+
+    if (inputValue === '') {
+        input.addClass('is-invalid');
+    } else {
+        switch (input.attr('name')) {
+            case "name" :
+                if (inputValue.length > 30) {
+                    input.addClass('is-invalid');
+                } else {
+                    input.removeClass('is-invalid');
+                }
+                break;
+            case "surname" :
+                if (inputValue.length > 35) {
+                    input.addClass('is-invalid');
+                } else {
+                    input.removeClass('is-invalid');
+                }
+                break;
+            case "idNumber" :
+                var correctIdNumber = checkIfDniNieCorrect(input);
+                if (!correctIdNumber) {
+                    input.addClass('is-invalid');
+                } else {
+                    checkIfIdNumberExists(input);
+                }
+                break;
+            case "age" :
+                var isCorrectAge = (inputValue).match(/^[0-9]{1,2}$/);
+                if (!isCorrectAge) {
+                    input.addClass('is-invalid');
+                } else {
+                    input.removeClass('is-invalid');
+                }
+                break;
+            case "address" :
+                if (inputValue.length > 50) {
+                    input.addClass('is-invalid');
+                } else {
+                    input.removeClass('is-invalid');
+                }
+                break;
+            case "phoneNumber" :
+                var isCorrectPhone = (inputValue).match(/^\d{9}$/);
+                if (!isCorrectPhone) {
+                    input.addClass('is-invalid');
+                } else {
+                    input.removeClass('is-invalid');
+                }
+                break;
+        };
+    }
+
+    allInputsOk = !$("#modalEditEmployee").find("input[type=text]").hasClass("is-invalid");
+    $("#modalEditEmployee").find("input[type=text]").each(function () {
+        if ($(this).val() === '') {
+            allInputsOk = false;
+        }
+    });
+
+    if (allInputsOk) {
+        $("#btnConfirmAddEdit").removeAttr('disabled');
+    } else {
+        $("#btnConfirmAddEdit").attr('disabled', true);
+    }
+}
+
 
 function initializeDatepicker() {
     $('#datepickerHolidays').datepicker({
@@ -223,7 +280,7 @@ function saveHolidaysEmployee() {
     var selectedHolidays = $("#selectedHolidays").val();
     
     $.ajax({
-        url: 'manageHaird/saveHolidaysEmployeeAjax',
+        url: 'saveHolidaysEmployeeAjax',
         data: {
             idHairdressing: idHairdressing,
             idEmployee: idEmployee,

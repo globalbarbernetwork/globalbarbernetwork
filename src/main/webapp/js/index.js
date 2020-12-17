@@ -28,7 +28,7 @@ function loadInfoModalReserve(element) {
     $("#modalReserveLongTitle").text("Realitzar reserva en " + $(element).data("company"));
     
     $.ajax({
-        url: 'ManagementServlet/menuOption/manageHaird/getEmployeesAjax',
+        url: 'ManagementServlet/menuOption/manageHairdressing/getEmployeesAjax',
         data: {
             idHairdressing: idHairdressingSelected
         },

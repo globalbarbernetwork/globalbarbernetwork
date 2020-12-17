@@ -50,13 +50,11 @@ public class IndexManager extends Manager implements ManagerInterface {
         try {
                 RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
                 String listHairdressingsJSON = getListHairdressingsToJSON();
-
-                User user = this.getCurrentUser(request);
-                List options = this.buildMenuOptionsByUser(user);
-
-                request.setAttribute("listHairdressingsJSON", listHairdressingsJSON);            
-                request.setAttribute("options", options);
+                        
+            request.setAttribute("listHairdressingsJSON", listHairdressingsJSON);  
+            this.buildMenuOptions(request, response);
                 rd.forward(request, response);
+            
         } catch (ServletException ex) {
             Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -105,32 +103,6 @@ public class IndexManager extends Manager implements ManagerInterface {
         }
 
         return json.toString();
-    }
-
-    private List buildMenuOptionsByUser(User user) {
-
-        List<Map> options = new ArrayList<Map>();
-
-        if (user instanceof Hairdressing) {
-            options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/hairdressing", ""));
-            options.add(addMenuOption("Gestio calendari", "ServletX", ""));
-            options.add(addMenuOption("Gestio ", "/ManagementServlet/menuOption/manageHaird", ""));
-            options.add(addMenuOption("Cerrar sesión", "/ManagementServlet/access/logout", ""));
-        } else if (user instanceof Client) {
-            options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/client", ""));
-            options.add(addMenuOption("Historial de reserves", "ServletX", ""));
-            options.add(addMenuOption("Cerrar sesión", "/ManagementServlet/access/logout", ""));
-        }
-
-        return options;
-    }
-
-    private Map addMenuOption(String label, String url, String params) {
-        Map<String, String> option = new HashMap<>();
-        option.put("label", label);
-        option.put("url", url);
-        option.put("params", params);
-        return option;
-    }
+    }   
 
 }

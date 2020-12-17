@@ -18,7 +18,6 @@ package org.globalbarbernetwork.managers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,9 +47,11 @@ import org.json.JSONObject;
  */
 public class ManageHairdressingManager extends Manager implements ManagerInterface {
 
+    final static String LOAD_EMPLOYEE = "loadEmployee";
     final static String ADD_EMPLOYEE = "addEmployee";
     final static String EDIT_EMPLOYEE = "editEmployee";
     final static String DELETE_EMPLOYEE = "deleteEmployee";
+    final static String CHECK_EMPLOYEE = "checkEmployee";
     final static String GET_EMPLOYEES_AJAX = "getEmployeesAjax";
     final static String SAVE_HOLIDAYS_EMPLOYEE_AJAX = "saveHolidaysEmployeeAjax";
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
@@ -63,18 +64,27 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
             switch (action) {
                 case ADD_EMPLOYEE:
-                    addEmployee(request, activeUser);
-                    sendListEmployees(request, activeUser);
+                    if ("POST".equals(request.getMethod())) {
+                        addEmployee(request, activeUser);
+                    }
                     rd = request.getRequestDispatcher("/manageHairdressing.jsp");
                     break;
                 case EDIT_EMPLOYEE:
-                    editEmployee(request, activeUser);
-                    sendListEmployees(request, activeUser);
+                    if ("POST".equals(request.getMethod())) {
+                        editEmployee(request, activeUser);
+                    }
                     rd = request.getRequestDispatcher("/manageHairdressing.jsp");
                     break;
                 case DELETE_EMPLOYEE:
-                    deleteEmployee(request, activeUser);
-                    sendListEmployees(request, activeUser);
+                    if ("POST".equals(request.getMethod())) {
+                        deleteEmployee(request, activeUser);
+                    }
+                    rd = request.getRequestDispatcher("/manageHairdressing.jsp");
+                    break;
+                case CHECK_EMPLOYEE:
+                    checkIfEmployeeExistsInHairdressing(request, response, activeUser);
+                    break;
+                case LOAD_EMPLOYEE:
                     rd = request.getRequestDispatcher("/manageHairdressing.jsp");
                     break;
                 case GET_EMPLOYEES_AJAX:
@@ -85,21 +95,18 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                     break;
                 case SAVE_HOLIDAYS_EMPLOYEE_AJAX:
                     response.setContentType("text/html;charset=UTF-8");
-                    
+
                     String idHairdressing2 = request.getParameter("idHairdressing");
                     String idEmployee = request.getParameter("idEmployee");
                     String selectedHolidays = request.getParameter("selectedHolidays");
-                    
+
                     saveHolidaysEmployee(idHairdressing2, idEmployee, selectedHolidays);
-                    break;
-                default:
-                    sendListEmployees(request, activeUser);
-                    rd = request.getRequestDispatcher("/manageHairdressing.jsp");
                     break;
             }
 
             if (rd != null) {
-                
+                sendListEmployees(request, activeUser);
+                this.buildMenuOptions(request, response);
                 rd.forward(request, response);
             }
         } catch (ServletException ex) {
@@ -116,43 +123,42 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     }
 
     public void addEmployee(HttpServletRequest request, User activeUser) {
-        //-------------------------------------------------
-        // TODO : Controlar si el dni no es existente en dicha peluqueria
-        //-------------------------------------------------
+
         String name = (String) request.getParameter("name") != null ? request.getParameter("name") : "";
         String surname = (String) request.getParameter("surname") != null ? request.getParameter("surname") : "";
-        String nationalIdentity = (String) request.getParameter("nationalIdentity") != null ? request.getParameter("nationalIdentity") : "";
+        String idNumber = (String) request.getParameter("idNumber") != null ? request.getParameter("idNumber") : "";
         String age = (String) request.getParameter("age") != null ? request.getParameter("age") : "";
         String address = (String) request.getParameter("address") != null ? request.getParameter("address") : "";
         String phoneNumber = (String) request.getParameter("phoneNumber") != null ? request.getParameter("phoneNumber") : "";
 
-        Employee newEmployee = new Employee(name, surname, nationalIdentity, age, address, phoneNumber, activeUser.getUID());
+        Employee newEmployee = new Employee(name, surname, idNumber, age, address, phoneNumber, activeUser.getUID());
         firebaseDAO.insertEmployee(newEmployee);
     }
 
     public void editEmployee(HttpServletRequest request, User activeUser) {
-        //Supongamos que todos los campos han pasado el control 
-        // Controlar : Si el dni no es existente en dicha peluqueria
 
         String name = (String) request.getParameter("name") != null ? request.getParameter("name") : "";
         String surname = (String) request.getParameter("surname") != null ? request.getParameter("surname") : "";
-        String nationalIdentity = (String) request.getParameter("nationalIdentity") != null ? request.getParameter("nationalIdentity") : "";
+        String idNumber = (String) request.getParameter("idNumberEmployeeToEdit") != null ? request.getParameter("idNumberEmployeeToEdit") : "";
         String age = (String) request.getParameter("age") != null ? request.getParameter("age") : "";
         String address = (String) request.getParameter("address") != null ? request.getParameter("address") : "";
         String phoneNumber = (String) request.getParameter("phoneNumber") != null ? request.getParameter("phoneNumber") : "";
 
         if (activeUser != null) {
-            Employee newEmployee = new Employee(name, surname, nationalIdentity, age, address, phoneNumber, activeUser.getUID());
-            firebaseDAO.modifyEmployee(newEmployee);
+            Employee newEmployee = new Employee(name, surname, idNumber, age, address, phoneNumber, activeUser.getUID());
+            firebaseDAO.updateEmployee(newEmployee);
         }
 
     }
 
     public void deleteEmployee(HttpServletRequest request, User activeUser) {
-        String nationalIdentity = (String) request.getParameter("natIdenEmployee") != null ? request.getParameter("natIdenEmployee") : "";
+        //-------------------------------------------------
+        // TODO : En el momento que se elimine la identidad nacional de un empleado, habrá que eliminar todos los registros de todas las tablas dodne se encuentre dicho empleado
+        //-------------------------------------------------
+        String idNumber = (String) request.getParameter("idNumberEmployeeToDelete") != null ? request.getParameter("idNumberEmployeeToDelete") : "";
 
         if (activeUser != null) {
-            firebaseDAO.deleteEmployee(nationalIdentity, activeUser.getUID());
+            firebaseDAO.deleteEmployee(idNumber, activeUser.getUID());
         }
     }
 
@@ -160,12 +166,28 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         if (activeUser != null) {
             request.setAttribute("employees", getListEmployees(activeUser.getUID()));
         }
-        
+
+    }
+
+    public void checkIfEmployeeExistsInHairdressing(HttpServletRequest request, HttpServletResponse response, User activeUser) {
+        String idNumberEmployee = request.getParameter("idNumberEmployee");
+        Employee employee = firebaseDAO.getEmployeeByID(activeUser.getUID(), idNumberEmployee);
+        boolean idNumberExistInHaird = employee != null;
+
+        JSONObject json = null;
+        try ( PrintWriter out = response.getWriter()) {
+            LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
+            jsonOrderedMap.put("idNumberExistInHairdressing", idNumberExistInHaird);
+            json = new JSONObject(jsonOrderedMap);
+            out.print(json);
+        } catch (IOException ex) {
+            Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void getListEmployeesToJSON(HttpServletResponse response, String idHairdressing) throws IOException {
         List<Employee> listEmployees = getListEmployees(idHairdressing);
-        
+
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
         try ( PrintWriter out = response.getWriter()) {
@@ -174,7 +196,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             for (Employee employee : listEmployees) {
                 jsonOrderedMap = new LinkedHashMap<>();
 
-                jsonOrderedMap.put("nationalIdentity", employee.getNationalIdentity());
+                jsonOrderedMap.put("idNumber", employee.getIdNumber());
                 jsonOrderedMap.put("name", employee.getName());
 
                 JSONObject member = new JSONObject(jsonOrderedMap);
@@ -190,13 +212,13 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             out.print(!array.isNull(0) ? json : "");
         }
     }
-    
+
     public void saveHolidaysEmployee(String idHairdressing, String idEmployee, String holidays) throws ParseException {
         Map<String, Object> docData = new HashMap<>();
 
         ArrayList<Date> listHolidays = new ArrayList<>();
-        String[] arrayHolidays = holidays.contains(",") ? holidays.split(",") : new String[0];
-        
+        String[] arrayHolidays = !holidays.split(",")[0].equals("") ? holidays.split(",") : new String[0];
+
         if (arrayHolidays.length > 0) {
             for (String holiday : arrayHolidays) {
                 Date date = new SimpleDateFormat("dd/MM/yyyy").parse(holiday);
@@ -204,7 +226,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             }
         }
         docData.put("holidays", listHolidays);
-        
+
         firebaseDAO.insertHolidaysEmployee(idHairdressing, idEmployee, docData);
     }
 }

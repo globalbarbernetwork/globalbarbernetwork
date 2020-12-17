@@ -76,6 +76,7 @@ public class UserManager extends Manager implements ManagerInterface {
 
         try {
             if (rd != null) {
+                this.buildMenuOptions(request, response);
                 rd.forward(request, response);
             }
         } catch (ServletException ex) {

@@ -54,17 +54,17 @@ public class ScheduleManager implements ManagerInterface {
                 }
 
                 JSONObject json = null;
-                try ( PrintWriter out = response.getWriter()) {
+                try (PrintWriter out = response.getWriter()) {
                     if (timetable != null) {
                         LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
                         for (Map.Entry<String, Object> entry : timetable.entrySet()) {
                             String dayOfWeek = entry.getKey();
                             Map<String, Map<String, String>> rangesHours = (Map<String, Map<String, String>>) entry.getValue();
-                            
+
                             LinkedHashMap<String, Object> jsonOrderedMap2 = new LinkedHashMap<>();
                             jsonOrderedMap2.put("dayOfWeek", getNameOfDayOfWeek(dayOfWeek) + ":");
                             jsonOrderedMap2.put("rangesHours", formatTimetable(rangesHours));
-                            
+
                             jsonOrderedMap.put(dayOfWeek, new JSONObject(jsonOrderedMap2));
                         }
                         json = new JSONObject(jsonOrderedMap);

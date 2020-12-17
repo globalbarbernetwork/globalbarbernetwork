@@ -21,9 +21,10 @@ package org.globalbarbernetwork.entities;
  * @author Grup 3
  */
 public class Employee {
+
     private String name;
     private String surname;
-    private String nationalIdentity;
+    private String idNumber;
     private String age;
     private String address;
     private String phoneNumber;
@@ -32,10 +33,10 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String name, String surname, String nationalIdentity, String age, String address, String phoneNumber, String idHairdressing) {
+    public Employee(String name, String surname, String idNumber, String age, String address, String phoneNumber, String idHairdressing) {
         this.name = name;
         this.surname = surname;
-        this.nationalIdentity = nationalIdentity;
+        this.idNumber = idNumber;
         this.age = age;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -58,12 +59,12 @@ public class Employee {
         this.surname = surname;
     }
 
-    public String getNationalIdentity() {
-        return nationalIdentity;
+    public String getIdNumber() {
+        return idNumber;
     }
 
-    public void setNationalIdentity(String nationalIdentity) {
-        this.nationalIdentity = nationalIdentity;
+    public void setIdNumber(String idNumber) {
+        this.idNumber = idNumber;
     }
 
     public String getAge() {
@@ -98,5 +99,4 @@ public class Employee {
         this.idHairdressing = idHairdressing;
     }
 
-    
 }
