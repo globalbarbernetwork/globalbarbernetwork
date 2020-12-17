@@ -62,7 +62,7 @@ public class ManagementServlet extends HttpServlet {
                 scheduleManager.execute(request, response, action);
             } else if (contextPath.startsWith("/menuOption")) {
                 switch (action) {
-                    case "manageHaird":
+                    case "manageHairdressing":
                         action = tmpAction.length > 3 ? tmpAction[3] : "";
                         ManageHairdressingManager menuOptionManager = new ManageHairdressingManager();
                         menuOptionManager.execute(request, response, action);
