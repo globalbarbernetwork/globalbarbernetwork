@@ -103,26 +103,13 @@ $(document).ready(function () {
         }
     });
     
-    $('#datepicker').datepicker({
-          multidate: true,
-        language: "ca",
-        clearBtn: true,
-        format: "dd/mm/yyyy",
-        autoclose: true,
-        daysOfWeekDisabled: [0, 6],
-        daysOfWeekHighlighted: [0, 6],
-        todayHighlight: true
+    initializeDatepicker();
+    $("#modalHolidaysEmployee").on('hidden.bs.modal', function () {
+        cleanModalGestioVacances();
     });
-
-
-    // FOR DEMO PURPOSE
-    $('#datepicker').on('changeDate', function () {
-        $('#my_hidden_input').val(
-                $('#datepicker').datepicker('getFormattedDate')
-                );
+    $("#saveHolidays").click(function() {
+        saveHolidaysEmployee();
     });
-    
-    
 });
 
 function editEmployee(btnEdit) {
@@ -193,4 +180,72 @@ function checkIfDniNieCorrect(fieldNationalIdent) {
         return possLetters === letter.toUpperCase();
     }
     return false;
+}
+
+function initializeDatepicker() {
+    $('#datepickerHolidays').datepicker({
+        multidate: true,
+        language: "ca",
+        clearBtn: true,
+        format: "dd/mm/yyyy",
+        autoclose: true,
+        //daysOfWeekDisabled: [0, 6],
+        daysOfWeekHighlighted: [0, 6],
+        todayHighlight: true
+    });
+
+
+    // Guardamos las fechas seleccionadas en un hidden input
+    $('#datepickerHolidays').on('changeDate', function () {
+        $('#selectedHolidays').val($('#datepickerHolidays').datepicker('getFormattedDate'));
+    });
+}
+
+function cleanModalGestioVacances() {
+    $("#datepickerHolidays").data('datepicker').setDate(null);
+    $("#idHairdressing").val("");
+    $("#selectedIdEmployee").val("");
+}
+
+function loadInfoModalHolidays(element) {
+    var idHairdressing = $(element).data("idhairdressing");
+    var idEmployee = $(element).data("idemployee");
+    var nameAndSurname = $(element).data("name") + " " + $(element).data("surname");
+    
+    $("#headModalHolidays").html("Gestionar vacances de " + nameAndSurname);
+    $("#idHairdressing").val(idHairdressing);
+    $("#selectedIdEmployee").val(idEmployee);
+}
+
+function saveHolidaysEmployee() {
+    var idHairdressing = $("#idHairdressing").val();
+    var idEmployee = $("#selectedIdEmployee").val();
+    var selectedHolidays = $("#selectedHolidays").val();
+    
+    $.ajax({
+        url: 'manageHaird/saveHolidaysEmployeeAjax',
+        data: {
+            idHairdressing: idHairdressing,
+            idEmployee: idEmployee,
+            selectedHolidays: selectedHolidays
+        },
+        success: function (data) {
+            $("#modalHolidaysEmployee").modal('hide');
+            Swal.fire({
+                icon: 'success',
+                title: 'Grabación correcta',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        },
+        error: function () {
+            console.log("No se ha podido obtener la información");
+            $("#modalHolidaysEmployee").modal('hide');
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Grabación incorrecta, contacta con el administrador por favor!'
+            });
+        }
+    });
 }

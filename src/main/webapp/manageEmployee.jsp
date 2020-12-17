@@ -25,7 +25,7 @@
             <tr>
                 <td class="inline">
                     <button id="btnEdit${contador}" class="btn btn-primary btn-sm" title="Editar dades" data-title="Edit" data-toggle="modal" data-target="#modalEditEmployee" onclick="editEmployee(this)"><span class="fal fa-pencil"></span></button>
-                    <button id="btnHolidays${contador}" class="btn btn-warning btn-sm" title="Gestionar de vacances" data-title="Manage" data-toggle="modal" data-target="#modalManageHolidaysEmployee"><i class="fal fa-calendar-alt"></i></button>
+                    <button id="btnHolidays${contador}" class="btn btn-warning btn-sm" title="Gestionar de vacances" data-idhairdressing="${employee.idHairdressing}" data-idemployee="${employee.nationalIdentity}" data-name="${employee.name}" data-surname="${employee.surname}" data-toggle="modal" data-target="#modalHolidaysEmployee" onclick="loadInfoModalHolidays(this);"><i class="fal fa-calendar-alt"></i></button>
                 </td>
                 <td>${employee.name}</td>
                 <td>${employee.surname}</td>
@@ -105,25 +105,24 @@
 </div>
                     
 
-<div class="modal fade" id="modalManageHolidaysEmployee" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+<div class="modal fade" id="modalHolidaysEmployee" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title custom_align" id="Heading">Gestionar vacances treballador</h4>
+                <h4 class="modal-title custom_align" id="headModalHolidays">Gestionar vacances treballador</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fas fa-times" aria-hidden="true"></span></button>
             </div>
             <div class="modal-body">
                 <div class="datepicker date input-group shadow-sm">
-                    <div id="datepicker" data-date=""></div>
-                    <input type="hidden" id="my_hidden_input">
+                    <div id="datepickerHolidays"></div>
+                    <input type="hidden" id="selectedHolidays"/>
                 </div>
+                <input type="hidden" id="idHairdressing"/>
+                <input type="hidden" id="selectedIdEmployee"/>
             </div>
             <div class="modal-footer">
-                <form method="post" action="${contextPath}/ManagementServlet/menuOption/manageHaird/deleteEmployee">
-                    <input type="hidden" id="natIdenEmployee" name="natIdenEmployee">
-                    <button id="confirmDelete" type="submit" class="btn btn-success"><i class="fas fa-check"></i> Si</button>
-                </form>
-                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fas fa-times"></i> No</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel·lar</button>
+                <button type="button" id="saveHolidays" class="btn btn-primary">Gravar</button>
             </div>
         </div>
     </div>

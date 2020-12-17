@@ -26,3 +26,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #container {
     padding: 1% 5% 5% 5%;
 }
+
+
+ .datepicker { 
+    width: 100% 
+ } 
+
+.datepicker td, .datepicker th {
+    width: 5rem;
+    height: 2.5rem;
+}

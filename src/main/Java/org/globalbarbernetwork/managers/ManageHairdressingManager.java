@@ -17,8 +17,14 @@
 package org.globalbarbernetwork.managers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -32,6 +38,9 @@ import org.globalbarbernetwork.entities.Employee;
 import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -42,49 +51,63 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     final static String ADD_EMPLOYEE = "addEmployee";
     final static String EDIT_EMPLOYEE = "editEmployee";
     final static String DELETE_EMPLOYEE = "deleteEmployee";
+    final static String GET_EMPLOYEES_AJAX = "getEmployeesAjax";
+    final static String SAVE_HOLIDAYS_EMPLOYEE_AJAX = "saveHolidaysEmployeeAjax";
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
-        RequestDispatcher rd = null;
-        User activeUser = (User) request.getSession().getAttribute("user");
-
         try {
-            request.setCharacterEncoding("UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            RequestDispatcher rd = null;
+            User activeUser = (User) request.getSession().getAttribute("user");
 
-        switch (action) {
-            case ADD_EMPLOYEE:
-                addEmployee(request, activeUser);
-                sendListEmployees(request, activeUser);
-                rd = request.getRequestDispatcher("/manageHairdressing.jsp");
-                break;
-            case EDIT_EMPLOYEE:
-                editEmployee(request, activeUser);
-                sendListEmployees(request, activeUser);
-                rd = request.getRequestDispatcher("/manageHairdressing.jsp");
-                break;
-            case DELETE_EMPLOYEE:
-                deleteEmployee(request, activeUser);
-                sendListEmployees(request, activeUser);
-                rd = request.getRequestDispatcher("/manageHairdressing.jsp");
-                break;
-            default:
-                sendListEmployees(request, activeUser);
-                rd = request.getRequestDispatcher("/manageHairdressing.jsp");
-                break;
-        }
+            switch (action) {
+                case ADD_EMPLOYEE:
+                    addEmployee(request, activeUser);
+                    sendListEmployees(request, activeUser);
+                    rd = request.getRequestDispatcher("/manageHairdressing.jsp");
+                    break;
+                case EDIT_EMPLOYEE:
+                    editEmployee(request, activeUser);
+                    sendListEmployees(request, activeUser);
+                    rd = request.getRequestDispatcher("/manageHairdressing.jsp");
+                    break;
+                case DELETE_EMPLOYEE:
+                    deleteEmployee(request, activeUser);
+                    sendListEmployees(request, activeUser);
+                    rd = request.getRequestDispatcher("/manageHairdressing.jsp");
+                    break;
+                case GET_EMPLOYEES_AJAX:
+                    response.setContentType("text/html;charset=UTF-8");
 
-        try {
+                    String idHairdressing = request.getParameter("idHairdressing");
+                    getListEmployeesToJSON(response, idHairdressing);
+                    break;
+                case SAVE_HOLIDAYS_EMPLOYEE_AJAX:
+                    response.setContentType("text/html;charset=UTF-8");
+                    
+                    String idHairdressing2 = request.getParameter("idHairdressing");
+                    String idEmployee = request.getParameter("idEmployee");
+                    String selectedHolidays = request.getParameter("selectedHolidays");
+                    
+                    saveHolidaysEmployee(idHairdressing2, idEmployee, selectedHolidays);
+                    break;
+                default:
+                    sendListEmployees(request, activeUser);
+                    rd = request.getRequestDispatcher("/manageHairdressing.jsp");
+                    break;
+            }
+
             if (rd != null) {
+                
                 rd.forward(request, response);
             }
         } catch (ServletException ex) {
             Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(ManageHairdressingManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -140,4 +163,48 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         
     }
 
+    public void getListEmployeesToJSON(HttpServletResponse response, String idHairdressing) throws IOException {
+        List<Employee> listEmployees = getListEmployees(idHairdressing);
+        
+        JSONObject json = new JSONObject();
+        JSONArray array = new JSONArray();
+        try ( PrintWriter out = response.getWriter()) {
+
+            LinkedHashMap<String, Object> jsonOrderedMap;
+            for (Employee employee : listEmployees) {
+                jsonOrderedMap = new LinkedHashMap<>();
+
+                jsonOrderedMap.put("nationalIdentity", employee.getNationalIdentity());
+                jsonOrderedMap.put("name", employee.getName());
+
+                JSONObject member = new JSONObject(jsonOrderedMap);
+                array.put(member);
+            }
+
+            try {
+                json.put("jsonArray", array);
+            } catch (JSONException ex) {
+                Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            out.print(!array.isNull(0) ? json : "");
+        }
+    }
+    
+    public void saveHolidaysEmployee(String idHairdressing, String idEmployee, String holidays) throws ParseException {
+        Map<String, Object> docData = new HashMap<>();
+
+        ArrayList<Date> listHolidays = new ArrayList<>();
+        String[] arrayHolidays = holidays.contains(",") ? holidays.split(",") : new String[0];
+        
+        if (arrayHolidays.length > 0) {
+            for (String holiday : arrayHolidays) {
+                Date date = new SimpleDateFormat("dd/MM/yyyy").parse(holiday);
+                listHolidays.add(date);
+            }
+        }
+        docData.put("holidays", listHolidays);
+        
+        firebaseDAO.insertHolidaysEmployee(idHairdressing, idEmployee, docData);
+    }
 }

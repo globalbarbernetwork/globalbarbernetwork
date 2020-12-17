@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -280,4 +281,7 @@ public class FirebaseDAO {
         docRef.set(client);
     }
 
+    public void insertHolidaysEmployee(String idHairdressing, String idEmployee, Map<String, Object> holidays) {
+        db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).set(holidays);
+    }
 }
