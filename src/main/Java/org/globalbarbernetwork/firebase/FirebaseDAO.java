@@ -29,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,13 +236,29 @@ public class FirebaseDAO {
 
         return listEmployees;
     }
+    
+    public Employee getEmployeeByID(String idHairdressing, String idNumber) {
+        Employee employee = null;
+        ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(idHairdressing).collection("employees").whereEqualTo("idNumber", idNumber).get();
+        try {
+            for (QueryDocumentSnapshot document : future.get().getDocuments()) {
+                employee = document.toObject(Employee.class);
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
+
+        return employee;
+    }
 
     public void insertEmployee(Employee newEmployee) {
         db.collection("employeesHairdressing").document(newEmployee.getIdHairdressing()).collection("employees").document().set(newEmployee);
     }
 
-    public void deleteEmployee(String nationalIdentity, String idHairdressing) {
-        ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(idHairdressing).collection("employees").whereEqualTo("nationalIdentity", nationalIdentity).get();
+    public void deleteEmployee(String idNumber, String idHairdressing) {
+        ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(idHairdressing).collection("employees").whereEqualTo("idNumber", idNumber).get();
         try {
             for (QueryDocumentSnapshot document : future.get().getDocuments()) {
                 document.getReference().delete();
@@ -253,8 +270,8 @@ public class FirebaseDAO {
         }
     }
 
-    public void modifyEmployee(Employee newEmployee) {
-        ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(newEmployee.getIdHairdressing()).collection("employees").whereEqualTo("nationalIdentity", newEmployee.getNationalIdentity()).get();
+    public void updateEmployee(Employee newEmployee) {
+        ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(newEmployee.getIdHairdressing()).collection("employees").whereEqualTo("idNumber", newEmployee.getIdNumber()).get();
         try {
             for (QueryDocumentSnapshot document : future.get().getDocuments()) {
                 document.getReference().update(
@@ -262,7 +279,7 @@ public class FirebaseDAO {
                         "age", newEmployee.getAge(),
                         "idHairdressing", newEmployee.getIdHairdressing(),
                         "name", newEmployee.getName(),
-                        "nationalIdentity", newEmployee.getNationalIdentity(),
+                        "idNumber", newEmployee.getIdNumber(),
                         "phoneNumber", newEmployee.getPhoneNumber(),
                         "surname", newEmployee.getSurname()
                 );
@@ -280,4 +297,7 @@ public class FirebaseDAO {
         docRef.set(client);
     }
 
+    public void insertHolidaysEmployee(String idHairdressing, String idEmployee, Map<String, Object> holidays) {
+        db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).set(holidays);
+    }
 }

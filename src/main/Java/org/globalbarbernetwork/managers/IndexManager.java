@@ -48,12 +48,12 @@ public class IndexManager extends Manager implements ManagerInterface {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
         try {
-            RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
-            String listHairdressingsJSON = getListHairdressingsToJSON();
+                RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
+                String listHairdressingsJSON = getListHairdressingsToJSON();
                         
             request.setAttribute("listHairdressingsJSON", listHairdressingsJSON);  
             this.buildMenuOptions(request, response);
-            rd.forward(request, response);
+                rd.forward(request, response);
             
         } catch (ServletException ex) {
             Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -94,12 +94,12 @@ public class IndexManager extends Manager implements ManagerInterface {
 
             JSONObject member = new JSONObject(jsonOrderedMap);
             array.put(member);
-
-            try {
-                json.put("jsonArray", array);
-            } catch (JSONException ex) {
-                Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        }
+        
+        try {
+            json.put("jsonArray", array);
+        } catch (JSONException ex) {
+            Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return json.toString();

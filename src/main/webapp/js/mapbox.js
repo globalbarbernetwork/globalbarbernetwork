@@ -50,7 +50,6 @@ function renderMap () {
 }
 
 function loadHairdressings() {
-    console.log($("#listHairdressingsJSON").val());
     var hairdressingsJSON = JSON.parse($("#listHairdressingsJSON").val());
     var hairdressingsJSONArray = hairdressingsJSON.jsonArray;
     var jsonFeatures = [];
@@ -124,6 +123,7 @@ function loadHairdressings() {
                     uidHairdressing: UID
                 },
                 success: function(data) {
+                    var userType = $("#userType").val();
                     var horari = "";
                     var horari2 = "<div class='collapse' id='collapseOtherDays'> <table>";
                     
@@ -168,7 +168,7 @@ function loadHairdressings() {
                     HTMLPopup += "<p>" + description + "</p>";
                     HTMLPopup += "<p><a href=" + urlInstagram + " target='_blank' title='Obre en una nova finestra'>Instagram</a></p>";
                     if(horari !== "") HTMLPopup += "Horari:<br>" + horari + horari2;
-                    HTMLPopup += "<button id='reserva' onclick='loadInfoModalReserve(this);' type='button' class='btn btn-success' data-uid='" + UID + "' data-company='" + companyName + "' data-toggle='modal' data-target='#modalReserve'>Fer una reserva</button>";
+                    if(userType !== "hairdressing") HTMLPopup += "<button id='btnReserve' onclick='loadInfoModalReserve(this);' type='button' class='btn btn-success' data-uid='" + UID + "' data-company='" + companyName + "' data-toggle='modal' data-target='#modalReserve'>Fer una reserva</button>";
 
                     new mapboxgl.Popup({offset: popupOffsets})
                             .setLngLat(coordinates)

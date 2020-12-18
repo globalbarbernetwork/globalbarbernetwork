@@ -20,9 +20,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #dataTable_wrapper {
-    padding: 2% 5% 5% 5%;
+    padding: 0% 5% 5% 5%;
 }
 
 #container {
     padding: 1% 5% 5% 5%;
+}
+
+.centerButton {
+    text-align: center;
+}
+
+.w5 {
+    width: 5%;
+}
+
+.w7 {
+    width: 7%;
+}
+
+.w10 {
+    width: 10%;
+}
+
+.w25 {
+    width: 25%;
+}
+
+.w30 {
+    width: 30%;
+}
+
+
+ .datepicker { 
+    width: 100% 
+ } 
+
+.datepicker td, .datepicker th {
+    width: 5rem;
+    height: 2.5rem;
 }

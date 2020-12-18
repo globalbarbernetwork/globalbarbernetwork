@@ -34,3 +34,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     width: 250px;
     font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
 }
+
+.datepicker td, .datepicker th {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 0.85rem;
+}
+
+.datepicker {
+    margin-bottom: 3rem;
+}
