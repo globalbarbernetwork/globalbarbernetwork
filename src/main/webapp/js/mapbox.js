@@ -14,8 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+var contextPath;
 $(document).ready(function() {
+    contextPath = $("#contextPath").val();
     renderMap();
     loadHairdressings();
 });
@@ -122,6 +123,7 @@ function loadHairdressings() {
                 data: {
                     uidHairdressing: UID
                 },
+                dataType: "json",
                 success: function(data) {
                     var userType = $("#userType").val();
                     var horari = "";
@@ -130,7 +132,7 @@ function loadHairdressings() {
                     var date = new Date();
                     var dayOfWeek = date.getDay() !== 0 ? date.getDay() : 7;
                     if (data !== "") {
-                        var timetableJSON = JSON.parse(data);
+                        var timetableJSON = data;
                         var restartCount = true;
                         var totalDays = 7;
                         for (var i = dayOfWeek; i <= totalDays; i++) {

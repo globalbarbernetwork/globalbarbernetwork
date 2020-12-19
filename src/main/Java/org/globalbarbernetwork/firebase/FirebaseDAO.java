@@ -17,6 +17,7 @@
 package org.globalbarbernetwork.firebase;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -275,11 +276,11 @@ public class FirebaseDAO {
         try {
             for (QueryDocumentSnapshot document : future.get().getDocuments()) {
                 document.getReference().update(
-                        "address", newEmployee.getAddress(),
-                        "age", newEmployee.getAge(),
+                        "contractEndDate", newEmployee.getContractEndDate(),
+                        "contractIniDate", newEmployee.getContractIniDate(),
                         "idHairdressing", newEmployee.getIdHairdressing(),
-                        "name", newEmployee.getName(),
                         "idNumber", newEmployee.getIdNumber(),
+                        "name", newEmployee.getName(),
                         "phoneNumber", newEmployee.getPhoneNumber(),
                         "surname", newEmployee.getSurname()
                 );
@@ -299,5 +300,24 @@ public class FirebaseDAO {
 
     public void insertHolidaysEmployee(String idHairdressing, String idEmployee, Map<String, Object> holidays) {
         db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).set(holidays);
+    }
+    
+    public ArrayList<Timestamp> getHolidaysEmployee(String idHairdressing, String idEmployee) {
+        ArrayList<Timestamp> listHolidays = null;
+        ApiFuture<DocumentSnapshot> future = db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).get();
+        try {
+            Map<String, Object> docData = future.get().getData();
+            listHolidays = (ArrayList<Timestamp>) docData.get("holidays");
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
+
+        return listHolidays;
+    }
+    
+    public void deleteHolidaysEmployee(String idHairdressing, String idEmployee) {
+        db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).delete();
     }
 }
