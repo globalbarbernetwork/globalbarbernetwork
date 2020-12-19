@@ -35,26 +35,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     width: 5%;
 }
 
-.w7 {
-    width: 7%;
-}
-
 .w10 {
     width: 10%;
 }
 
-.w25 {
-    width: 25%;
+.w15 {
+    width: 15%;
 }
 
-.w30 {
-    width: 30%;
+.w20 {
+    width: 20%;
 }
 
-
- .datepicker { 
+.datepicker { 
     width: 100% 
- } 
+} 
 
 .datepicker td, .datepicker th {
     width: 5rem;

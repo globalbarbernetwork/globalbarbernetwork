@@ -82,6 +82,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                     rd = request.getRequestDispatcher("/manageHairdressing.jsp");
                     break;
                 case CHECK_EMPLOYEE:
+                    response.setContentType("application/json");
                     checkIfEmployeeExistsInHairdressing(request, response, activeUser);
                     break;
                 case LOAD_EMPLOYEE:
@@ -127,11 +128,11 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         String name = (String) request.getParameter("name") != null ? request.getParameter("name") : "";
         String surname = (String) request.getParameter("surname") != null ? request.getParameter("surname") : "";
         String idNumber = (String) request.getParameter("idNumber") != null ? request.getParameter("idNumber") : "";
-        String age = (String) request.getParameter("age") != null ? request.getParameter("age") : "";
-        String address = (String) request.getParameter("address") != null ? request.getParameter("address") : "";
+        String contractIni = (String) request.getParameter("contractIniDate") != null ? request.getParameter("contractIniDate") : "";
+        String contractEnd = (String) request.getParameter("contractEndDate") != null ? request.getParameter("contractEndDate") : "";
         String phoneNumber = (String) request.getParameter("phoneNumber") != null ? request.getParameter("phoneNumber") : "";
 
-        Employee newEmployee = new Employee(name, surname, idNumber, age, address, phoneNumber, activeUser.getUID());
+        Employee newEmployee = new Employee(name, surname, idNumber, parseStringToDate(contractIni), parseStringToDate(contractEnd), phoneNumber, activeUser.getUID());
         firebaseDAO.insertEmployee(newEmployee);
     }
 
@@ -140,12 +141,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         String name = (String) request.getParameter("name") != null ? request.getParameter("name") : "";
         String surname = (String) request.getParameter("surname") != null ? request.getParameter("surname") : "";
         String idNumber = (String) request.getParameter("idNumberEmployeeToEdit") != null ? request.getParameter("idNumberEmployeeToEdit") : "";
-        String age = (String) request.getParameter("age") != null ? request.getParameter("age") : "";
-        String address = (String) request.getParameter("address") != null ? request.getParameter("address") : "";
+        String contractIni = (String) request.getParameter("contractIniDate") != null ? request.getParameter("contractIniDate") : "";
+        String contractEnd = (String) request.getParameter("contractEndDate") != null ? request.getParameter("contractEndDate") : "";
         String phoneNumber = (String) request.getParameter("phoneNumber") != null ? request.getParameter("phoneNumber") : "";
 
         if (activeUser != null) {
-            Employee newEmployee = new Employee(name, surname, idNumber, age, address, phoneNumber, activeUser.getUID());
+            Employee newEmployee = new Employee(name, surname, idNumber, parseStringToDate(contractIni), parseStringToDate(contractEnd), phoneNumber, activeUser.getUID());
             firebaseDAO.updateEmployee(newEmployee);
         }
 
@@ -166,7 +167,6 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         if (activeUser != null) {
             request.setAttribute("employees", getListEmployees(activeUser.getUID()));
         }
-
     }
 
     public void checkIfEmployeeExistsInHairdressing(HttpServletRequest request, HttpServletResponse response, User activeUser) {
@@ -175,7 +175,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         boolean idNumberExistInHaird = employee != null;
 
         JSONObject json = null;
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
             jsonOrderedMap.put("idNumberExistInHairdressing", idNumberExistInHaird);
             json = new JSONObject(jsonOrderedMap);
@@ -190,7 +190,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
 
             LinkedHashMap<String, Object> jsonOrderedMap;
             for (Employee employee : listEmployees) {
@@ -228,5 +228,17 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         docData.put("holidays", listHolidays);
 
         firebaseDAO.insertHolidaysEmployee(idHairdressing, idEmployee, docData);
+    }
+
+    public Date parseStringToDate(String dateInFormatString) {
+        Date dateInFormatDate = null;
+        if (!"".equals(dateInFormatString)) {
+            try {
+                dateInFormatDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateInFormatString);
+            } catch (ParseException ex) {
+                Logger.getLogger(ManageHairdressingManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return dateInFormatDate;
     }
 }

@@ -275,11 +275,11 @@ public class FirebaseDAO {
         try {
             for (QueryDocumentSnapshot document : future.get().getDocuments()) {
                 document.getReference().update(
-                        "address", newEmployee.getAddress(),
-                        "age", newEmployee.getAge(),
+                        "contractEndDate", newEmployee.getContractEndDate(),
+                        "contractIniDate", newEmployee.getContractIniDate(),
                         "idHairdressing", newEmployee.getIdHairdressing(),
-                        "name", newEmployee.getName(),
                         "idNumber", newEmployee.getIdNumber(),
+                        "name", newEmployee.getName(),
                         "phoneNumber", newEmployee.getPhoneNumber(),
                         "surname", newEmployee.getSurname()
                 );

@@ -16,6 +16,9 @@
  */
 package org.globalbarbernetwork.entities;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  *
  * @author Grup 3
@@ -25,20 +28,20 @@ public class Employee {
     private String name;
     private String surname;
     private String idNumber;
-    private String age;
-    private String address;
+    private Date contractIniDate;
+    private Date contractEndDate;
     private String phoneNumber;
     private String idHairdressing;
 
     public Employee() {
     }
 
-    public Employee(String name, String surname, String idNumber, String age, String address, String phoneNumber, String idHairdressing) {
+    public Employee(String name, String surname, String idNumber, Date contractIniDate, Date contractEndDate, String phoneNumber, String idHairdressing) {
         this.name = name;
         this.surname = surname;
         this.idNumber = idNumber;
-        this.age = age;
-        this.address = address;
+        this.contractIniDate = contractIniDate;
+        this.contractEndDate = contractEndDate;
         this.phoneNumber = phoneNumber;
         this.idHairdressing = idHairdressing;
     }
@@ -67,20 +70,20 @@ public class Employee {
         this.idNumber = idNumber;
     }
 
-    public String getAge() {
-        return age;
+    public Date getContractIniDate() {
+        return contractIniDate;
     }
 
-    public void setAge(String age) {
-        this.age = age;
+    public void setContractIniDate(Date contractIniDate) {
+        this.contractIniDate = contractIniDate;
     }
 
-    public String getAddress() {
-        return address;
+    public Date getContractEndDate() {
+        return contractEndDate;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setContractEndDate(Date contractEndDate) {
+        this.contractEndDate = contractEndDate;
     }
 
     public String getPhoneNumber() {
@@ -97,6 +100,11 @@ public class Employee {
 
     public void setIdHairdressing(String idHairdressing) {
         this.idHairdressing = idHairdressing;
+    }
+
+    public String dateToString(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(date);
     }
 
 }

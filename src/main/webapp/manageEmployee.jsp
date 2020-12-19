@@ -8,14 +8,14 @@
     <table id="dataTable" class="table table-striped" cellspacing="0" width="100%">
         <thead>
             <tr>
-                <th class="th-sm centerButton w7">
+                <th class="th-sm centerButton w10">
                     <button id="btnAdd" type="button" data-toggle="modal" data-target="#modalEditEmployee" class="btn btn-info btn-rounded btn-sm"><i class="fas fa-user-plus"></i></button>
                 </th>
-                <th class="th-sm w10">Nom</th>
-                <th class="th-sm w25">Cognoms</th>
-                <th class="th-sm w7">DNI</th>
-                <th class="th-sm w5">Edat</th>
-                <th class="th-sm w35">Direcció</th>
+                <th class="th-sm w15">Nom</th>
+                <th class="th-sm w20">Cognoms</th>
+                <th class="th-sm w10">DNI</th>
+                <th class="th-sm w15">Data Inici Contracte</th>
+                <th class="th-sm w15">Data Final Contracte</th>
                 <th class="th-sm w10">Telèfon Mòbil</th>
                 <th class="th-sm w5"></th>
             </tr>
@@ -24,15 +24,15 @@
         <c:set var="contador" value="${0}"/>
         <c:forEach items="${employees}" var="employee">
             <tr>
-                <td class="inline w7 centerButton">
+                <td class="inline w10 centerButton">
                     <button id="btnEdit${contador}" class="btn btn-primary btn-sm" title="Editar dades" data-title="Edit" data-toggle="modal" data-target="#modalEditEmployee" data-name="${employee.name}" data-surname="${employee.surname}" data-idnumber="${employee.idNumber}" onclick="editEmployee(this)"><span class="fal fa-pencil"></span></button>
                     <button id="btnHolidays${contador}" class="btn btn-warning btn-sm" title="Gestionar de vacances" data-idhairdressing="${employee.idHairdressing}" data-idemployee="${employee.idNumber}" data-name="${employee.name}" data-surname="${employee.surname}" data-toggle="modal" data-target="#modalHolidaysEmployee" onclick="loadInfoModalHolidays(this);"><i class="fal fa-calendar-alt"></i></button>
                 </td>
-                <td class="w10">${employee.name}</td>
-                <td class="w25">${employee.surname}</td>
-                <td class="w7">${employee.idNumber}</td>
-                <td class="w5">${employee.age}</td>
-                <td class="w30">${employee.address}</td>
+                <td class="w15">${employee.name}</td>
+                <td class="w20">${employee.surname}</td>
+                <td class="w10">${employee.idNumber}</td>
+                <td class="w15">${employee.dateToString(employee.contractIniDate)}</td>
+                <td class="w15">${employee.dateToString(employee.contractEndDate)}</td>
                 <td class="w10">${employee.phoneNumber}</td>
                 <td class="centerButton w5">
                     <button id="btnDelete${contador}" class="btn btn-danger btn-sm" title="Esborrar treballador" data-title="Delete" data-toggle="modal" data-target="#modalDeleteEmployee" data-name="${employee.name}" data-surname="${employee.surname}" data-idnumber="${employee.idNumber}" onclick="deleteEmployee(this)"><span class="fal fa-trash"></span></button>
@@ -70,12 +70,14 @@
                         <input type="hidden" id="idNumberEmployeeToEdit" name="idNumberEmployeeToEdit">
                     </div>
                     <div class="form-group">
-                        <label for="age">Edat</label>
-                        <input class="form-control" type="text" id="age" name="age" placeholder="Edat" title="Omple aquest camp">
+                        <label for="iniDateContract">Data Inici Contracte</label>
+                        <input class="form-control" type="date" id="contractIniDate" name="contractIniDate" title="Omple aquest camp">
+                        <small id="errorInputIniDate" class="text-danger"></small>
                     </div>
                     <div class="form-group">
-                        <label for="address">Direcció</label>
-                        <input class="form-control" type="text" id="address" name="address" placeholder="Direcció" title="Omple aquest camp">
+                        <label for="endDateContract">Data Final Contracte</label>
+                        <input class="form-control" type="date" id="contractEndDate" name="contractEndDate" title="Omple aquest camp">
+                        <small id="errorInputEndDate" class="text-danger"></small>
                     </div>
                     <div class="form-group">
                         <label for="phoneNumber">Telèfon Mòbil</label>
