@@ -69,13 +69,19 @@
                         <input type="hidden" id="idNumberEmployeeToEdit" name="idNumberEmployeeToEdit">
                     </div>
                     <div class="form-group">
-                        <label for="iniDateContract">Data Inici Contracte</label>
-                        <input class="form-control" type="date" id="contractIniDate" name="contractIniDate" title="Omple aquest camp">
+                        <label for="contractIniDate">Data Inici Contracte</label>
+                        <div class="datepicker date input-group">
+                            <input type="text" placeholder="dd/mm/aaaa" class="form-control" id="contractIniDate" name="contractIniDate" title="Omple aquest camp">
+                            <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-day"></i></span></div>
+                        </div>
                         <small id="errorInputIniDate" class="text-danger"></small>
                     </div>
                     <div class="form-group">
                         <label for="endDateContract">Data Final Contracte</label>
-                        <input class="form-control" type="date" id="contractEndDate" name="contractEndDate" title="Omple aquest camp">
+                        <div class="datepicker date input-group">
+                            <input type="text" placeholder="dd/mm/aaaa" class="form-control" id="contractEndDate" name="contractEndDate" title="Omple aquest camp">
+                            <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-day"></i></span></div>
+                        </div>
                         <small id="errorInputEndDate" class="text-danger"></small>
                     </div>
                     <div class="form-group">

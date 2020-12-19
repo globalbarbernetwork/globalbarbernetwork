@@ -21,7 +21,7 @@ $(document).ready(function () {
     contextPath = $("#contextPath").val();
 
     initializeDataTable();
-
+    initializeDatepickerContract();
     $("#btnConfirmAddEdit").attr('disabled', true);
 
     $("#btnAdd").click(function () {
@@ -32,7 +32,11 @@ $(document).ready(function () {
         cleanModalClose();
     });
 
-    $("#modalEditEmployee").find("input[type=text],input[type=date]").blur(function () {
+    $("#contractIniDate, #contractEndDate").on('change', function () {
+        checkDates($(this));
+    });
+    
+    $("#modalEditEmployee").find("input[type=text]").blur(function () {
         validFieldsEmployee($(this));
     });
 
@@ -49,6 +53,7 @@ $(document).ready(function () {
 function initializeDataTable() {
     $('#dataTable').DataTable({
         "pagingType": "numbers",
+        "responsive": true,
         "order": [],
         "columnDefs": [{orderable: false, targets: [0, 7]}],
         "language": {
@@ -65,14 +70,8 @@ function editEmployee(btnEdit) {
 
     var row = $(btnEdit).parents("tr").children();
     var td = 1;
-    $("#modalEditEmployee").find("input[type=text], input[type=date]").each(function () {
-        if ($(this).attr('name') === "contractIniDate") {
-            $(this).val(changeFormatToInput($(row.get(td)).text()));
-        } else if ($(this).attr('name') === "contractEndDate") {
-            $(this).val(changeFormatToInput($(row.get(td)).text()));
-        } else {
-            $(this).val($(row.get(td)).text());
-        }
+    $("#modalEditEmployee").find("input[type=text]").each(function () {
+        $(this).val($(row.get(td)).text());
         td++;
     });
 
@@ -176,62 +175,43 @@ function cleanModalClose() {
 function validFieldsEmployee(input) {
     var inputValue = input.val();
 
-    if (inputValue === '') {
-        input.addClass('is-invalid');
-    } else {
-        switch (input.attr('name')) {
-            case "name" :
-                if (inputValue.length > 30) {
-                    input.addClass('is-invalid');
-                } else {
-                    input.removeClass('is-invalid');
-                }
-                break;
-            case "surname" :
-                if (inputValue.length > 35) {
-                    input.addClass('is-invalid');
-                } else {
-                    input.removeClass('is-invalid');
-                }
-                break;
-            case "idNumber" :
-                var correctIdNumber = checkIfDniNieCorrect(input);
-                if (!correctIdNumber) {
-                    input.addClass('is-invalid');
-                    input.next().text("");
-                } else {
-                    checkIfIdNumberExists(input);
-                }
-                break;
-            case "contractIniDate" :
-                console.log(inputValue);
-                if (inputValue.length == 0) {
-                    input.next().text("");
-                    input.addClass('is-invalid');
-                } else {
-                    checkDates(input);
-                }
-                break;
-            case "contractEndDate" :
-                if (inputValue.length == 0) {
-                    input.next().text("");
-                    input.addClass('is-invalid');
-                } else {
-                    checkDates(input);
-                }
-                break;
-            case "phoneNumber" :
-                var isCorrectPhone = (inputValue).match(/^\d{9}$/);
-                if (!isCorrectPhone) {
-                    input.addClass('is-invalid');
-                } else {
-                    input.removeClass('is-invalid');
-                }
-                break;
-        }
-        ;
-    }
+    switch (input.attr('name')) {
+        case "name" :
+            if (inputValue === '' || inputValue.length > 30) {
+                input.addClass('is-invalid');
+            } else {
+                input.removeClass('is-invalid');
+            }
+            break;
+        case "surname" :
+            if (inputValue === '' || inputValue.length > 35) {
+                input.addClass('is-invalid');
+            } else {
+                input.removeClass('is-invalid');
+            }
+            break;
+        case "idNumber" :
+            var correctIdNumber = checkIfDniNieCorrect(input);
+            if (inputValue === '' || !correctIdNumber) {
+                input.addClass('is-invalid');
+                input.next().text("");
+            } else {
+                checkIfIdNumberExists(input);
+            }
+            break;
+        case "phoneNumber" :
+            var isCorrectPhone = (inputValue).match(/^\d{9}$/);
+            if (inputValue === '' || !isCorrectPhone) {
+                input.addClass('is-invalid');
+            } else {
+                input.removeClass('is-invalid');
+            }
+            break;
+    };
+    checkIfAllInputsOK();
+}
 
+function checkIfAllInputsOK(){
     allInputsOk = !$("#modalEditEmployee").find("input[type=text]").hasClass("is-invalid");
     $("#modalEditEmployee").find("input[type=text]").each(function () {
         if ($(this).val() === '') {
@@ -246,7 +226,67 @@ function validFieldsEmployee(input) {
     }
 }
 
+function checkDates(input) {
+    var iniBiggerThanEndDate;
+    var contractIniDate = $("#contractIniDate").val();
+    var contractEndDate = $("#contractEndDate").val();
 
+    if (input.val().length == 0) {
+        input.next().text("");
+        input.addClass('is-invalid');
+    } else {
+        if (contractIniDate != "" && contractEndDate != "") {
+            var iniCorrectFormat = contractIniDate.split("/");
+            var ini = new Date(iniCorrectFormat[2], iniCorrectFormat[1]-1, iniCorrectFormat[0]);
+            
+            var endCorrectFormat = contractEndDate.split("/");
+            var end = new Date(endCorrectFormat[2], endCorrectFormat[1]-1, endCorrectFormat[0]);
+            
+            iniBiggerThanEndDate = ini.getTime() >= end.getTime();
+        }
+        var textError = "* La data inici no pot ser igual o major que la data final";
+        if (input.attr('name') == "contractEndDate") {
+            textError = "* La data final no pot ser igual o menor que la data inici";
+        }
+        
+        $("#contractIniDate").removeClass('is-invalid');
+        $("#contractIniDate").parent().next().text("");
+        
+        $("#contractEndDate").removeClass('is-invalid');
+        $("#contractEndDate").parent().next().text("");
+        
+        if (iniBiggerThanEndDate) {
+            input.addClass('is-invalid');
+            input.parent().next().text(textError);
+        } else {
+            input.removeClass('is-invalid');
+            input.parent().next().text("");
+        }
+    }
+    checkIfAllInputsOK();
+}
+
+function initializeDatepickerContract() {
+    $('#contractIniDate').datepicker({
+        language: "ca",
+        clearBtn: true,
+        format: "dd/mm/yyyy",
+        autoclose: true,
+        daysOfWeekHighlighted: [0, 6],
+        todayHighlight: true
+    });
+    
+    $('#contractEndDate').datepicker({
+        language: "ca",
+        clearBtn: true,
+        format: "dd/mm/yyyy",
+        autoclose: true,
+        daysOfWeekHighlighted: [0, 6],
+        todayHighlight: true
+    });  
+}
+
+// Part
 function initializeDatepicker() {
     $('#datepickerHolidays').datepicker({
         multidate: true,
@@ -282,18 +322,17 @@ function loadInfoModalHolidays(element) {
     $("#idHairdressing").val(idHairdressing);
     $("#selectedIdEmployee").val(idEmployee);
 
-    
+
     $.ajax({
-        url:  contextPath + '/ManagementServlet/menuOption/manageHairdressing/getHolidaysEmployeeAjax',
+        url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getHolidaysEmployeeAjax',
         data: {
             idHairdressing: idHairdressing,
             idEmployee: idEmployee
         },
-        dataType:"json",
         success: function (data) {
             console.log(data);
             $("#datepickerHolidays").data('datepicker').setDates(data.jsonArray);
-	    $("#datepickerHolidays").data('datepicker')._setDate(new Date(), 'view');
+            $("#datepickerHolidays").data('datepicker')._setDate(new Date(), 'view');
         },
         error: function () {
             console.log("No se ha podido obtener la información");
@@ -333,33 +372,4 @@ function saveHolidaysEmployee() {
             });
         }
     });
-}
-
-function checkDates(input) {
-    var iniBiggerThanEndDate;
-    var saveContractIniDate = $("#contractIniDate").val();
-    var saveContractEndDate = $("#contractEndDate").val();
-
-    if (saveContractIniDate != "" && saveContractEndDate != "") {
-        var ini = new Date(saveContractIniDate);
-        var end = new Date(saveContractEndDate);
-        iniBiggerThanEndDate = ini.getTime() > end.getTime();
-    }
-    var textError = "* La data inici no pot ser major que la data final";
-    if (input.attr('name') == "contractEndDate") {
-        textError = "* La data final no pot ser menor que la data inici";
-    }
-    console.log(iniBiggerThanEndDate);
-    if (iniBiggerThanEndDate) {
-        input.addClass('is-invalid');
-        input.next().text(textError);
-    } else {
-        input.removeClass('is-invalid');
-        input.next().text("");
-    }
-}
-
-function changeFormatToInput(date) {
-    var dateBadFormat = date.split("/");
-    return dateBadFormat[2] + "-" + dateBadFormat[1] + "-" + dateBadFormat[0];
 }
