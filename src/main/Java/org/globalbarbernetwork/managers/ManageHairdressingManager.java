@@ -16,8 +16,10 @@
  */
 package org.globalbarbernetwork.managers;
 
+import com.google.cloud.Timestamp;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +56,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     final static String CHECK_EMPLOYEE = "checkEmployee";
     final static String GET_EMPLOYEES_AJAX = "getEmployeesAjax";
     final static String SAVE_HOLIDAYS_EMPLOYEE_AJAX = "saveHolidaysEmployeeAjax";
+    final static String GET_HOLIDAYS_EMPLOYEE_AJAX = "getHolidaysEmployeeAjax";
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
 
     @Override
@@ -94,13 +97,19 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                     String idHairdressing = request.getParameter("idHairdressing");
                     getListEmployeesToJSON(response, idHairdressing);
                     break;
+                case GET_HOLIDAYS_EMPLOYEE_AJAX:
+                    response.setContentType("application/json");
+                    
+                    String idHairdressing3 = request.getParameter("idHairdressing");
+                    String idEmployee2 = request.getParameter("idEmployee");
+                    
+                    getHolidaysEmployeeToJSON(response, idHairdressing3, idEmployee2);
+                    break;
                 case SAVE_HOLIDAYS_EMPLOYEE_AJAX:
-                    response.setContentType("text/html;charset=UTF-8");
-
                     String idHairdressing2 = request.getParameter("idHairdressing");
                     String idEmployee = request.getParameter("idEmployee");
                     String selectedHolidays = request.getParameter("selectedHolidays");
-
+                    
                     saveHolidaysEmployee(idHairdressing2, idEmployee, selectedHolidays);
                     break;
             }
@@ -115,6 +124,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         } catch (IOException ex) {
             Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
+            Logger.getLogger(ManageHairdressingManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JSONException ex) {
             Logger.getLogger(ManageHairdressingManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -156,10 +167,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         //-------------------------------------------------
         // TODO : En el momento que se elimine la identidad nacional de un empleado, habrá que eliminar todos los registros de todas las tablas dodne se encuentre dicho empleado
         //-------------------------------------------------
+        String idHairdressing = activeUser.getUID();
         String idNumber = (String) request.getParameter("idNumberEmployeeToDelete") != null ? request.getParameter("idNumberEmployeeToDelete") : "";
-
+        
         if (activeUser != null) {
-            firebaseDAO.deleteEmployee(idNumber, activeUser.getUID());
+            firebaseDAO.deleteEmployee(idNumber, idHairdressing);
+            firebaseDAO.deleteHolidaysEmployee(idHairdressing, idNumber);
         }
     }
 
@@ -229,7 +242,25 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
         firebaseDAO.insertHolidaysEmployee(idHairdressing, idEmployee, docData);
     }
+    
+    public void getHolidaysEmployeeToJSON(HttpServletResponse response, String idHairdressing, String idEmployee) throws IOException, JSONException {
+        List<Timestamp> listHolidays = firebaseDAO.getHolidaysEmployee(idHairdressing, idEmployee);
 
+        JSONObject json = new JSONObject();
+        JSONArray array = new JSONArray();
+        try ( PrintWriter out = response.getWriter()) {
+            for (Timestamp holiday : listHolidays) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                String dateHoliday = sdf.format(holiday.toDate());
+
+                array.put(dateHoliday);
+            }
+            json.put("jsonArray", array);
+            
+            out.print(json);
+        }
+    }
+    
     public Date parseStringToDate(String dateInFormatString) {
         Date dateInFormatDate = null;
         if (!"".equals(dateInFormatString)) {

@@ -14,8 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+var contextPath;
 $(document).ready(function() {
+    contextPath = $("#contextPath").val();
+    
     initializeDatepicker();
     
     $("#modalReserve").on('hidden.bs.modal', function () {
@@ -32,9 +34,9 @@ function loadInfoModalReserve(element) {
         data: {
             idHairdressing: idHairdressingSelected
         },
+        dataType: "json",
         success: function (data) {
-            var hairdressersJSON = JSON.parse(data);
-            var hairdressersJSONArray = hairdressersJSON.jsonArray;
+            var hairdressersJSONArray = data.jsonArray;
             
             for (var i in hairdressersJSONArray) {
                 $("#hairdressers").append(new Option(hairdressersJSONArray[i].name), i);

@@ -35,6 +35,8 @@
             </div>
         </div>
 
+        <input id="contextPath" name="contextPath" type="hidden" value="${contextPath}"/>
+                
         <!-- Footer -->
         <%@include file="/WEB-INF/jspf/footer.jspf"%>
         <!-- Scripts comunes -->

@@ -46,7 +46,8 @@ public class ScheduleManager implements ManagerInterface {
 
         switch (action) {
             case "timetable":
-                response.setContentType("text/html;charset=UTF-8");
+                response.setContentType("application/json");
+                
                 String uid = request.getParameter("uidHairdressing");
                 Map<String, Object> timetable = firebaseDAO.getTimetableHairdressing(uid);
                 if (timetable != null) {

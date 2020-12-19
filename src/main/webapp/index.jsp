@@ -80,6 +80,7 @@
             </div>
         </div>
         
+        <input id="contextPath" name="contextPath" type="hidden" value="${contextPath}"/>
         <input id="listHairdressingsJSON" name="listHairdressingsJSON" type="hidden" value='<%=listHairdressingsJSON%>'/>
         <input id="userType" name="userType" type="hidden" value='${user.type}'/>
         

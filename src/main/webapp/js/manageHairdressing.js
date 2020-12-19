@@ -15,9 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var contextPath = $("#contextPath").val();
+var contextPath;
 
 $(document).ready(function () {
+    contextPath = $("#contextPath").val();
 
     initializeDataTable();
 
@@ -266,7 +267,8 @@ function initializeDatepicker() {
 }
 
 function cleanModalGestioVacances() {
-    $("#datepickerHolidays").data('datepicker').setDate(null);
+    $("#datepickerHolidays").data('datepicker').clearDates();
+    $("#datepickerHolidays").data('datepicker').setViewMode(0);
     $("#idHairdressing").val("");
     $("#selectedIdEmployee").val("");
 }
@@ -279,6 +281,24 @@ function loadInfoModalHolidays(element) {
     $("#headModalHolidays").html("Gestionar vacances de " + nameAndSurname);
     $("#idHairdressing").val(idHairdressing);
     $("#selectedIdEmployee").val(idEmployee);
+
+    
+    $.ajax({
+        url:  contextPath + '/ManagementServlet/menuOption/manageHairdressing/getHolidaysEmployeeAjax',
+        data: {
+            idHairdressing: idHairdressing,
+            idEmployee: idEmployee
+        },
+        dataType:"json",
+        success: function (data) {
+            console.log(data);
+            $("#datepickerHolidays").data('datepicker').setDates(data.jsonArray);
+	    $("#datepickerHolidays").data('datepicker')._setDate(new Date(), 'view');
+        },
+        error: function () {
+            console.log("No se ha podido obtener la información");
+        }
+    });
 }
 
 function saveHolidaysEmployee() {
@@ -287,13 +307,14 @@ function saveHolidaysEmployee() {
     var selectedHolidays = $("#selectedHolidays").val();
 
     $.ajax({
-        url: 'saveHolidaysEmployeeAjax',
+        method: "POST",
+        url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/saveHolidaysEmployeeAjax',
         data: {
             idHairdressing: idHairdressing,
             idEmployee: idEmployee,
             selectedHolidays: selectedHolidays
         },
-        success: function (data) {
+        success: function () {
             $("#modalHolidaysEmployee").modal('hide');
             Swal.fire({
                 icon: 'success',
@@ -303,7 +324,7 @@ function saveHolidaysEmployee() {
             });
         },
         error: function () {
-            console.log("No se ha podido obtener la información");
+            console.log("Error");
             $("#modalHolidaysEmployee").modal('hide');
             Swal.fire({
                 icon: 'error',

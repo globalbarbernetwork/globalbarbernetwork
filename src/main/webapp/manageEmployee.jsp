@@ -42,7 +42,6 @@
         </c:forEach>
         </tbody>
     </table>
-    <input type="hidden" id="contextPath" name="contextPath" value="${contextPath}">
 </div>
 
 
