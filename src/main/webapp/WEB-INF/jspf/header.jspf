@@ -19,7 +19,7 @@
                         <span class="displayName mr-3">${user.displayName}</span>
                         <div class="dropdown">
                             <img class="dropdown-toggle mr-5" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" src="${contextPath}/img/user.svg" width="30" height="30" class="d-inline-block align-top" alt="iconUser">
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <div class="dropdown-menu dropdown-menu-gbn" aria-labelledby="dropdownMenuButton">
                                 <c:forEach items="${options}" var="option">
                                     <a class="dropdown-item" href="${contextPath}${option.url}">${option.label}</a>
                                 </c:forEach>

@@ -47,11 +47,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     width: 20%;
 }
 
-.datepicker { 
-    width: 100% 
-} 
+.datepicker-inline {
+    width: 100%;
+}
 
-.datepicker td, .datepicker th {
+.datepicker-inline td, .datepicker-inline th {
     width: 5rem;
     height: 2.5rem;
 }
