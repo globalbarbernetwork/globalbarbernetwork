@@ -55,3 +55,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     width: 5rem;
     height: 2.5rem;
 }
+
+#dataTable thead {
+    background: #343a40;
+    color: white;
+}

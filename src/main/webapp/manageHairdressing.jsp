@@ -41,6 +41,6 @@
         <%@include file="/WEB-INF/jspf/footer.jspf"%>
         <!-- Scripts comunes -->
         <%@include file="/WEB-INF/jspf/base_body.jspf"%>
-        <script src="${contextPath}/js/manageHairdressing.js"></script>
+        <script src="${contextPath}/js/manageEmployee.js"></script>
     </body>
 </html>

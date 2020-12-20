@@ -265,7 +265,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         Date dateInFormatDate = null;
         if (!"".equals(dateInFormatString)) {
             try {
-                dateInFormatDate = new SimpleDateFormat("yyyy-MM-dd").parse(dateInFormatString);
+                dateInFormatDate = new SimpleDateFormat("dd/MM/yyyy").parse(dateInFormatString);
             } catch (ParseException ex) {
                 Logger.getLogger(ManageHairdressingManager.class.getName()).log(Level.SEVERE, null, ex);
             }
