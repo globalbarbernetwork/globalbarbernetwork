@@ -16,6 +16,13 @@
  */
 package org.globalbarbernetwork.bo;
 
+import com.google.cloud.firestore.DocumentReference;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.UserRecord.UpdateRequest;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
 import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.entities.User;
@@ -66,4 +73,27 @@ public class UserBO {
             }
         }
     }
+
+    public Map<String, Boolean> updateClient(Client client, HttpServletRequest request) {
+        Map<String, Boolean> response = new HashMap<String, Boolean>();
+        String newPassword = request.getParameter("newPassword");        
+        
+        if(!Objects.isNull(newPassword)){
+            firebaseDAO.changePassword(client.getUID(), newPassword);                
+            response.put("password", true);
+            return response;
+        }
+
+        client.setDisplayName(request.getParameter("displayName"));
+        client.setName(request.getParameter("name"));
+        client.setSurname(request.getParameter("surname"));
+        client.setPhoneNumber(request.getParameter("phoneNumber"));
+        
+        request.getSession().setAttribute("user", client);
+
+        firebaseDAO.updateClient(client);
+        response.put("data", true);
+        return response;
+    }
+
 }

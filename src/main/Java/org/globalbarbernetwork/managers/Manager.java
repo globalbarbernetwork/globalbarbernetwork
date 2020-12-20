@@ -16,10 +16,13 @@
  */
 package org.globalbarbernetwork.managers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.entities.Client;
@@ -34,6 +37,16 @@ public class Manager {
 
     public User getCurrentUser(HttpServletRequest request) {
         return (User) request.getSession().getAttribute("user");
+    }
+
+    public void closeSession(HttpServletRequest request, HttpServletResponse response) {
+        request.getSession().removeAttribute("user");
+
+        try {
+            response.sendRedirect(request.getContextPath() + "/ManagementServlet/");
+        } catch (IOException ex) {
+            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void buildMenuOptions(HttpServletRequest request, HttpServletResponse response) {

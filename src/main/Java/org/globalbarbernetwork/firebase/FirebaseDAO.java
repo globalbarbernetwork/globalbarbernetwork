@@ -29,8 +29,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
+import com.google.firebase.auth.UserRecord.UpdateRequest;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -237,7 +237,7 @@ public class FirebaseDAO {
 
         return listEmployees;
     }
-    
+
     public Employee getEmployeeByID(String idHairdressing, String idNumber) {
         Employee employee = null;
         ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(idHairdressing).collection("employees").whereEqualTo("idNumber", idNumber).get();
@@ -294,8 +294,31 @@ public class FirebaseDAO {
     }
 
     public void updateClient(Client client) {
-        DocumentReference docRef = db.collection("clients").document(client.getUID());
-        docRef.set(client);
+
+        try {
+            UpdateRequest request = new UserRecord.UpdateRequest(client.getUID())
+                    .setEmail(client.getEmail())
+                    .setPhoneNumber(client.getPhoneNumber())
+                    .setEmailVerified(true)
+                    .setDisplayName(client.getDisplayName());
+
+            UserRecord userRecord = FirebaseAuth.getInstance().updateUser(request);
+
+            DocumentReference docRef = db.collection("clients").document(client.getUID());
+            docRef.set(client);
+
+        } catch (FirebaseAuthException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void changePassword(String UID, String newPassword) {
+        try {
+            UpdateRequest request = new UserRecord.UpdateRequest(UID).setPassword(newPassword);
+            UserRecord userRecord = FirebaseAuth.getInstance().updateUser(request);
+        } catch (FirebaseAuthException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void insertHolidaysEmployee(String idHairdressing, String idEmployee, Map<String, Object> holidays) {

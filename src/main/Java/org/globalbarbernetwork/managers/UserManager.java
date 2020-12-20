@@ -17,12 +17,16 @@
 package org.globalbarbernetwork.managers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.globalbarbernetwork.bo.UserBO;
 import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
@@ -45,32 +49,37 @@ public class UserManager extends Manager implements ManagerInterface {
             case "client":
 
                 Client client = null;
+                UserBO userBo = new UserBO();
 
                 if (request.getMethod().equals("POST")) {
-
-                    //To do
-                    String email = request.getParameter("email");
 
                     User user = this.getCurrentUser(request);
                     client = firebaseDAO.getClient(user.getUID());
 
-                    client.setDisplayName(request.getParameter("displayName"));
-                    client.setName(request.getParameter("name"));
-                    client.setSurname(request.getParameter("surname"));
-                    client.setPhoneNumber(request.getParameter("phoneNumber"));
+                    Map<String, Boolean> updateResponse = new HashMap<String, Boolean>();
+                    updateResponse = userBo.updateClient(client, request);
 
-                    firebaseDAO.updateClient(client);
+                    Boolean isChangePasswordMethod = updateResponse.get("password");
+                    if (isChangePasswordMethod != null && isChangePasswordMethod == true) {
+                        this.closeSession(request, response);
+                    } else {
+                        rd = request.getRequestDispatcher("/User/editClient.jsp");
+                        client = (Client) this.getCurrentUser(request);
+                        request.setAttribute("client", client);
+                    }
 
                 } else {
+                    rd = request.getRequestDispatcher("/User/editClient.jsp");
                     client = (Client) this.getCurrentUser(request);
+                    request.setAttribute("client", client);
                 }
-
-                request.setAttribute("client", client);
-                rd = request.getRequestDispatcher("/User/editClient.jsp");
 
                 break;
             case "hairdressing":
                 rd = request.getRequestDispatcher("/User/editHairdressing.jsp");
+                break;
+            case "changePassword":
+
                 break;
         }
 
