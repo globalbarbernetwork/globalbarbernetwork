@@ -44,7 +44,7 @@
                                         <label class="custom-control-label" for="chooseHairdresser">Vull escollir al meu perruquer de confiança</label>
                                     </div>
                                     <select id="hairdressers" class="browser-default custom-select" style="display:none;">
-                                        <option value="0" selected>Escull un/a perruquer/a</option>
+                                        <option value="-1" selected>Escull un/a perruquer/a</option>
                                     </select>
                                     <div class="datepicker date input-group shadow-sm">
                                         <input type="text" placeholder="Data de la reserva" class="form-control" id="reservationDate">
@@ -56,6 +56,7 @@
                                             <option value="3">17:30H</option>
                                         </select>
                                     </div>
+                                    <input id="selectedIdHairdressing" name="selectedIdHairdressing" type="hidden"/>
                                 </div>
                             </c:when>
                             <c:otherwise>

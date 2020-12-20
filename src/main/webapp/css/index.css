@@ -44,3 +44,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .datepicker {
     margin-bottom: 3rem;
 }
+
+.disabled-date {
+    color: #F70000 !important;
+    font-weight: bold;
+}

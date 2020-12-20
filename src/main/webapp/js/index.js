@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 var contextPath;
+var hairdressersJSONArray;
+
 $(document).ready(function() {
     contextPath = $("#contextPath").val();
     
@@ -23,10 +25,19 @@ $(document).ready(function() {
     $("#modalReserve").on('hidden.bs.modal', function () {
         cleanModalReserva();
     });
+    
+    $("#hairdressers").change(function() {
+        var positionEmployee = $(this).val();
+        
+        if (positionEmployee !== -1) {
+            disableHolidaysSelectedEmployee(positionEmployee);
+        }
+    });
 });
 
 function loadInfoModalReserve(element) {
     var idHairdressingSelected = $(element).data("uid");
+    $("#selectedIdHairdressing").val(idHairdressingSelected);
     $("#modalReserveLongTitle").text("Realitzar reserva en " + $(element).data("company"));
     
     $.ajax({
@@ -36,10 +47,10 @@ function loadInfoModalReserve(element) {
         },
         dataType: "json",
         success: function (data) {
-            var hairdressersJSONArray = data.jsonArray;
+            hairdressersJSONArray = data.jsonArray;
             
             for (var i in hairdressersJSONArray) {
-                $("#hairdressers").append(new Option(hairdressersJSONArray[i].name), i);
+                $("#hairdressers").append(new Option(hairdressersJSONArray[i].nameSurname, i));
             }
         },
         error: function () {
@@ -51,13 +62,15 @@ function loadInfoModalReserve(element) {
 
 function cleanModalReserva() {
     $("#chooseHairdresser").prop('checked', false);
+    $("#hairdressers").find('option').remove();
+    $("#hairdressers").append(new Option("Escull un/a perruquer/a", -1));
     showOrHideHairdressers(false);
     $("#reservationDate").val("");
     $("#availableHours").val(0);
 }
 
 function initializeDatepicker() {
-    $('.datepicker').datepicker({
+    $('#reservationDate').datepicker({
         language: "ca",
         clearBtn: true,
         format: "dd/mm/yyyy",
@@ -82,4 +95,23 @@ function showOrHideHairdressers(isChecked) {
         $("#hairdressers").hide();
         $("#hairdressers").val(0);
     }
+}
+
+function disableHolidaysSelectedEmployee(positionEmployee) {
+    var idHairdressing = $("#selectedIdHairdressing").val();
+    var idEmployee = hairdressersJSONArray[positionEmployee].idNumber;
+
+    $.ajax({
+        url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getHolidaysEmployeeAjax',
+        data: {
+            idHairdressing: idHairdressing,
+            idEmployee: idEmployee
+        },
+        success: function (data) {
+            $("#reservationDate").data('datepicker').setDatesDisabled(data.jsonArray);
+        },
+        error: function () {
+            console.log("No se ha podido obtener la información");
+        }
+    });
 }
