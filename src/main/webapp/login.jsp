@@ -22,9 +22,9 @@
             <div class="col-md-4 card-login">
                 <div class="card text-center">
                     <div class="card-header">
-                        <h5 class="card-title">Inicia sessio</h5>
+                        <h4 class="card-title">Inicia sessió</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-5" >
                         <form method="post" action="${contextPath}/ManagementServlet/access/login">
                             <div class="form-group">
                                 <input type='email' required class='form-control' name="email" id='email' placeholder='Correu electronic'/>

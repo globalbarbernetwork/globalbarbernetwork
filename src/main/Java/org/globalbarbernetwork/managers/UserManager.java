@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Adrian
+ * Copyright (C) 2020 Grup 3
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
 package org.globalbarbernetwork.managers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -31,14 +30,17 @@ import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
+import static org.globalbarbernetwork.constants.Constants.*;
 
 /**
  *
- * @author Adrian
+ * @author Grup 3
  */
 public class UserManager extends Manager implements ManagerInterface {
 
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
+    private final String CLIENT = "client";
+    private final String HAIRDRESSING = "hairdressing";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
@@ -46,40 +48,37 @@ public class UserManager extends Manager implements ManagerInterface {
         RequestDispatcher rd = null;
 
         switch (action) {
-            case "client":
+            case CLIENT:
 
                 Client client = null;
                 UserBO userBo = new UserBO();
 
-                if (request.getMethod().equals("POST")) {
+                if (request.getMethod().equals(POST)) {
 
                     User user = this.getCurrentUser(request);
                     client = firebaseDAO.getClient(user.getUID());
 
-                    Map<String, Boolean> updateResponse = new HashMap<String, Boolean>();
+                    Map<String, Boolean> updateResponse = new HashMap();
                     updateResponse = userBo.updateClient(client, request);
 
                     Boolean isChangePasswordMethod = updateResponse.get("password");
                     if (isChangePasswordMethod != null && isChangePasswordMethod == true) {
                         this.closeSession(request, response);
                     } else {
-                        rd = request.getRequestDispatcher("/User/editClient.jsp");
+                        rd = request.getRequestDispatcher("/" + EDIT_CLIENT_JSP);
                         client = (Client) this.getCurrentUser(request);
                         request.setAttribute("client", client);
                     }
 
                 } else {
-                    rd = request.getRequestDispatcher("/User/editClient.jsp");
+                    rd = request.getRequestDispatcher("/" + EDIT_CLIENT_JSP);
                     client = (Client) this.getCurrentUser(request);
                     request.setAttribute("client", client);
                 }
 
                 break;
-            case "hairdressing":
-                rd = request.getRequestDispatcher("/User/editHairdressing.jsp");
-                break;
-            case "changePassword":
-
+            case HAIRDRESSING:
+                rd = request.getRequestDispatcher("/" + EDIT_HAIRDRESSING_JSP);
                 break;
         }
 

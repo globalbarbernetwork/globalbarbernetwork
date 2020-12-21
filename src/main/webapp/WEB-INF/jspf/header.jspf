@@ -28,7 +28,7 @@
                     </c:when>
                     <c:otherwise>
                         <a href="${contextPath}/login.jsp">
-                            <button class="btn btn-sm btn-outline-secondary" type="button">Iniciar sessión</button>
+                            <button class="btn btn-sm btn-outline-secondary" type="button">Iniciar sessió</button>
                         </a>
                         <a href="${contextPath}/register.jsp">
                             <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se</button>

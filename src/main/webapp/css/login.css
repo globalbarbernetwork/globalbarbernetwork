@@ -5,11 +5,23 @@
     padding: 10px;
 } 
 
+.card{
+    border-top: none;
+    border-radius: 7px 7px 7px 7px !important;
+}
+
 .card-header {
     background-color: #343A40;
     color: white;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    border-top-left-radius: 7px !important;
+    border-top-right-radius: 7px !important;
 }
 
 .card-footer {
     background-color: #343A40;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    height: 50px;
+    border-bottom-left-radius: 7px !important;
+    border-bottom-right-radius: 7px !important;
 }
