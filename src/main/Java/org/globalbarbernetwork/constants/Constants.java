@@ -26,6 +26,7 @@ public class Constants {
     public static final String LOGIN_JSP = "login.jsp";
     public static final String REGISTER_JSP = "register.jsp";
     public static final String REGISTER_HAIRDRESSING_JSP = "registerHairdressing.jsp";
+    public static final String MANAGE_HAIRDRESSING_JSP = "manageHairdressing.jsp";
 
     // Email Verified
     public static String BODY_MAIL_VERIFICATION = "Hola, %DISPLAY_NAME%,\n"

@@ -20,7 +20,7 @@ var contextPath;
 $(document).ready(function () {
     contextPath = $("#contextPath").val();
 
-    initializeDataTable();
+    //initializeDataTable();
     initializeDatepickerContract();
     $("#btnConfirmAddEdit").attr('disabled', true);
 
@@ -141,7 +141,7 @@ function checkIfDniNieCorrect(fieldIdNumber) {
 function checkIfIdNumberExists(inputIdNumber) {
     var idNumber = inputIdNumber.val();
     $.ajax({
-        url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/checkEmployee',
+        url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/checkEmployeeAjax',
         data: {
             idNumberEmployee: idNumber
         },
@@ -330,7 +330,6 @@ function loadInfoModalHolidays(element) {
             idEmployee: idEmployee
         },
         success: function (data) {
-            console.log(data);
             $("#datepickerHolidays").data('datepicker').setDates(data.jsonArray);
             $("#datepickerHolidays").data('datepicker')._setDate(new Date(), 'view');
         },

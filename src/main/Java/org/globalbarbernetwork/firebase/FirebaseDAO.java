@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.Employee;
 import org.globalbarbernetwork.entities.Hairdressing;
+import org.globalbarbernetwork.entities.Service;
 import org.globalbarbernetwork.entities.User;
 
 /**
@@ -238,7 +239,7 @@ public class FirebaseDAO {
         return listEmployees;
     }
 
-    public Employee getEmployeeByID(String idHairdressing, String idNumber) {
+    public Employee getEmployeeByIDNumber(String idHairdressing, String idNumber) {
         Employee employee = null;
         ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(idHairdressing).collection("employees").whereEqualTo("idNumber", idNumber).get();
         try {
@@ -324,7 +325,7 @@ public class FirebaseDAO {
     public void insertHolidaysEmployee(String idHairdressing, String idEmployee, Map<String, Object> holidays) {
         db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).set(holidays);
     }
-    
+
     public ArrayList<Timestamp> getHolidaysEmployee(String idHairdressing, String idEmployee) {
         ArrayList<Timestamp> listHolidays = null;
         ApiFuture<DocumentSnapshot> future = db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).get();
@@ -339,8 +340,59 @@ public class FirebaseDAO {
 
         return listHolidays;
     }
-    
+
     public void deleteHolidaysEmployee(String idHairdressing, String idEmployee) {
         db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).delete();
+    }
+
+    public List<Service> getAllServicesByHairdressing(String idHairdressing) {
+        List<Service> listServices = new ArrayList<>();
+        ApiFuture<QuerySnapshot> services = db.collection("servicesHairdressing").document(idHairdressing).collection("services").get();
+        try {
+            for (QueryDocumentSnapshot document : services.get().getDocuments()) {
+                listServices.add(document.toObject(Service.class));
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
+
+        return listServices;
+    }
+
+    public void insertService(User activeUser, Service service) {
+        db.collection("servicesHairdressing").document(activeUser.getUID()).collection("services").document().set(service);
+    }
+
+    public void updateService(User activeUser, Service service) {
+        ApiFuture<QuerySnapshot> future = db.collection("servicesHairdressing").document(activeUser.getUID()).collection("services").whereEqualTo("id", service.getId()).get();
+        try {
+            for (QueryDocumentSnapshot document : future.get().getDocuments()) {
+                document.getReference().update(
+                        "id", service.getId(),
+                        "name", service.getName(),
+                        "duration", service.getDuration()
+                );
+            }
+
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void deleteService(User activeUser, Integer idService) {
+        ApiFuture<QuerySnapshot> future = db.collection("servicesHairdressing").document(activeUser.getUID()).collection("services").whereEqualTo("id", idService).get();
+        try {
+            for (QueryDocumentSnapshot document : future.get().getDocuments()) {
+                document.getReference().delete();
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
     }
 }

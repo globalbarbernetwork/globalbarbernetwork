@@ -19,7 +19,6 @@ package org.globalbarbernetwork.managers;
 import com.google.cloud.Timestamp;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,11 +30,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static org.globalbarbernetwork.constants.Constants.*;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.entities.Employee;
+import org.globalbarbernetwork.entities.Service;
 import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
@@ -49,15 +50,21 @@ import org.json.JSONObject;
  */
 public class ManageHairdressingManager extends Manager implements ManagerInterface {
 
-    final static String LOAD_EMPLOYEE = "loadEmployee";
+    private final FirebaseDAO firebaseDAO = new FirebaseDAO();
+    
+    final static String LOAD_LISTS_TO_MANAGE = "loadListsToManage";
+
     final static String ADD_EMPLOYEE = "addEmployee";
     final static String EDIT_EMPLOYEE = "editEmployee";
     final static String DELETE_EMPLOYEE = "deleteEmployee";
-    final static String CHECK_EMPLOYEE = "checkEmployee";
+    final static String CHECK_EMPLOYEE_AJAX = "checkEmployeeAjax";
     final static String GET_EMPLOYEES_AJAX = "getEmployeesAjax";
     final static String SAVE_HOLIDAYS_EMPLOYEE_AJAX = "saveHolidaysEmployeeAjax";
     final static String GET_HOLIDAYS_EMPLOYEE_AJAX = "getHolidaysEmployeeAjax";
-    private final FirebaseDAO firebaseDAO = new FirebaseDAO();
+
+    final static String ADD_SERVICE = "addService";
+    final static String EDIT_SERVICE = "editService";
+    final static String DELETE_SERVICE = "deleteService";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
@@ -66,30 +73,30 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             User activeUser = (User) request.getSession().getAttribute("user");
 
             switch (action) {
+                case LOAD_LISTS_TO_MANAGE:
+                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
+                    break;
                 case ADD_EMPLOYEE:
                     if ("POST".equals(request.getMethod())) {
                         addEmployee(request, activeUser);
                     }
-                    rd = request.getRequestDispatcher("/manageHairdressing.jsp");
+                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
                     break;
                 case EDIT_EMPLOYEE:
                     if ("POST".equals(request.getMethod())) {
                         editEmployee(request, activeUser);
                     }
-                    rd = request.getRequestDispatcher("/manageHairdressing.jsp");
+                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
                     break;
                 case DELETE_EMPLOYEE:
                     if ("POST".equals(request.getMethod())) {
                         deleteEmployee(request, activeUser);
                     }
-                    rd = request.getRequestDispatcher("/manageHairdressing.jsp");
+                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
                     break;
-                case CHECK_EMPLOYEE:
+                case CHECK_EMPLOYEE_AJAX:
                     response.setContentType("application/json");
                     checkIfEmployeeExistsInHairdressing(request, response, activeUser);
-                    break;
-                case LOAD_EMPLOYEE:
-                    rd = request.getRequestDispatcher("/manageHairdressing.jsp");
                     break;
                 case GET_EMPLOYEES_AJAX:
                     response.setContentType("text/html;charset=UTF-8");
@@ -99,22 +106,47 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                     break;
                 case GET_HOLIDAYS_EMPLOYEE_AJAX:
                     response.setContentType("application/json");
-                    
+
                     String idHairdressing3 = request.getParameter("idHairdressing");
                     String idEmployee2 = request.getParameter("idEmployee");
-                    
+
                     getHolidaysEmployeeToJSON(response, idHairdressing3, idEmployee2);
                     break;
                 case SAVE_HOLIDAYS_EMPLOYEE_AJAX:
                     String idHairdressing2 = request.getParameter("idHairdressing");
                     String idEmployee = request.getParameter("idEmployee");
                     String selectedHolidays = request.getParameter("selectedHolidays");
-                    
+
                     saveHolidaysEmployee(idHairdressing2, idEmployee, selectedHolidays);
+                    break;
+                case ADD_SERVICE:
+                    if ("POST".equals(request.getMethod())) {
+                        addService(request, activeUser);
+                    }
+                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
+                    break;
+                case EDIT_SERVICE:
+                    if ("POST".equals(request.getMethod())) {
+                        editService(request, activeUser);
+                    }
+                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
+                    break;
+                case DELETE_SERVICE:
+                    if ("POST".equals(request.getMethod())) {
+                        deleteService(request, activeUser);
+                    }
+                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
                     break;
             }
 
+            if (action.toLowerCase().contains("employee")) {
+                request.setAttribute("selectedTab", false);
+            } else {
+                request.setAttribute("selectedTab", true);
+            }
+
             if (rd != null) {
+                sendListServices(request, activeUser);
                 sendListEmployees(request, activeUser);
                 this.buildMenuOptions(request, response);
                 rd.forward(request, response);
@@ -135,7 +167,6 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     }
 
     public void addEmployee(HttpServletRequest request, User activeUser) {
-
         String name = (String) request.getParameter("name") != null ? request.getParameter("name") : "";
         String surname = (String) request.getParameter("surname") != null ? request.getParameter("surname") : "";
         String idNumber = (String) request.getParameter("idNumber") != null ? request.getParameter("idNumber") : "";
@@ -143,8 +174,11 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         String contractEnd = (String) request.getParameter("contractEndDate") != null ? request.getParameter("contractEndDate") : "";
         String phoneNumber = (String) request.getParameter("phoneNumber") != null ? request.getParameter("phoneNumber") : "";
 
-        Employee newEmployee = new Employee(name, surname, idNumber, parseStringToDate(contractIni), parseStringToDate(contractEnd), phoneNumber, activeUser.getUID());
-        firebaseDAO.insertEmployee(newEmployee);
+        Employee employee = firebaseDAO.getEmployeeByIDNumber(activeUser.getUID(), idNumber);
+        if (activeUser != null && employee == null) {
+            Employee newEmployee = new Employee(name, surname, idNumber, parseStringToDate(contractIni), parseStringToDate(contractEnd), phoneNumber, activeUser.getUID());
+            firebaseDAO.insertEmployee(newEmployee);
+        }
     }
 
     public void editEmployee(HttpServletRequest request, User activeUser) {
@@ -169,7 +203,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         //-------------------------------------------------
         String idHairdressing = activeUser.getUID();
         String idNumber = (String) request.getParameter("idNumberEmployeeToDelete") != null ? request.getParameter("idNumberEmployeeToDelete") : "";
-        
+
         if (activeUser != null) {
             firebaseDAO.deleteEmployee(idNumber, idHairdressing);
             firebaseDAO.deleteHolidaysEmployee(idHairdressing, idNumber);
@@ -184,7 +218,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
     public void checkIfEmployeeExistsInHairdressing(HttpServletRequest request, HttpServletResponse response, User activeUser) {
         String idNumberEmployee = request.getParameter("idNumberEmployee");
-        Employee employee = firebaseDAO.getEmployeeByID(activeUser.getUID(), idNumberEmployee);
+        Employee employee = firebaseDAO.getEmployeeByIDNumber(activeUser.getUID(), idNumberEmployee);
         boolean idNumberExistInHaird = employee != null;
 
         JSONObject json = null;
@@ -242,13 +276,13 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
         firebaseDAO.insertHolidaysEmployee(idHairdressing, idEmployee, docData);
     }
-    
+
     public void getHolidaysEmployeeToJSON(HttpServletResponse response, String idHairdressing, String idEmployee) throws IOException, JSONException {
         List<Timestamp> listHolidays = firebaseDAO.getHolidaysEmployee(idHairdressing, idEmployee);
 
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             for (Timestamp holiday : listHolidays) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String dateHoliday = sdf.format(holiday.toDate());
@@ -256,11 +290,11 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                 array.put(dateHoliday);
             }
             json.put("jsonArray", array);
-            
+
             out.print(json);
         }
     }
-    
+
     public Date parseStringToDate(String dateInFormatString) {
         Date dateInFormatDate = null;
         if (!"".equals(dateInFormatString)) {
@@ -271,5 +305,56 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             }
         }
         return dateInFormatDate;
+    }
+
+    public void sendListServices(HttpServletRequest request, User activeUser) {
+        if (activeUser != null) {
+            request.setAttribute("services", getListServices(activeUser.getUID()));
+        }
+    }
+
+    public List<Service> getListServices(String idHairdressing) {
+        return firebaseDAO.getAllServicesByHairdressing(idHairdressing);
+    }
+
+    public void addService(HttpServletRequest request, User activeUser) {
+        String name = (String) request.getParameter("nameService") != null ? request.getParameter("nameService") : "";
+        String durationService = (String) request.getParameter("durationService") != null ? request.getParameter("durationService") : "";
+
+        int autoIncrementalID = 1;
+
+        List<Service> services = getListServices(activeUser.getUID());
+        if (services.size() > 0) {
+            Service tmpService = services.get(services.size() - 1);
+            autoIncrementalID = tmpService.getId() + 1;
+        }
+
+        Service service = new Service(autoIncrementalID, name, convertDurationToMin(durationService));
+        firebaseDAO.insertService(activeUser, service);
+    }
+
+    public void editService(HttpServletRequest request, User activeUser) {
+        String id = (String) request.getParameter("idServiceToUpdate") != null ? request.getParameter("idServiceToUpdate") : "";
+        String name = (String) request.getParameter("nameService") != null ? request.getParameter("nameService") : "";
+        String durationService = (String) request.getParameter("durationService") != null ? request.getParameter("durationService") : "";
+
+        if (activeUser != null) {
+            Service service = new Service(Integer.valueOf(id), name, convertDurationToMin(durationService));
+            firebaseDAO.updateService(activeUser, service);
+        }
+
+    }
+
+    public void deleteService(HttpServletRequest request, User activeUser) {
+        String id = (String) request.getParameter("idServiceToDelete") != null ? request.getParameter("idServiceToDelete") : "";
+
+        if (activeUser != null) {
+            firebaseDAO.deleteService(activeUser, Integer.valueOf(id));
+        }
+    }
+
+    public int convertDurationToMin(String duration) {
+        String[] tmpDuration = duration.split(":");
+        return Integer.parseInt(tmpDuration[0]) * 60 + Integer.parseInt(tmpDuration[1]);
     }
 }

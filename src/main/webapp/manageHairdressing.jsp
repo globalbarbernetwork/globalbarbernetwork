@@ -5,42 +5,48 @@
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:useBean id="employees" scope="request" class="java.util.List<org.globalbarbernetwork.entities.Employee>"/>
+<jsp:useBean id="services" scope="request" class="java.util.List<org.globalbarbernetwork.entities.Service>"/>
+<jsp:useBean id="selectedTab" scope="request" class="java.lang.Boolean"/>
+
 <!DOCTYPE html>
 <html>
     <head>
         <!-- Scripts comunes -->
         <%@include file="/WEB-INF/jspf/base_head.jspf"%>
-        <link rel="stylesheet" href="${contextPath}/css/manageHairdressing.css">
+        <link rel="stylesheet" href="${contextPath}/css/manageHairdressing.css">        
     </head>
     <body>
         <!-- Header -->
         <%@include file="/WEB-INF/jspf/header.jspf"%>
 
         <div id="container">
-            <ul class="nav nav-tabs nav-justified md-tabs indigo" id="myTab" role="tablist">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="employee-tab" data-toggle="tab" href="#employee" role="tab" aria-controls="employee" aria-selected="true">Treballadors</a>
+                    <a class="nav-link <%= selectedTab ? "active" : "" %>" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${selectedTab}">Serveis</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="service-tab" data-toggle="tab" href="#service" role="tab" aria-controls="service" aria-selected="false">Serveis</a>
+                    <a class="nav-link <%= !selectedTab ? "active" : "" %>" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${!selectedTab}">Treballadors</a>
                 </li>
             </ul>
-            <div class="tab-content card pt-5" id="myTabContentJust">
-                <div class="tab-pane fade show active" id="employee" role="tabpanel" aria-labelledby="employee-tab-just">
-                    <%@include file="/manageEmployee.jsp"%>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade <%= selectedTab ? "show active" : "" %>" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <%@include file="/manageService.jsp"%>
                 </div>
-                <div class="tab-pane fade" id="service" role="tabpanel" aria-labelledby="service-tab-just">
-
+                <div class="tab-pane fade <%= !selectedTab ? "show active" : "" %>" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <%@include file="/manageEmployee.jsp"%>
                 </div>
             </div>
         </div>
 
         <input id="contextPath" name="contextPath" type="hidden" value="${contextPath}"/>
-                
+
         <!-- Footer -->
         <%@include file="/WEB-INF/jspf/footer.jspf"%>
         <!-- Scripts comunes -->
         <%@include file="/WEB-INF/jspf/base_body.jspf"%>
+
+        <script src="${contextPath}/js/initializeDatatables.js"></script>
         <script src="${contextPath}/js/manageEmployee.js"></script>
+        <script src="${contextPath}/js/manageService.js"></script>
     </body>
 </html>

@@ -63,13 +63,13 @@ public class Manager {
 
         if (user instanceof Hairdressing) {
             options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/hairdressing", ""));
-            options.add(addMenuOption("Gestio calendari", "ServletX", ""));
-            options.add(addMenuOption("Gestio ", "/ManagementServlet/menuOption/manageHairdressing/loadEmployee", ""));
-            options.add(addMenuOption("Cerrar sesión", "/ManagementServlet/access/logout", ""));
+            options.add(addMenuOption("Gestió calendari", "ServletX", ""));
+            options.add(addMenuOption("Gestió", "/ManagementServlet/menuOption/manageHairdressing/loadListsToManage", ""));
+            options.add(addMenuOption("Tancar sessió", "/ManagementServlet/access/logout", ""));
         } else if (user instanceof Client) {
             options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/client", ""));
             options.add(addMenuOption("Historial de reserves", "ServletX", ""));
-            options.add(addMenuOption("Cerrar sesión", "/ManagementServlet/access/logout", ""));
+            options.add(addMenuOption("Tancar sessió", "/ManagementServlet/access/logout", ""));
         }
 
         return options;

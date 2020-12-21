@@ -20,7 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #dataTable_wrapper {
-    padding: 0% 5% 5% 5%;
+    padding: 3% 5% 5% 5%;
+}
+
+#dataTableServices_wrapper {
+    padding: 3% 5% 5% 5%;
 }
 
 #container {
@@ -47,6 +51,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     width: 20%;
 }
 
+.w30 {
+    width: 30%;
+}
+
+.w40 {
+    width: 40%;
+}
+
 .datepicker-inline {
     width: 100%;
 }
@@ -56,7 +68,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     height: 2.5rem;
 }
 
-#dataTable thead {
+.customDataTable thead {
     background: #343a40;
     color: white;
+}
+
+.ui-timepicker-container {
+    z-index: 3500 !important;
+}
+
+.ui-timepicker-standard {
+    font-size : 1em;
+}
+
+.nav-link.active {
+    color : #527BFF !important;
+}
+
+a {
+    color: #212529;
+}
+
+.form-control[readonly] {
+    background-color: #fff;
 }
