@@ -70,7 +70,7 @@ public class ScheduleManager implements ManagerInterface {
                         }
                         json = new JSONObject(jsonOrderedMap);
                     }
-                    out.print(json != null ? json : "");
+                    out.print(json);
                 } catch (IOException ex) {
                     Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
                 }

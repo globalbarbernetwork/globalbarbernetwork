@@ -119,7 +119,7 @@ function loadHairdressings() {
             
             // Llamada ajax para obtener horarios de apertura de la peluqueria
             $.ajax({
-                url: 'ManagementServlet/schedule/timetable',
+                url: contextPath + '/ManagementServlet/schedule/timetable',
                 data: {
                     uidHairdressing: UID
                 },
@@ -131,7 +131,7 @@ function loadHairdressings() {
                     
                     var date = new Date();
                     var dayOfWeek = date.getDay() !== 0 ? date.getDay() : 7;
-                    if (data !== "") {
+                    if (data !== null) {
                         var timetableJSON = data;
                         var restartCount = true;
                         var totalDays = 7;

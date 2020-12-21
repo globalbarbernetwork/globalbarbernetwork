@@ -5,7 +5,7 @@
 --%>
 
 <div id="table-responsive">
-    <table id="dataTable" class="table table-striped" cellspacing="0" width="100%">
+    <table id="dataTable" class="table table-striped customDataTable" cellspacing="0" width="100%">
         <thead>
             <tr>
                 <th class="th-sm centerButton w10">
@@ -35,7 +35,7 @@
                 <td class="w15">${employee.dateToString(employee.contractEndDate)}</td>
                 <td class="w10">${employee.phoneNumber}</td>
                 <td class="centerButton w5">
-                    <button id="btnDelete${contador}" class="btn btn-danger btn-sm" title="Esborrar treballador" data-title="Delete" data-toggle="modal" data-target="#modalDeleteEmployee" data-name="${employee.name}" data-surname="${employee.surname}" data-idnumber="${employee.idNumber}" onclick="deleteEmployee(this)"><span class="fal fa-trash"></span></button>
+                    <button id="btnDelete${contador}" class="btn btn-danger btn-sm" title="Eliminar treballador" data-title="Delete" data-toggle="modal" data-target="#modalDeleteEmployee" data-name="${employee.name}" data-surname="${employee.surname}" data-idnumber="${employee.idNumber}" onclick="deleteEmployee(this)"><span class="fal fa-trash"></span></button>
                 </td>
             <c:set var="contador" value="${contador + 1}" />
             </tr>
