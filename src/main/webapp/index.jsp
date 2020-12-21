@@ -46,6 +46,9 @@
                                     <select id="hairdressers" class="browser-default custom-select" style="display:none;">
                                         <option value="-1" selected>Escull un/a perruquer/a</option>
                                     </select>
+                                    <select id="services" class="browser-default custom-select">
+                                        <option value="-1" selected>Escull un servei</option>
+                                    </select>
                                     <div class="datepicker date input-group shadow-sm">
                                         <input type="text" placeholder="Data de la reserva" class="form-control" id="reservationDate">
                                         <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-day"></i></span></div>

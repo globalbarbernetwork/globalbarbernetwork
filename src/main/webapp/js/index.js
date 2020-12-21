@@ -29,8 +29,10 @@ $(document).ready(function() {
     $("#hairdressers").change(function() {
         var positionEmployee = $(this).val();
         
-        if (positionEmployee !== -1) {
+        if (positionEmployee != -1) {
             disableHolidaysSelectedEmployee(positionEmployee);
+        } else {
+            $("#reservationDate").data('datepicker').setDatesDisabled([]);
         }
     });
 });
@@ -41,7 +43,7 @@ function loadInfoModalReserve(element) {
     $("#modalReserveLongTitle").text("Realitzar reserva en " + $(element).data("company"));
     
     $.ajax({
-        url: 'ManagementServlet/menuOption/manageHairdressing/getEmployeesAjax',
+        url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getEmployeesAjax',
         data: {
             idHairdressing: idHairdressingSelected
         },
