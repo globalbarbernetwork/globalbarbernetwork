@@ -50,22 +50,24 @@ import org.json.JSONObject;
  */
 public class ManageHairdressingManager extends Manager implements ManagerInterface {
 
-    private final FirebaseDAO firebaseDAO = new FirebaseDAO();
-    
     final static String LOAD_LISTS_TO_MANAGE = "loadListsToManage";
 
     final static String ADD_EMPLOYEE = "addEmployee";
     final static String EDIT_EMPLOYEE = "editEmployee";
     final static String DELETE_EMPLOYEE = "deleteEmployee";
     final static String CHECK_EMPLOYEE_AJAX = "checkEmployeeAjax";
+    
     final static String GET_EMPLOYEES_AJAX = "getEmployeesAjax";
-    final static String SAVE_HOLIDAYS_EMPLOYEE_AJAX = "saveHolidaysEmployeeAjax";
     final static String GET_HOLIDAYS_EMPLOYEE_AJAX = "getHolidaysEmployeeAjax";
-
+    final static String SAVE_HOLIDAYS_EMPLOYEE_AJAX = "saveHolidaysEmployeeAjax";
+    
     final static String ADD_SERVICE = "addService";
     final static String EDIT_SERVICE = "editService";
     final static String DELETE_SERVICE = "deleteService";
+    final static String GET_SERVICES_AJAX = "getServicesAjax";
 
+    private final FirebaseDAO firebaseDAO = new FirebaseDAO();
+    
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
         try {
@@ -136,6 +138,13 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                         deleteService(request, activeUser);
                     }
                     rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
+                    break;
+                case GET_SERVICES_AJAX:
+                    response.setContentType("application/json");
+                    
+                    String idHairdressing4 = request.getParameter("idHairdressing");
+                    
+                    getServicesHairdressingToJSON(response, idHairdressing4);
                     break;
             }
 
@@ -282,12 +291,35 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             for (Timestamp holiday : listHolidays) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String dateHoliday = sdf.format(holiday.toDate());
 
                 array.put(dateHoliday);
+            }
+            json.put("jsonArray", array);
+            
+            out.print(json);
+        }
+    }
+    
+    public void getServicesHairdressingToJSON(HttpServletResponse response, String idHairdressing) throws IOException, JSONException {
+        List<Service> listServices = getListServices(idHairdressing);
+        
+        JSONObject json = new JSONObject();
+        JSONArray array = new JSONArray();
+        try (PrintWriter out = response.getWriter()) {
+            
+            LinkedHashMap<String, Object> jsonOrderedMap;
+            for (Service service : listServices) {
+                jsonOrderedMap = new LinkedHashMap<>();
+                
+                jsonOrderedMap.put("idService", service.getId());
+                jsonOrderedMap.put("nameAndDuration", service.getName() + " (" + service.convertMinToFormat(service.getDuration()) + " h)");
+                
+                JSONObject member = new JSONObject(jsonOrderedMap);
+                array.put(member);
             }
             json.put("jsonArray", array);
 

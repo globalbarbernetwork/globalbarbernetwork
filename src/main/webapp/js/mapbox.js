@@ -26,8 +26,12 @@ function renderMap () {
     if (!mapboxgl.supported()) {
         alert('El teu navegador no suporta Mapbox GL');
     } else {
-        var lat = 40.2;
-        var lng = -3.7;
+        //Spain
+        //var lat = 40.2;
+        //var lng = -3.7;
+        var lat = 41.82046;
+        var lng = 1.86768;
+        
 
         // Config mapa
         mapboxgl.accessToken = 'pk.eyJ1IjoiZ2xvYmFsLWJhcmJlci1uZXR3b3JrIiwiYSI6ImNrZ2R1MWZneDBtZGwycW83aHU0anZ5MmMifQ.WXb5-N15u4z2pcL-qKR3ig';
@@ -35,7 +39,7 @@ function renderMap () {
             container: 'map',
             style: 'mapbox://styles/global-barber-network/ckh6xvale0gy719mw6jxuvgjy', // Style aplicado al mapa
             center: [lng, lat], // Posición inicial [lng, lat]
-            zoom: 5.7 // Zoom inicial
+            zoom: 8 // Zoom inicial // 5.7
         });
         
         // Botón de geolocalización del cliente
