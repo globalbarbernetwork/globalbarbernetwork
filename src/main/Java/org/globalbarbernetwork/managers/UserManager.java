@@ -31,6 +31,7 @@ import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
 import static org.globalbarbernetwork.constants.Constants.*;
+import org.globalbarbernetwork.entities.Hairdressing;
 
 /**
  *
@@ -46,40 +47,43 @@ public class UserManager extends Manager implements ManagerInterface {
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
 
         RequestDispatcher rd = null;
+        UserBO userBo = new UserBO();
+        User user = this.getCurrentUser(request);
 
         switch (action) {
             case CLIENT:
-
                 Client client = null;
-                UserBO userBo = new UserBO();
+                client = (Client) this.getCurrentUser(request);
 
                 if (request.getMethod().equals(POST)) {
-
-                    User user = this.getCurrentUser(request);
-                    client = firebaseDAO.getClient(user.getUID());
-
-                    Map<String, Boolean> updateResponse = new HashMap();
-                    updateResponse = userBo.updateClient(client, request);
-
-                    Boolean isChangePasswordMethod = updateResponse.get("password");
-                    if (isChangePasswordMethod != null && isChangePasswordMethod == true) {
-                        this.closeSession(request, response);
-                    } else {
-                        rd = request.getRequestDispatcher("/" + EDIT_CLIENT_JSP);
-                        client = (Client) this.getCurrentUser(request);
-                        request.setAttribute("client", client);
-                    }
-
-                } else {
+                    rd = this.updateClient(client, request, response);
+                }else{
                     rd = request.getRequestDispatcher("/" + EDIT_CLIENT_JSP);
-                    client = (Client) this.getCurrentUser(request);
-                    request.setAttribute("client", client);
                 }
-
+                                
+                request.setAttribute("client", client);
                 break;
             case HAIRDRESSING:
-                rd = request.getRequestDispatcher("/" + EDIT_HAIRDRESSING_JSP);
+                Hairdressing hairdressing = null;
+                hairdressing = (Hairdressing) this.getCurrentUser(request);
+
+                if (request.getMethod().equals(POST)) {
+                    rd = this.updateHairdressing(hairdressing, request, response);
+                } else {
+                    rd = request.getRequestDispatcher("/" + EDIT_HAIRDRESSING_JSP);
+                }
+
+                request.setAttribute("hairdressing", hairdressing);
+                break;                
+            case "changePassword":
+
+                userBo = new UserBO();
+                user = (User) this.getCurrentUser(request);
+                userBo.changePassword(user, request);
+                this.closeSession(request, response);
+
                 break;
+
         }
 
         try {
@@ -92,6 +96,30 @@ public class UserManager extends Manager implements ManagerInterface {
         } catch (IOException ex) {
             Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+    }
+
+    private RequestDispatcher updateHairdressing(Hairdressing hairdressing, HttpServletRequest request, HttpServletResponse response) {
+
+        UserBO userBo = new UserBO();
+        RequestDispatcher rd;
+
+        userBo.updateHairdressing(hairdressing, request);
+
+        rd = request.getRequestDispatcher("/" + EDIT_HAIRDRESSING_JSP);
+        return rd;
+
+    }
+
+    private RequestDispatcher updateClient(Client client, HttpServletRequest request, HttpServletResponse response) {
+
+        UserBO userBo = new UserBO();
+        RequestDispatcher rd;
+
+        userBo.updateClient(client, request);
+
+        rd = request.getRequestDispatcher("/" + EDIT_CLIENT_JSP);
+        return rd;
 
     }
 

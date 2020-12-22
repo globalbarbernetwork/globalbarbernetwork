@@ -46,7 +46,7 @@
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text"><i class="fas fa-envelope"></i></div>
                                             </div>
-                                            <input type="text" class="form-control" name="email" placeholder="Correu electronic" value="<%=client.getEmail()%>" disabled="true">
+                                            <input id="email" type="text" class="form-control" name="email" placeholder="Correu electronic" value="<%=client.getEmail()%>" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -84,8 +84,8 @@
                                         <label for="labelPhoneNumber">Numero de telefon</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <div class="input-group-text"><i class="fas fa-phone-alt"></i></div>
-                                            </div>                                                                                                                                                                
+                                                <div class="input-group-text"><i class="fas fa-phone-alt"><span class="ml-2">+34</span></i></div>                                                
+                                            </div>                                                                                                                                                                                                            
                                             <input id="phone" name="phoneNumber" type="tel" placeholder="Numero de telefon" class="form-control" value="<%=client.getPhoneNumber()%>">
                                         </div>
                                     </div>       
@@ -93,6 +93,7 @@
                                 <div class="form-group row">
                                     <button class="btn btn-success mt-4  w-100">Actualitza</button>
                                 </div>   
+                                <input id="type" name="type" type="hidden" value="${client.type}"/>                                
                             </form>
                         </div>
                     </div>

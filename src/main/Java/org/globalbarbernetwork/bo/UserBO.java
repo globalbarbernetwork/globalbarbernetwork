@@ -16,12 +16,6 @@
  */
 package org.globalbarbernetwork.bo;
 
-import com.google.cloud.firestore.DocumentReference;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserRecord.UpdateRequest;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.Hairdressing;
@@ -74,26 +68,38 @@ public class UserBO {
         }
     }
 
-    public Map<String, Boolean> updateClient(Client client, HttpServletRequest request) {
-        Map<String, Boolean> response = new HashMap<String, Boolean>();
-        String newPassword = request.getParameter("newPassword");        
-        
-        if(!Objects.isNull(newPassword)){
-            firebaseDAO.changePassword(client.getUID(), newPassword);                
-            response.put("password", true);
-            return response;
-        }
+    public void updateClient(Client client, HttpServletRequest request) {                
 
         client.setDisplayName(request.getParameter("displayName"));
         client.setName(request.getParameter("name"));
         client.setSurname(request.getParameter("surname"));
         client.setPhoneNumber(request.getParameter("phoneNumber"));
-        
+
         request.getSession().setAttribute("user", client);
 
-        firebaseDAO.updateClient(client);
-        response.put("data", true);
-        return response;
+        firebaseDAO.updateClient(client);        
     }
 
+    public void updateHairdressing(Hairdressing hairdressing, HttpServletRequest request) {                
+        
+        hairdressing.setDisplayName(request.getParameter("displayName"));
+        hairdressing.setAddress(request.getParameter("address"));
+        hairdressing.setCountry(request.getParameter("country"));
+        hairdressing.setCity(request.getParameter("city"));
+        hairdressing.setProvince(request.getParameter("province"));
+        hairdressing.setCompanyName(request.getParameter("companyName"));
+        hairdressing.setInstagram(request.getParameter("instagram"));
+        hairdressing.setWebsite(request.getParameter("website"));
+        hairdressing.setDescription(request.getParameter("description"));
+        hairdressing.setPhoneNumber(request.getParameter("phoneNumber"));
+        hairdressing.setZipCode(request.getParameter("zipCode"));
+        firebaseDAO.updateHairdressing(hairdressing);
+
+        request.getSession().setAttribute("user", hairdressing);                
+    }
+    
+    public void changePassword(User user, HttpServletRequest request){
+        String newPassword = request.getParameter("newPassword");
+        firebaseDAO.changePassword(user.getUID(), newPassword);        
+    }
 }

@@ -1,4 +1,7 @@
 $(document).ready(function () {
+    contextPath = $("#contextPath").val();
+    type = $('#type').val();
+    uid = $('#uid').val();
 
     var newPassword;
     console.dir($('.swal2-confirm'));
@@ -19,10 +22,12 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     type: "POST",
-                    url: "${contextPath}" + "/ManagementServlet/menuOptions/editProfile/client",
-                    data: {"newPassword": newPassword},
+                    url:  contextPath + "/ManagementServlet/menuOptions/editProfile/changePassword",
+                    data: {
+                        newPassword: newPassword,                        
+                    },
                     success: function () {
-                        window.location.replace("${contextPath}" + "/ManagementServlet/");
+                        window.location.replace(contextPath + "/ManagementServlet/");
                     },
                     error: function () {
                         alert('error');
@@ -36,7 +41,7 @@ $(document).ready(function () {
             type: "POST",
             url: "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyCdxvdJ6PudEb3bAF7rFrwdTyJHck88bfg",
             data: {
-                email: "<%=client.getEmail()%>",
+                email: $('#email').val(),
                 password: $(this).val()
             },
             success: function (data) {

@@ -299,7 +299,7 @@ public class FirebaseDAO {
         try {
             UpdateRequest request = new UserRecord.UpdateRequest(client.getUID())
                     .setEmail(client.getEmail())
-                    .setPhoneNumber(client.getPhoneNumber())
+                    .setPhoneNumber("+34"+client.getPhoneNumber())
                     .setEmailVerified(true)
                     .setDisplayName(client.getDisplayName());
 
@@ -393,6 +393,23 @@ public class FirebaseDAO {
             ex.printStackTrace();
         } catch (ExecutionException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public void updateHairdressing(Hairdressing hairdressing) {
+         try {
+            UpdateRequest request = new UserRecord.UpdateRequest(hairdressing.getUID())                    
+                    .setPhoneNumber("+34"+hairdressing.getPhoneNumber())
+                    .setEmailVerified(true)
+                    .setDisplayName(hairdressing.getDisplayName());
+
+            UserRecord userRecord = FirebaseAuth.getInstance().updateUser(request);
+
+            DocumentReference docRef = db.collection("hairdressings").document(hairdressing.getUID());
+            docRef.set(hairdressing);
+
+        } catch (FirebaseAuthException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
