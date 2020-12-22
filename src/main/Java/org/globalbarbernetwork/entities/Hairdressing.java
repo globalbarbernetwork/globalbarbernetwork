@@ -30,7 +30,7 @@ public class Hairdressing extends User {
     private String address;
     private String country;
     private String province;
-    private Integer zipCode;
+    private String zipCode;
     private GeoPoint coordinates;
     private String instagram;
     private String description;
@@ -38,7 +38,7 @@ public class Hairdressing extends User {
     public Hairdressing() {
     }
 
-    public Hairdressing(String companyName, String website, String city, String address, String country, String province, Integer zipCode, GeoPoint coordinates, String instagram, String description, String UID, String email, String phoneNumber, String displayName, String type) {
+    public Hairdressing(String companyName, String website, String city, String address, String country, String province, String zipCode, GeoPoint coordinates, String instagram, String description, String UID, String email, String phoneNumber, String displayName, String type) {
         super(UID, email, phoneNumber, displayName, type);
         this.companyName = companyName;
         this.website = website;
@@ -100,11 +100,11 @@ public class Hairdressing extends User {
         this.province = province;
     }
 
-    public Integer getZipCode() {
+    public String getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(Integer zipCode) {
+    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 
