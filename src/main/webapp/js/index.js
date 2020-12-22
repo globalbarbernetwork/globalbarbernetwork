@@ -42,6 +42,7 @@ function loadInfoModalReserve(element) {
     $("#selectedIdHairdressing").val(idHairdressingSelected);
     $("#modalReserveLongTitle").text("Realitzar reserva en " + $(element).data("company"));
     
+    // Carga empleados
     $.ajax({
         url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getEmployeesAjax',
         data: {
@@ -59,6 +60,25 @@ function loadInfoModalReserve(element) {
             console.log("No se ha podido obtener la información");
         }
     });
+    
+    // Carga servicios
+    $.ajax({
+        url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getServicesAjax',
+        data: {
+            idHairdressing: idHairdressingSelected
+        },
+        dataType: "json",
+        success: function (data) {
+            servicesJSONArray = data.jsonArray;
+            console.log(data.jsonArray);
+            for (var i in servicesJSONArray) {
+                $("#services").append(new Option(servicesJSONArray[i].nameAndDuration, servicesJSONArray[i].idService));
+            }
+        },
+        error: function () {
+            console.log("No se ha podido obtener la información");
+        }
+    });
                 
 }
 
@@ -66,6 +86,8 @@ function cleanModalReserva() {
     $("#chooseHairdresser").prop('checked', false);
     $("#hairdressers").find('option').remove();
     $("#hairdressers").append(new Option("Escull un/a perruquer/a", -1));
+    $("#services").find('option').remove();
+    $("#services").append(new Option("Escull un servei", -1));
     showOrHideHairdressers(false);
     $("#reservationDate").val("");
     $("#availableHours").val(0);
@@ -95,7 +117,7 @@ function showOrHideHairdressers(isChecked) {
         $("#hairdressers").show();
     } else {
         $("#hairdressers").hide();
-        $("#hairdressers").val(0);
+        $("#hairdressers").val(-1);
     }
 }
 

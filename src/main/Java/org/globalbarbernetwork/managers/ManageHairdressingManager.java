@@ -140,6 +140,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                     rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
                     break;
                 case GET_SERVICES_AJAX:
+                    response.setContentType("application/json");
+                    
                     String idHairdressing4 = request.getParameter("idHairdressing");
                     
                     getServicesHairdressingToJSON(response, idHairdressing4);
@@ -309,11 +311,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         JSONArray array = new JSONArray();
         try (PrintWriter out = response.getWriter()) {
             
-            LinkedHashMap<Integer, Object> jsonOrderedMap;
+            LinkedHashMap<String, Object> jsonOrderedMap;
             for (Service service : listServices) {
                 jsonOrderedMap = new LinkedHashMap<>();
                 
-                jsonOrderedMap.put(service.getId(), service.getName() + "(" + service.convertMinToFormat(service.getDuration()) + " h)");
+                jsonOrderedMap.put("idService", service.getId());
+                jsonOrderedMap.put("nameAndDuration", service.getName() + " (" + service.convertMinToFormat(service.getDuration()) + " h)");
                 
                 JSONObject member = new JSONObject(jsonOrderedMap);
                 array.put(member);
