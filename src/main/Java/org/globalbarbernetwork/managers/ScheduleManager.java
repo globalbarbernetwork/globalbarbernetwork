@@ -16,8 +16,13 @@
  */
 package org.globalbarbernetwork.managers;
 
+import com.google.cloud.Timestamp;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -26,6 +31,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
 import org.json.JSONArray;
@@ -42,50 +48,75 @@ public class ScheduleManager implements ManagerInterface {
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
-        RequestDispatcher rd = null;
-
-        switch (action) {
-            case "timetable":
-                response.setContentType("application/json");
-                
-                String uid = request.getParameter("uidHairdressing");
-                Map<String, Object> timetable = firebaseDAO.getTimetableHairdressing(uid);
-                if (timetable != null) {
-                    timetable.remove("uid");
-                }
-
-                JSONObject json = null;
-                try (PrintWriter out = response.getWriter()) {
-                    if (timetable != null) {
-                        LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
-                        for (Map.Entry<String, Object> entry : timetable.entrySet()) {
-                            String dayOfWeek = entry.getKey();
-                            Map<String, Map<String, String>> rangesHours = (Map<String, Map<String, String>>) entry.getValue();
-
-                            LinkedHashMap<String, Object> jsonOrderedMap2 = new LinkedHashMap<>();
-                            jsonOrderedMap2.put("dayOfWeek", getNameOfDayOfWeek(dayOfWeek) + ":");
-                            jsonOrderedMap2.put("rangesHours", formatTimetable(rangesHours));
-
-                            jsonOrderedMap.put(dayOfWeek, new JSONObject(jsonOrderedMap2));
-                        }
-                        json = new JSONObject(jsonOrderedMap);
-                    }
-                    out.print(json);
-                } catch (IOException ex) {
-                    Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            break;
-
-        }
-
         try {
-            if (rd != null) {
-                rd.forward(request, response);
+            RequestDispatcher rd = null;
+            
+            switch (action) {
+                case "timetable":
+                    response.setContentType("application/json");
+                    
+                    String uid = request.getParameter("uidHairdressing");
+                    Map<String, Object> timetable = firebaseDAO.getTimetableHairdressing(uid);
+                    if (timetable != null) {
+                        timetable.remove("uid");
+                    }
+                    
+                    JSONObject json = null;
+                    try ( PrintWriter out = response.getWriter()) {
+                        if (timetable != null) {
+                            LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
+                            for (Map.Entry<String, Object> entry : timetable.entrySet()) {
+                                String dayOfWeek = entry.getKey();
+                                Map<String, Map<String, String>> rangesHours = (Map<String, Map<String, String>>) entry.getValue();
+                                
+                                LinkedHashMap<String, Object> jsonOrderedMap2 = new LinkedHashMap<>();
+                                jsonOrderedMap2.put("dayOfWeek", getNameOfDayOfWeek(dayOfWeek) + ":");
+                                jsonOrderedMap2.put("rangesHours", formatTimetable(rangesHours));
+                                
+                                jsonOrderedMap.put(dayOfWeek, new JSONObject(jsonOrderedMap2));
+                            }
+                            json = new JSONObject(jsonOrderedMap);
+                        }
+                        out.print(json);
+                    } catch (IOException ex) {
+                        Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    break;
+                case "getAvailableHoursAjax":
+                    response.setContentType("application/json");
+                    
+                    String idHairdressing = request.getParameter("idHairdressingSelected");
+                    Map<String, Object> timetableHairdressing = firebaseDAO.getTimetableHairdressing(idHairdressing);
+                    
+                    ArrayList<Timestamp> holidaysHairdresser = null;
+                    String idHairdresser = request.getParameter("idHairdresserSelected");
+                    if (idHairdresser != null){
+                        holidaysHairdresser = firebaseDAO.getHolidaysEmployee(idHairdressing, idHairdresser);
+                    }
+                    
+                    String idService = request.getParameter("idServiceSelected");
+                    
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                    Date date = sdf.parse(request.getParameter("selectedDate"));
+                    
+                    
+                                     
+                    
+                    
+                    break;
             }
-        } catch (ServletException ex) {
-            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
+            
+            try {
+                if (rd != null) {
+                    rd.forward(request, response);
+                }
+            } catch (ServletException ex) {
+                Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (ParseException ex) {
+            Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

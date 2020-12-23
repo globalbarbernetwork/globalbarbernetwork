@@ -17,23 +17,28 @@
 var contextPath;
 var hairdressersJSONArray;
 
-$(document).ready(function() {
+$(document).ready(function () {
     contextPath = $("#contextPath").val();
-    
+
     initializeDatepicker();
-    
+
     $("#modalReserve").on('hidden.bs.modal', function () {
         cleanModalReserva();
     });
-    
-    $("#hairdressers").change(function() {
+
+    $("#hairdressers").change(function () {
+        $("#reservationDate").val("");
         var positionEmployee = $(this).val();
-        
+
         if (positionEmployee != -1) {
             disableHolidaysSelectedEmployee(positionEmployee);
         } else {
             $("#reservationDate").data('datepicker').setDatesDisabled([]);
         }
+    });
+
+    $("#reservationDate").on('changeDate', function (e) {
+        getAvailableHours(e);
     });
 });
 
@@ -41,7 +46,7 @@ function loadInfoModalReserve(element) {
     var idHairdressingSelected = $(element).data("uid");
     $("#selectedIdHairdressing").val(idHairdressingSelected);
     $("#modalReserveLongTitle").text("Realitzar reserva en " + $(element).data("company"));
-    
+
     // Carga empleados
     $.ajax({
         url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getEmployeesAjax',
@@ -51,7 +56,7 @@ function loadInfoModalReserve(element) {
         dataType: "json",
         success: function (data) {
             hairdressersJSONArray = data.jsonArray;
-            
+
             for (var i in hairdressersJSONArray) {
                 $("#hairdressers").append(new Option(hairdressersJSONArray[i].nameSurname, i));
             }
@@ -60,7 +65,7 @@ function loadInfoModalReserve(element) {
             console.log("No se ha podido obtener la información");
         }
     });
-    
+
     // Carga servicios
     $.ajax({
         url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getServicesAjax',
@@ -70,7 +75,6 @@ function loadInfoModalReserve(element) {
         dataType: "json",
         success: function (data) {
             servicesJSONArray = data.jsonArray;
-            console.log(data.jsonArray);
             for (var i in servicesJSONArray) {
                 $("#services").append(new Option(servicesJSONArray[i].nameAndDuration, servicesJSONArray[i].idService));
             }
@@ -79,7 +83,7 @@ function loadInfoModalReserve(element) {
             console.log("No se ha podido obtener la información");
         }
     });
-                
+
 }
 
 function cleanModalReserva() {
@@ -91,6 +95,7 @@ function cleanModalReserva() {
     showOrHideHairdressers(false);
     $("#reservationDate").val("");
     $("#availableHours").val(0);
+    $("#reservationDate").data('datepicker').setDatesDisabled([]);
 }
 
 function initializeDatepicker() {
@@ -103,13 +108,6 @@ function initializeDatepicker() {
         daysOfWeekHighlighted: [0, 6],
         todayHighlight: true
     });
-
-
-    // FOR DEMO PURPOSE
-    $('#reservationDate').on('change', function () {
-        var pickedDate = $('input').val();
-        $('#pickedDate').html(pickedDate);
-    });
 }
 
 function showOrHideHairdressers(isChecked) {
@@ -118,6 +116,7 @@ function showOrHideHairdressers(isChecked) {
     } else {
         $("#hairdressers").hide();
         $("#hairdressers").val(-1);
+        $("#reservationDate").data('datepicker').setDatesDisabled([]);
     }
 }
 
@@ -135,7 +134,40 @@ function disableHolidaysSelectedEmployee(positionEmployee) {
             $("#reservationDate").data('datepicker').setDatesDisabled(data.jsonArray);
         },
         error: function () {
-            console.log("No se ha podido obtener la información");
+            console.log("[ERROR] Ha habido algún error durante el proceso de recogida de vacaciones.");
+        }
+    });
+}
+
+function getAvailableHours(e) {
+    var selectedDate = e.format();
+    var idServiceSelected = $("#services").val();
+    var idHairdressingSelected = $("#selectedIdHairdressing").val();
+    
+    
+    var positionHaidresser = $("#hairdressers").val();
+    var idHairdresserSelected = null;
+    
+    if (positionHaidresser !== "-1") {
+        idHairdresserSelected = hairdressersJSONArray[positionHaidresser].idNumber;
+    }
+    console.log(selectedDate);
+    console.log(idServiceSelected);
+    console.log(idHairdresserSelected);
+    
+    $.ajax({
+        url: contextPath + '/ManagementServlet/schedule/getAvailableHoursAjax',
+        data: {
+            selectedDate: selectedDate,
+            idHairdresserSelected: idHairdresserSelected,
+            idServiceSelected: idServiceSelected,
+            idHairdressingSelected : idHairdressingSelected
+        },
+        success: function (data) {
+            $("#reservationDate").data('datepicker').setDatesDisabled(data.jsonArray);
+        },
+        error: function () {
+            console.log("[ERROR] Ha habido algún error durante el proceso de recogida de vacaciones.");
         }
     });
 }

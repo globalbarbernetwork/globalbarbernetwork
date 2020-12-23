@@ -174,7 +174,7 @@ function loadHairdressings() {
                     HTMLPopup += "<p>" + description + "</p>";
                     HTMLPopup += "<p><a href=" + urlInstagram + " target='_blank' title='Obre en una nova finestra'>Instagram</a></p>";
                     if(horari !== "") HTMLPopup += "Horari:<br>" + horari + horari2;
-                    if(userType !== "hairdressing") HTMLPopup += "<button id='btnReserve' onclick='loadInfoModalReserve(this);' type='button' class='btn btn-success' data-uid='" + UID + "' data-company='" + companyName + "' data-toggle='modal' data-target='#modalReserve'>Fer una reserva</button>";
+                    if(userType !== "hairdressing") HTMLPopup += "<button id='btnReserve' onclick='loadInfoModalReserve(this);' type='button' class='btn btn-primary' data-uid='" + UID + "' data-company='" + companyName + "' data-toggle='modal' data-target='#modalReserve'>Fer una reserva</button>";
 
                     new mapboxgl.Popup({offset: popupOffsets})
                             .setLngLat(coordinates)

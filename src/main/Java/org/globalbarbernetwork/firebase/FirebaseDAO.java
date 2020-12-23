@@ -327,11 +327,13 @@ public class FirebaseDAO {
     }
 
     public ArrayList<Timestamp> getHolidaysEmployee(String idHairdressing, String idEmployee) {
-        ArrayList<Timestamp> listHolidays = null;
+        ArrayList<Timestamp> listHolidays = new ArrayList();
         ApiFuture<DocumentSnapshot> future = db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).get();
         try {
             Map<String, Object> docData = future.get().getData();
-            listHolidays = (ArrayList<Timestamp>) docData.get("holidays");
+            if (docData != null) {
+                listHolidays = (ArrayList<Timestamp>) docData.get("holidays");
+            }
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         } catch (ExecutionException ex) {
