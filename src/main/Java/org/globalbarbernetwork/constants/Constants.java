@@ -29,6 +29,7 @@ public class Constants {
     public static final String EDIT_CLIENT_JSP = "editClient.jsp";
     public static final String EDIT_HAIRDRESSING_JSP = "editHairdressing.jsp";
     public static final String MANAGE_HAIRDRESSING_JSP = "manageHairdressing.jsp";
+    public static final Long INCREMENT_MINUTES = 15L;
 
     // Email Verified
     public static String BODY_MAIL_VERIFICATION = "Hola, %DISPLAY_NAME%,\n"

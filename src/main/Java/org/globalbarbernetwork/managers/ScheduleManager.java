@@ -16,11 +16,11 @@
  */
 package org.globalbarbernetwork.managers;
 
-import com.google.cloud.Timestamp;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -31,12 +31,10 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+import static org.globalbarbernetwork.constants.Constants.*;
 
 /**
  *
@@ -50,29 +48,29 @@ public class ScheduleManager implements ManagerInterface {
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
         try {
             RequestDispatcher rd = null;
-            
+
             switch (action) {
                 case "timetable":
                     response.setContentType("application/json");
-                    
+
                     String uid = request.getParameter("uidHairdressing");
                     Map<String, Object> timetable = firebaseDAO.getTimetableHairdressing(uid);
                     if (timetable != null) {
                         timetable.remove("uid");
                     }
-                    
+
                     JSONObject json = null;
-                    try ( PrintWriter out = response.getWriter()) {
+                    try (PrintWriter out = response.getWriter()) {
                         if (timetable != null) {
                             LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
                             for (Map.Entry<String, Object> entry : timetable.entrySet()) {
                                 String dayOfWeek = entry.getKey();
                                 Map<String, Map<String, String>> rangesHours = (Map<String, Map<String, String>>) entry.getValue();
-                                
+
                                 LinkedHashMap<String, Object> jsonOrderedMap2 = new LinkedHashMap<>();
                                 jsonOrderedMap2.put("dayOfWeek", getNameOfDayOfWeek(dayOfWeek) + ":");
                                 jsonOrderedMap2.put("rangesHours", formatTimetable(rangesHours));
-                                
+
                                 jsonOrderedMap.put(dayOfWeek, new JSONObject(jsonOrderedMap2));
                             }
                             json = new JSONObject(jsonOrderedMap);
@@ -83,29 +81,72 @@ public class ScheduleManager implements ManagerInterface {
                     }
                     break;
                 case "getAvailableHoursAjax":
+                    // Hay dos casos :
+                    // Calcular las horas disponibles teniendo un peluquero en concreto
+                    // Calcular las horas disponibles con todos los peluqueros
                     response.setContentType("application/json");
-                    
+
                     String idHairdressing = request.getParameter("idHairdressingSelected");
                     Map<String, Object> timetableHairdressing = firebaseDAO.getTimetableHairdressing(idHairdressing);
-                    
-                    ArrayList<Timestamp> holidaysHairdresser = null;
-                    String idHairdresser = request.getParameter("idHairdresserSelected");
-                    if (idHairdresser != null){
-                        holidaysHairdresser = firebaseDAO.getHolidaysEmployee(idHairdressing, idHairdresser);
-                    }
-                    
+
                     String idService = request.getParameter("idServiceSelected");
-                    
+
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                     Date date = sdf.parse(request.getParameter("selectedDate"));
+
+                    String idHairdresser = request.getParameter("idHairdresserSelected");
+
+                    ArrayList<String> rangeHours1 = new ArrayList();
+                    ArrayList<String> rangeHours2 = new ArrayList();
                     
-                    
-                                     
-                    
+                    if (idHairdresser != null) {
+                        String dayOfWeek = String.valueOf(date.getDay());
+
+                        Map<String, Object> timetableDay = (Map<String, Object>) timetableHairdressing.get(dayOfWeek);
+                        Map<String, Object> rangeHour1 = (Map<String, Object>) timetableDay.get("rangeHour1");
+                        Map<String, Object> rangeHour2 = (Map<String, Object>) timetableDay.get("rangeHour2");
+
+                        rangeHours1.add((String) rangeHour1.get("startHour"));
+                        rangeHours1.add((String) rangeHour1.get("endHour"));
+
+                        rangeHours2.add((String) rangeHour2.get("startHour"));
+                        rangeHours2.add((String) rangeHour2.get("endHour"));
+                        
+                        boolean continueWhile = true;
+                        ArrayList<LocalTime> rangeHour1Split = new ArrayList();
+                        ArrayList<LocalTime> rangeHour2Split = new ArrayList();
+                        LocalTime iniHour1 = LocalTime.parse((CharSequence) rangeHours1.get(0));
+                        LocalTime endHour1 = LocalTime.parse((CharSequence) rangeHours1.get(1));
+
+                        LocalTime iniHour2 = LocalTime.parse((CharSequence) rangeHours2.get(0));
+                        LocalTime endHour2 = LocalTime.parse((CharSequence) rangeHours2.get(1));
+
+                        while(continueWhile){
+                            rangeHour1Split.add(iniHour1);
+                            iniHour1 = iniHour1.plusMinutes(INCREMENT_MINUTES);
+                            if (iniHour1.equals(endHour1)) {
+                                rangeHour1Split.add(iniHour1);
+                                continueWhile = false;
+                            }
+                        }
+                        
+                        continueWhile = true;
+                        while(continueWhile){
+                            rangeHour2Split.add(iniHour2);
+                            iniHour2 = iniHour2.plusMinutes(INCREMENT_MINUTES);
+                            if (iniHour2.equals(endHour2)) {
+                                rangeHour2Split.add(iniHour2);
+                                continueWhile = false;
+                            }
+                        }
+                        
+
+                    }
+
                     
                     break;
             }
-            
+
             try {
                 if (rd != null) {
                     rd.forward(request, response);
