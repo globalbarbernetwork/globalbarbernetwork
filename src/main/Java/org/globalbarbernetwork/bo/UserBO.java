@@ -84,9 +84,6 @@ public class UserBO {
         
         hairdressing.setDisplayName(request.getParameter("displayName"));
         hairdressing.setAddress(request.getParameter("address"));
-        hairdressing.setCountry(request.getParameter("country"));
-        hairdressing.setCity(request.getParameter("city"));
-        hairdressing.setProvince(request.getParameter("province"));
         hairdressing.setCompanyName(request.getParameter("companyName"));
         hairdressing.setInstagram(request.getParameter("instagram"));
         hairdressing.setWebsite(request.getParameter("website"));

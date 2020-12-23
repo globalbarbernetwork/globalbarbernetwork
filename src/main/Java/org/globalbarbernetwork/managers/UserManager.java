@@ -17,8 +17,6 @@
 package org.globalbarbernetwork.managers;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -28,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.bo.UserBO;
 import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.User;
-import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
 import static org.globalbarbernetwork.constants.Constants.*;
 import org.globalbarbernetwork.entities.Hairdressing;
@@ -38,8 +35,7 @@ import org.globalbarbernetwork.entities.Hairdressing;
  * @author Grup 3
  */
 public class UserManager extends Manager implements ManagerInterface {
-
-    private final FirebaseDAO firebaseDAO = new FirebaseDAO();
+    
     private final String CLIENT = "client";
     private final String HAIRDRESSING = "hairdressing";
 
@@ -47,16 +43,16 @@ public class UserManager extends Manager implements ManagerInterface {
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
 
         RequestDispatcher rd = null;
-        UserBO userBo = new UserBO();
-        User user = this.getCurrentUser(request);
-
+        UserBO userBo;
+        User user;        
         switch (action) {
             case CLIENT:
                 Client client = null;
                 client = (Client) this.getCurrentUser(request);
 
-                if (request.getMethod().equals(POST)) {
+                if (request.getMethod().equals(POST)) {                    
                     rd = this.updateClient(client, request, response);
+                    request.setAttribute("edited", true);
                 }else{
                     rd = request.getRequestDispatcher("/" + EDIT_CLIENT_JSP);
                 }
@@ -67,8 +63,9 @@ public class UserManager extends Manager implements ManagerInterface {
                 Hairdressing hairdressing = null;
                 hairdressing = (Hairdressing) this.getCurrentUser(request);
 
-                if (request.getMethod().equals(POST)) {
+                if (request.getMethod().equals(POST)) {                    
                     rd = this.updateHairdressing(hairdressing, request, response);
+                    request.setAttribute("edited", true);
                 } else {
                     rd = request.getRequestDispatcher("/" + EDIT_HAIRDRESSING_JSP);
                 }

@@ -18,9 +18,10 @@
     </head>
     <body>
         <%@include file="/WEB-INF/jspf/header.jspf"%>
-        <div class="container mt-3">
-            <div class="row justify-content-center ">                
-                <div class="col-md-6 col-md-offset-6 mb-3">
+        <div class="container-fluid mt-5">
+            <div class="row">      
+                <div class="col-md-1"></div>
+                <div class="col-md-3 mb-3">
                     <div class="container card bg-dark">
                         <h3 class="mb-5 mt-3 text-center"><%=hairdressing.getDisplayName()%></h3>
                         <div class="text-center">
@@ -31,7 +32,7 @@
                     </div>
                 </div>
 
-                <div class=" col-md-12">
+                <div class="col-md-7">
                     <div class="card bg-dark mb-3 pt-2">
                         <div class="card-header">
                             <h3 class="mb-3">Editar Perfil</h3> 
@@ -50,13 +51,13 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="labelDisplayName">Display name</label>
+                                        <label for="labelSurname">Pais</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <div class="input-group-text"><i class="fas fa-text"></i></div>
-                                            </div>                                        
-                                            <input name="displayName" type="text" placeholder="Display name" class="form-control" value="<%=hairdressing.getDisplayName()%>">                
-                                        </div>                    
+                                                <div class="input-group-text"><i class="fas fa-map-marker-alt"></i></div>
+                                            </div>                                                                                                                        
+                                            <input name="country" type="text" placeholder="Pais" class="form-control" value="<%=hairdressing.getCountry()%>" disabled>                                    
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -70,32 +71,32 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="labelSurname">Pais</label>
+                                        <label for="labelName">Ciutat</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <div class="input-group-text"><i class="fas fa-text"></i></div>
-                                            </div>                                                                                                                        
-                                            <input name="country" type="text" placeholder="Pais" class="form-control" value="<%=hairdressing.getCountry()%>">                                    
+                                                <div class="input-group-text"><i class="fas fa-map-marker-alt"></i></div>
+                                            </div>                                                                                
+                                            <input name="city" type="text" placeholder="Ciutat" class="form-control" value="<%=hairdressing.getCity()%>" disabled>                        
                                         </div>
                                     </div>
                                 </div>                    
                                 <div class="form-group row">
                                     <div class="col-md-6">
-                                        <label for="labelName">Ciutat</label>
+                                        <label for="labelDisplayName">Display name</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text"><i class="fas fa-text"></i></div>
-                                            </div>                                                                                
-                                            <input name="city" type="text" placeholder="Ciutat" class="form-control" value="<%=hairdressing.getCity()%>">                        
-                                        </div>
-                                    </div>
+                                            </div>                                        
+                                            <input name="displayName" type="text" placeholder="Display name" class="form-control" value="<%=hairdressing.getDisplayName()%>">                
+                                        </div>                    
+                                    </div>                                    
                                     <div class="col-md-6">
                                         <label for="labelName">Provincia</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <div class="input-group-text"><i class="fas fa-text"></i></div>
+                                                <div class="input-group-text"><i class="fas fa-map-marker-alt"></i></div>
                                             </div>                                                                                
-                                            <input name="province" type="text" placeholder="Provincia" class="form-control" value="<%=hairdressing.getProvince()%>">                        
+                                            <input name="province" type="text" placeholder="Provincia" class="form-control" value="<%=hairdressing.getProvince()%>" disabled>                        
                                         </div>
                                     </div>                                   
                                 </div>                    
@@ -104,7 +105,7 @@
                                         <label for="labelSurname">Codi postal</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <div class="input-group-text"><i class="fas fa-text"></i></div>
+                                                <div class="input-group-text"><i class="fas fa-map-marker-alt"></i></div>
                                             </div>                                                                                                                        
                                             <input name="zipCode" type="text" placeholder="Codi postal" class="form-control" value="<%=hairdressing.getZipCode()%>">                                    
                                         </div>
@@ -113,7 +114,7 @@
                                         <label for="labelSurname">Direcció</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <div class="input-group-text"><i class="fas fa-text"></i></div>
+                                                <div class="input-group-text"><i class="fas fa-map-marker-alt"></i></i></div>
                                             </div>                                                                                                                        
                                             <input name="address" type="text" placeholder="Direcció" class="form-control" value="<%=hairdressing.getAddress()%>">                                    
                                         </div>
@@ -133,7 +134,7 @@
                                         <label for="labelSurname">Instagram</label>
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <div class="input-group-text"><i class="fas fa-text"></i></div>
+                                                <div class="input-group-text"><i class="fab fa-instagram" style="font-size: 21px !important;"></i></i></div>
                                             </div>                                                                                                                        
                                             <input name="instagram" type="text" placeholder="Instagram" class="form-control" value="<%=hairdressing.getInstagram()%>">                                    
                                         </div>
@@ -159,20 +160,36 @@
                                         </div>
                                     </div>       
                                 </div>                    
-                                <div class="form-group row">
-                                    <button class="btn btn-success mt-4  w-100">Actualitza</button>
+                                <div class="form-group row pl-3 pr-3">
+                                    <button class="btn btn-success mt-4 w-100">Actualitza</button>
                                 </div>   
                                 <input id="type" name="type" type="hidden" value="${hairdressing.type}"/>
                             </form>
                         </div>
                     </div>
                 </div>
+                <div class="col-md-1"></div>
             </div>           
-        </div>                       
+        </div>                      
 
         <!-- Footer -->
         <%@include file="/WEB-INF/jspf/footer.jspf"%>
         <!-- Scripts comunes -->
         <%@include file="/WEB-INF/jspf/base_body.jspf"%>
+
+        <script>
+            <%--<c:if test="${request.getAttribute('edited')}">--%>
+            <c:set var="edited" value="<%= request.getAttribute("edited")%>"/>
+            <c:out value="${row.file_name}"/>
+            <c:if test="${edited != null}">
+            Swal.fire({
+                icon: 'success',
+                title: "S'han guardat els canvis",
+                showConfirmButton: false,
+                timer: 1500
+            })
+            </c:if>
+            <%--</c:if>--%>
+        </script>
     </body>
 </html>

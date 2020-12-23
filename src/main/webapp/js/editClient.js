@@ -9,9 +9,10 @@ $(document).ready(function () {
         var sweetAlert = SweetAlert.fire({
             showConfirmButton: true,
             showCancelButton: true,
-            confirmButtonText: 'Cambiar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Canviar',
             Stitle: 'Multiple inputs',
-            html: '<h4>Cambiar contrasenya</h4><br><div class="input-group mb-3"><div class="input-group-prepend"><div class="input-group-text"><i class="fas fa-key"></i></div>\n\
+            html: '<h4>Canviar contrasenya</h4><br><div class="input-group mb-3"><div class="input-group-prepend"><div class="input-group-text"><i class="fas fa-key"></i></div>\n\
                     </div><input id="actualPassword" name="actualPassword" type="password" placeholder="Contrasenya actual" class="form-control" value=""></div></div>\n\
                     <div class="input-group"><div class="input-group-prepend"><div class="input-group-text"><i class="fas fa-key"></i></div>\n\
                     </div><input id="newPassword" name="newPassword" required type="password" placeholder="Contrasenya nova" class="form-control" value=""></div>',
