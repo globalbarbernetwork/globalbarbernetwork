@@ -22,18 +22,24 @@
         <div id="container">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link <%= selectedTab ? "active" : "" %>" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${selectedTab}">Serveis</a>
+                    <a class="nav-link <%= selectedTab ? "active" : ""%>" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${selectedTab}">Serveis</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <%= !selectedTab ? "active" : "" %>" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${!selectedTab}">Treballadors</a>
+                    <a class="nav-link <%= !selectedTab ? "active" : ""%>" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${!selectedTab}">Treballadors</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="schedule-tab" data-toggle="tab" href="#schedule" role="tab" aria-controls="schedule" aria-selected="#">Treballadors</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade <%= selectedTab ? "show active" : "" %>" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade <%= selectedTab ? "show active" : ""%>" id="profile" role="tabpanel" aria-labelledby="profile-tab">
                     <%@include file="/manageService.jsp"%>
                 </div>
-                <div class="tab-pane fade <%= !selectedTab ? "show active" : "" %>" id="home" role="tabpanel" aria-labelledby="home-tab">
+                <div class="tab-pane fade <%= !selectedTab ? "show active" : ""%>" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <%@include file="/manageEmployee.jsp"%>
+                </div>
+                <div class="tab-pane fade" id="schedule" role="tabpanel" aria-labelledby="schedule-tab">
+                    <%@include file="/manageSchedule.jsp"%>
                 </div>
             </div>
         </div>
