@@ -22,7 +22,9 @@ import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -56,18 +58,20 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     final static String EDIT_EMPLOYEE = "editEmployee";
     final static String DELETE_EMPLOYEE = "deleteEmployee";
     final static String CHECK_EMPLOYEE_AJAX = "checkEmployeeAjax";
-    
+
     final static String GET_EMPLOYEES_AJAX = "getEmployeesAjax";
     final static String GET_HOLIDAYS_EMPLOYEE_AJAX = "getHolidaysEmployeeAjax";
     final static String SAVE_HOLIDAYS_EMPLOYEE_AJAX = "saveHolidaysEmployeeAjax";
-    
+
     final static String ADD_SERVICE = "addService";
     final static String EDIT_SERVICE = "editService";
     final static String DELETE_SERVICE = "deleteService";
     final static String GET_SERVICES_AJAX = "getServicesAjax";
 
+    final static String UPDATE_SCHEDULE = "updateSchedule";
+
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
-    
+
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
         try {
@@ -76,25 +80,25 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
             switch (action) {
                 case LOAD_LISTS_TO_MANAGE:
-                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
+                    rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
                     break;
                 case ADD_EMPLOYEE:
                     if ("POST".equals(request.getMethod())) {
                         addEmployee(request, activeUser);
                     }
-                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
+                    rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
                     break;
                 case EDIT_EMPLOYEE:
                     if ("POST".equals(request.getMethod())) {
                         editEmployee(request, activeUser);
                     }
-                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
+                    rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
                     break;
                 case DELETE_EMPLOYEE:
                     if ("POST".equals(request.getMethod())) {
                         deleteEmployee(request, activeUser);
                     }
-                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
+                    rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
                     break;
                 case CHECK_EMPLOYEE_AJAX:
                     response.setContentType("application/json");
@@ -125,26 +129,29 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                     if ("POST".equals(request.getMethod())) {
                         addService(request, activeUser);
                     }
-                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
+                    rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
                     break;
                 case EDIT_SERVICE:
                     if ("POST".equals(request.getMethod())) {
                         editService(request, activeUser);
                     }
-                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
+                    rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
                     break;
                 case DELETE_SERVICE:
                     if ("POST".equals(request.getMethod())) {
                         deleteService(request, activeUser);
                     }
-                    rd = request.getRequestDispatcher("/"+MANAGE_HAIRDRESSING_JSP);
+                    rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
                     break;
                 case GET_SERVICES_AJAX:
                     response.setContentType("application/json");
-                    
+
                     String idHairdressing4 = request.getParameter("idHairdressing");
-                    
+
                     getServicesHairdressingToJSON(response, idHairdressing4);
+                    break;
+                case UPDATE_SCHEDULE:
+                    this.updateSchedule(request, activeUser);
                     break;
             }
 
@@ -157,6 +164,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             if (rd != null) {
                 sendListServices(request, activeUser);
                 sendListEmployees(request, activeUser);
+                loadSchedule(request, activeUser);
                 this.buildMenuOptions(request, response);
                 rd.forward(request, response);
             }
@@ -291,7 +299,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             for (Timestamp holiday : listHolidays) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String dateHoliday = sdf.format(holiday.toDate());
@@ -299,25 +307,25 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                 array.put(dateHoliday);
             }
             json.put("jsonArray", array);
-            
+
             out.print(json);
         }
     }
-    
+
     public void getServicesHairdressingToJSON(HttpServletResponse response, String idHairdressing) throws IOException, JSONException {
         List<Service> listServices = getListServices(idHairdressing);
-        
+
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
         try (PrintWriter out = response.getWriter()) {
-            
+
             LinkedHashMap<String, Object> jsonOrderedMap;
             for (Service service : listServices) {
                 jsonOrderedMap = new LinkedHashMap<>();
-                
+
                 jsonOrderedMap.put("idService", service.getId());
                 jsonOrderedMap.put("nameAndDuration", service.getName() + " (" + service.convertMinToFormat(service.getDuration()) + " h)");
-                
+
                 JSONObject member = new JSONObject(jsonOrderedMap);
                 array.put(member);
             }
@@ -389,4 +397,63 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         String[] tmpDuration = duration.split(":");
         return Integer.parseInt(tmpDuration[0]) * 60 + Integer.parseInt(tmpDuration[1]);
     }
+
+    public Map<String, Object> loadSchedule(HttpServletRequest request, User activeUser) {
+        Map<String, Object> data = new HashMap<>();
+        data = firebaseDAO.getTimetableHairdressing(activeUser.getUID());
+        request.setAttribute("shchedule", data);
+        return data;
+    }
+
+    public void updateSchedule(HttpServletRequest request, User activeUser) {
+        Map<String,Object> schedule = new HashMap<>();
+        schedule = this.getScheduleFromRequest(request);
+        firebaseDAO.updateSchedule(schedule, activeUser);
+    }
+
+    private Map<String, Object> getScheduleFromRequest(HttpServletRequest request) {
+        HashMap<String, Object> data = new HashMap<>();
+//        Enumeration<String> parameterNames = request.getParameterNames();
+
+        for (int i = 0; i < 7; i++) {
+            HashMap<String, String> rangeHoursValues = new HashMap<>();
+            HashMap<String, Map<String, String>> rangeHours = new HashMap<>();
+            String range1StartValue = new String(), range1EndValue = new String(), range2StartValue = new String(), range2EndValue = new String();
+
+            range1StartValue = request.getParameter("range1-start-day" + i);
+            range1EndValue = request.getParameter("range1-end-day" + i);
+            rangeHoursValues.put("startHour", range1StartValue);
+            rangeHoursValues.put("endHour", range1EndValue);
+
+            rangeHours.put("rangeHour1", rangeHoursValues);
+            data.put(Integer.toString(i), rangeHours);
+
+            rangeHoursValues = new HashMap<>();
+
+            range2StartValue = request.getParameter("range2-start-day" + i);
+            range2EndValue = request.getParameter("range2-end-day" + i);
+            rangeHoursValues.put("startHour", range2StartValue);
+            rangeHoursValues.put("endHour", range2EndValue);
+
+            rangeHours.put("rangeHour2", rangeHoursValues);
+            data.put(Integer.toString(i), rangeHours);
+        }
+
+//        while (parameterNames.hasMoreElements()) {
+//            String paramName = parameterNames.nextElement();
+//            String[] days = paramName.split("-");
+//            String day = days[2].substring(days[2].length() - 1);
+//            String range = days[0];
+//            String rangeTime = days[1];
+//            String[] paramValues = request.getParameterValues(paramName);
+//            for (int i = 0; i < paramValues.length; i++) {
+//                rangeHoursValues.put(rangeTime, paramValues[i]);
+//                rangeHours.put(range, rangeHoursValues);
+//                data.put(day, rangeHours);
+//            }
+//        }
+        return data;
+
+    }
+
 }

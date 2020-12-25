@@ -210,15 +210,17 @@ public class FirebaseDAO {
     }
 
     public Map<String, Object> getTimetableHairdressing(String uid) {
-        CollectionReference hairdressings = db.collection("schedule");
-        Query query = hairdressings.whereEqualTo("uid", uid);
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+        DocumentReference docRef = db.collection("schedule").document(uid);
+        ApiFuture<DocumentSnapshot> future = docRef.get();
         try {
-            for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+            DocumentSnapshot document = future.get();
+            if (document.exists()) {
                 return document.getData();
             }
-        } catch (InterruptedException | ExecutionException ex) {
-            ex.printStackTrace();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -299,7 +301,7 @@ public class FirebaseDAO {
         try {
             UpdateRequest request = new UserRecord.UpdateRequest(client.getUID())
                     .setEmail(client.getEmail())
-                    .setPhoneNumber("+34"+client.getPhoneNumber())
+                    .setPhoneNumber("+34" + client.getPhoneNumber())
                     .setEmailVerified(true)
                     .setDisplayName(client.getDisplayName());
 
@@ -397,9 +399,9 @@ public class FirebaseDAO {
     }
 
     public void updateHairdressing(Hairdressing hairdressing) {
-         try {
-            UpdateRequest request = new UserRecord.UpdateRequest(hairdressing.getUID())                    
-                    .setPhoneNumber("+34"+hairdressing.getPhoneNumber())
+        try {
+            UpdateRequest request = new UserRecord.UpdateRequest(hairdressing.getUID())
+                    .setPhoneNumber("+34" + hairdressing.getPhoneNumber())
                     .setEmailVerified(true)
                     .setDisplayName(hairdressing.getDisplayName());
 
@@ -412,4 +414,9 @@ public class FirebaseDAO {
             Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public void updateSchedule(Map<String, Object> schedule, User user) {
+        db.collection("schedule").document(user.getUID()).set(schedule);
+    }
+
 }
