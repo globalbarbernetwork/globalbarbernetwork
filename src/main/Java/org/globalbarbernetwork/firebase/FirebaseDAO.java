@@ -94,6 +94,16 @@ public class FirebaseDAO {
         return userRecord;
     }
 
+    public UserRecord getUserByPhone(String phone) {
+        UserRecord userRecord = null;
+        try {
+            userRecord = FirebaseAuth.getInstance().getUserByPhoneNumber(phone);
+        } catch (FirebaseAuthException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return userRecord;
+    }
+
     public void insertUser(User user) {
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("uid", user.getUID());

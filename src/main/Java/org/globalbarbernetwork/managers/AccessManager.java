@@ -49,25 +49,25 @@ import org.globalbarbernetwork.interfaces.ManagerInterface;
  * @author Grup 3
  */
 public class AccessManager extends Manager implements ManagerInterface {
-    
+
     final static String LOGIN = "login";
     final static String REGISTER = "register";
     final static String REGISTER_HAIRDRESSING = "registerHairdressing";
     final static String LOGOUT = "logout";
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
-    
+
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
-        
+
         RequestDispatcher rd = null;
-        
+
         switch (action) {
             case LOGIN:
-                
+
                 if ("POST".equals(request.getMethod())) {
                     String email = request.getParameter("email");
                     String password = request.getParameter("password");
-                    
+
                     Map<String, String> errorsInAuth = authUser(request, email, password);
                     if (!errorsInAuth.isEmpty()) {
                         request.setAttribute("errors", errorsInAuth);
@@ -83,7 +83,7 @@ public class AccessManager extends Manager implements ManagerInterface {
                     rd = request.getRequestDispatcher("/index.jsp");
                 }
                 break;
-            
+
             case REGISTER:
                 if (POST.equals(request.getMethod())) {
                     rd = registerClient(request);
@@ -102,7 +102,7 @@ public class AccessManager extends Manager implements ManagerInterface {
                 this.closeSession(request, response);
                 break;
         }
-        
+
         try {
             if (rd != null) {
                 rd.forward(request, response);
@@ -113,7 +113,7 @@ public class AccessManager extends Manager implements ManagerInterface {
             Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private RequestDispatcher registerClient(HttpServletRequest request) {
         //Comprobamos primero que el email exista:
         // True - Lo mandamos de vuelta a la pantalla de registro
@@ -125,29 +125,37 @@ public class AccessManager extends Manager implements ManagerInterface {
         String phoneNum = request.getParameter("mobilePhone");
         String password = request.getParameter("password");
         String displayName = name + " " + surname;
-        
+
         Boolean userExists = firebaseDAO.getUserByEmail(email) != null;
-        
+
         if (!userExists) {
-            // Accedemos a Firebase para introducir el nuevo usuario en autentificacion
-            Client client = new Client(name, surname, null, email, phoneNum, displayName, "client");
-            UserRecord newUser = firebaseDAO.createUser(client, password);
-            Boolean isCreated = newUser != null;
-            
-            if (isCreated) {
-                client.setUID(newUser.getUid());
-                insertUser(client);
-                createEmailVerification(email, displayName);
+            Boolean userExistsWithSamePhone = firebaseDAO.getUserByPhone("+34" + phoneNum) != null;
+            if (!userExistsWithSamePhone) {
+                // Accedemos a Firebase para introducir el nuevo usuario en autentificacion
+                Client client = new Client(name, surname, null, email, phoneNum, displayName, "client");
+                UserRecord newUser = firebaseDAO.createUser(client, password);
+                Boolean isCreated = newUser != null;
+
+                if (isCreated) {
+                    client.setUID(newUser.getUid());
+                    insertUser(client);
+                    createEmailVerification(email, displayName);
+                }
+                return request.getRequestDispatcher("/" + LOGIN_JSP);
+            } else {
+                Client client = new Client(name, surname, null, email, phoneNum, null, null);
+                request.setAttribute("client", client);
+                request.setAttribute("msgErrorPhone", "* Aquest número de mòbil ja existeix, introdueix un altre número");
+                return request.getRequestDispatcher("/" + REGISTER_JSP);
             }
-            return request.getRequestDispatcher("/" + LOGIN_JSP);
         } else {
             Client client = new Client(name, surname, null, email, phoneNum, null, null);
             request.setAttribute("client", client);
-            request.setAttribute("msgErrorEmail", "Aquest correu ja existeix, introdueix un altre correu");
+            request.setAttribute("msgErrorEmail", "* Aquest correu ja existeix, introdueix un altre correu");
             return request.getRequestDispatcher("/" + REGISTER_JSP);
         }
     }
-    
+
     private RequestDispatcher registerHairdressing(HttpServletRequest request) {
         //Comprobamos primero que el email exista:
         // True - Lo mandamos de vuelta a la pantalla de registro
@@ -158,39 +166,47 @@ public class AccessManager extends Manager implements ManagerInterface {
         String displayName = companyName;
         String phoneNumber = request.getParameter("phoneNumber");
         String password = request.getParameter("password");
-        
+
         String address = request.getParameter("address");
         String city = request.getParameter("cityHidden");
         String country = request.getParameter("countryHidden");
         String province = request.getParameter("provinceHidden");
         String zipCode = request.getParameter("zipCode");
-        
+
         String[] geolocation = request.getParameter("coordHairdressing").split(",");
         GeoPoint coordinates = new GeoPoint(Double.parseDouble(geolocation[1]), Double.parseDouble(geolocation[0]));
-        
+
         Boolean userExists = firebaseDAO.getUserByEmail(email) != null;
-        
+
         if (!userExists) {
-            // Accedemos a Firebase para introducir el nuevo usuario en autentificacion
-            Hairdressing newHairdressing = new Hairdressing(companyName, "", city, address, country, province, zipCode, coordinates, "", "", "", email, phoneNumber, displayName, "hairdressing");
-            
-            UserRecord newUser = firebaseDAO.createUser(newHairdressing, password);
-            Boolean isCreated = newUser != null;
-            
-            if (isCreated) {
-                newHairdressing.setUID(newUser.getUid());
-                insertUser(newHairdressing);
-                createEmailVerification(email, displayName);
+            Boolean userExistsWithSamePhone = firebaseDAO.getUserByPhone("+34" + phoneNumber) != null;
+            if (!userExistsWithSamePhone) {
+                // Accedemos a Firebase para introducir el nuevo usuario en autentificacion
+                Hairdressing newHairdressing = new Hairdressing(companyName, "", city, address, country, province, zipCode, coordinates, "", "", "", email, phoneNumber, displayName, "hairdressing");
+
+                UserRecord newUser = firebaseDAO.createUser(newHairdressing, password);
+                Boolean isCreated = newUser != null;
+
+                if (isCreated) {
+                    newHairdressing.setUID(newUser.getUid());
+                    insertUser(newHairdressing);
+                    createEmailVerification(email, displayName);
+                }
+                return request.getRequestDispatcher("/" + LOGIN_JSP);
+            } else {
+                Hairdressing hairdressing = new Hairdressing(companyName, "", city, address, country, province, zipCode, coordinates, "", "", "", email, phoneNumber, displayName, "hairdressing");
+                request.setAttribute("hairdrsg", hairdressing);
+                request.setAttribute("msgErrorPhone", "* Aquest número de mòbil ja existeix, introdueix un altre número");
+                return request.getRequestDispatcher("/" + REGISTER_HAIRDRESSING_JSP);
             }
-            return request.getRequestDispatcher("/" + LOGIN_JSP);
         } else {
             Hairdressing hairdressing = new Hairdressing(companyName, "", city, address, country, province, zipCode, coordinates, "", "", "", email, phoneNumber, displayName, "hairdressing");
             request.setAttribute("hairdrsg", hairdressing);
-            request.setAttribute("msgErrorEmail", "Aquest correu ja existeix, introdueix un altre correu");
+            request.setAttribute("msgErrorEmail", "* Aquest correu ja existeix, introdueix un altre correu");
             return request.getRequestDispatcher("/" + REGISTER_HAIRDRESSING_JSP);
         }
     }
-    
+
     private void createEmailVerification(String email, String displayName) {
         try {
             String linkVerification = firebaseDAO.generateLink(email);
@@ -201,47 +217,47 @@ public class AccessManager extends Manager implements ManagerInterface {
             Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void insertUser(User user) {
         firebaseDAO.insertUser(user);
-        
+
         UserBO userBO = new UserBO();
         userBO.insertUserByType(user);
     }
-    
+
     private Map authUser(HttpServletRequest request, String email, String password) {
-        
+
         Map<String, String> errors = new HashMap<String, String>();
-        
+
         try {
             FirebaseDAO firebaseDAO = new FirebaseDAO();
             UserRecord userRecord = firebaseDAO.getUserByEmail(email);
-            
+
             if (userRecord != null) {
                 if (!userRecord.isEmailVerified()) {
                     errors.put("403", "Has de confirmar el correu");
                     return errors;
                 }
             }
-            
+
             JsonObject userJson = MyFirebaseAuth.getInstance().auth(email, password);
-            
+
             if (userJson == null) {
                 errors.put("401", "Email o contrasenya incorrecte");
                 return errors;
             }
-            
+
             UserBO userBO = new UserBO();
-            User user = userBO.getUserByType(userRecord.getUid());            
-            
-            request.getSession().setAttribute("user", user);            
-            
+            User user = userBO.getUserByType(userRecord.getUid());
+
+            request.getSession().setAttribute("user", user);
+
         } catch (FirebaseAuthException ex) {
             Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (Exception ex) {
             Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return errors;
     }
 }
