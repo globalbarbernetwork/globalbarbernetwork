@@ -94,6 +94,16 @@ public class FirebaseDAO {
         return userRecord;
     }
 
+    public UserRecord getUserByPhone(String phone) {
+        UserRecord userRecord = null;
+        try {
+            userRecord = FirebaseAuth.getInstance().getUserByPhoneNumber(phone);
+        } catch (FirebaseAuthException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return userRecord;
+    }
+
     public void insertUser(User user) {
         Map<String, Object> newUser = new HashMap<>();
         newUser.put("uid", user.getUID());
@@ -299,7 +309,7 @@ public class FirebaseDAO {
         try {
             UpdateRequest request = new UserRecord.UpdateRequest(client.getUID())
                     .setEmail(client.getEmail())
-                    .setPhoneNumber("+34"+client.getPhoneNumber())
+                    .setPhoneNumber("+34" + client.getPhoneNumber())
                     .setEmailVerified(true)
                     .setDisplayName(client.getDisplayName());
 
@@ -399,9 +409,9 @@ public class FirebaseDAO {
     }
 
     public void updateHairdressing(Hairdressing hairdressing) {
-         try {
-            UpdateRequest request = new UserRecord.UpdateRequest(hairdressing.getUID())                    
-                    .setPhoneNumber("+34"+hairdressing.getPhoneNumber())
+        try {
+            UpdateRequest request = new UserRecord.UpdateRequest(hairdressing.getUID())
+                    .setPhoneNumber("+34" + hairdressing.getPhoneNumber())
                     .setEmailVerified(true)
                     .setDisplayName(hairdressing.getDisplayName());
 
