@@ -35,6 +35,8 @@ import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
 import org.json.JSONObject;
 import static org.globalbarbernetwork.constants.Constants.*;
+import org.json.JSONArray;
+import org.json.JSONException;
 
 /**
  *
@@ -60,7 +62,7 @@ public class ScheduleManager implements ManagerInterface {
                     }
 
                     JSONObject json = null;
-                    try (PrintWriter out = response.getWriter()) {
+                    try ( PrintWriter out = response.getWriter()) {
                         if (timetable != null) {
                             LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
                             for (Map.Entry<String, Object> entry : timetable.entrySet()) {
@@ -87,63 +89,38 @@ public class ScheduleManager implements ManagerInterface {
                     response.setContentType("application/json");
 
                     String idHairdressing = request.getParameter("idHairdressingSelected");
-                    Map<String, Object> timetableHairdressing = firebaseDAO.getTimetableHairdressing(idHairdressing);
-
+                    String idHairdresser = request.getParameter("idHairdresserSelected");
                     String idService = request.getParameter("idServiceSelected");
-
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                     Date date = sdf.parse(request.getParameter("selectedDate"));
 
-                    String idHairdresser = request.getParameter("idHairdresserSelected");
+                    Map<String, Object> timetableHairdressing = firebaseDAO.getTimetableHairdressing(idHairdressing);
+                    String dayOfWeek = String.valueOf(date.getDay());
 
-                    ArrayList<String> rangeHours1 = new ArrayList();
-                    ArrayList<String> rangeHours2 = new ArrayList();
+                    Map<String, Object> timetableDay = (Map<String, Object>) timetableHairdressing.get(dayOfWeek);
+
+                    ArrayList<LocalTime> rangeHour1 = getListSplitHours((Map<String, Object>) timetableDay.get("rangeHour1"));
+                    ArrayList<LocalTime> rangeHour2 = getListSplitHours((Map<String, Object>) timetableDay.get("rangeHour2"));
+
+                    ArrayList<LocalTime> rangeHourComplete;
+                    rangeHourComplete = (ArrayList<LocalTime>) rangeHour1.clone();
+                    rangeHourComplete.addAll(rangeHour2);
                     
+                    
+                    
+                    // Excluir horas de reservas del peluquero seleccionado
                     if (idHairdresser != null) {
-                        String dayOfWeek = String.valueOf(date.getDay());
-
-                        Map<String, Object> timetableDay = (Map<String, Object>) timetableHairdressing.get(dayOfWeek);
-                        Map<String, Object> rangeHour1 = (Map<String, Object>) timetableDay.get("rangeHour1");
-                        Map<String, Object> rangeHour2 = (Map<String, Object>) timetableDay.get("rangeHour2");
-
-                        rangeHours1.add((String) rangeHour1.get("startHour"));
-                        rangeHours1.add((String) rangeHour1.get("endHour"));
-
-                        rangeHours2.add((String) rangeHour2.get("startHour"));
-                        rangeHours2.add((String) rangeHour2.get("endHour"));
                         
-                        boolean continueWhile = true;
-                        ArrayList<LocalTime> rangeHour1Split = new ArrayList();
-                        ArrayList<LocalTime> rangeHour2Split = new ArrayList();
-                        LocalTime iniHour1 = LocalTime.parse((CharSequence) rangeHours1.get(0));
-                        LocalTime endHour1 = LocalTime.parse((CharSequence) rangeHours1.get(1));
-
-                        LocalTime iniHour2 = LocalTime.parse((CharSequence) rangeHours2.get(0));
-                        LocalTime endHour2 = LocalTime.parse((CharSequence) rangeHours2.get(1));
-
-                        while(continueWhile){
-                            rangeHour1Split.add(iniHour1);
-                            iniHour1 = iniHour1.plusMinutes(INCREMENT_MINUTES);
-                            if (iniHour1.equals(endHour1)) {
-                                rangeHour1Split.add(iniHour1);
-                                continueWhile = false;
-                            }
-                        }
-                        
-                        continueWhile = true;
-                        while(continueWhile){
-                            rangeHour2Split.add(iniHour2);
-                            iniHour2 = iniHour2.plusMinutes(INCREMENT_MINUTES);
-                            if (iniHour2.equals(endHour2)) {
-                                rangeHour2Split.add(iniHour2);
-                                continueWhile = false;
-                            }
-                        }
-                        
-
+                    } else { // Excluir todas las horas con reserva
+                        // Recoger empleados disponibles para el dia solicitado
+                        // Recoger reservas de cada empleado disponible para el dia solicitado
+                        // Mirar si hay alguno disponible para el dia y hora escogido.
                     }
-
                     
+                    //comprobaciones segun servicio
+                    
+
+                    getListAvailableHoursToJSON(response, rangeHourComplete);
                     break;
             }
 
@@ -157,6 +134,8 @@ public class ScheduleManager implements ManagerInterface {
                 Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
             }
         } catch (ParseException ex) {
+            Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -185,5 +164,53 @@ public class ScheduleManager implements ManagerInterface {
         String[] namesOfDays = new String[]{"Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte"};
 
         return namesOfDays[Integer.parseInt(dayOfWeek)];
+    }
+
+    private int convertDurationToMin(String duration) {
+        String[] tmpDuration = duration.split(":");
+        return Integer.parseInt(tmpDuration[0]) * 60 + Integer.parseInt(tmpDuration[1]);
+    }
+
+    private ArrayList<LocalTime> getListSplitHours(Map<String, Object> rangeHour) {
+        boolean continueWhile = true;
+        ArrayList<LocalTime> rangeHourSplit = new ArrayList();
+        LocalTime iniHour = LocalTime.parse((CharSequence) rangeHour.get("startHour"));
+        LocalTime endHour = LocalTime.parse((CharSequence) rangeHour.get("endHour"));
+
+        while (continueWhile) {
+            rangeHourSplit.add(iniHour);
+            iniHour = iniHour.plusMinutes(INCREMENT_MINUTES);
+            if (iniHour.equals(endHour)) {
+                rangeHourSplit.add(iniHour);
+                continueWhile = false;
+            }
+        }
+        return rangeHourSplit;
+    }
+
+    private void getListAvailableHoursToJSON(HttpServletResponse response, ArrayList<LocalTime> rangeHourComplete) throws IOException {
+        JSONObject json = new JSONObject();
+        JSONArray array = new JSONArray();
+        try ( PrintWriter out = response.getWriter()) {
+            LinkedHashMap<String, Object> jsonOrderedMap;
+
+            for (LocalTime time : rangeHourComplete) {
+                jsonOrderedMap = new LinkedHashMap<>();
+
+                jsonOrderedMap.put("timeInFormat", time.toString());
+                jsonOrderedMap.put("timeInMinutes", convertDurationToMin(time.toString()));
+
+                JSONObject member = new JSONObject(jsonOrderedMap);
+                array.put(member);
+            }
+            
+            json.put("jsonArray", array);
+            
+            out.print(json);
+        } catch (IOException ex) {
+            Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JSONException ex) {
+            Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

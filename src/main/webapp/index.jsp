@@ -57,11 +57,11 @@
                                     <div class="form-group">
                                         <label for="reservationDate">Data i hora de la reserva</label>
                                         <div class="datepicker date input-group shadow-sm p-0">
-                                            <input type="text" placeholder="dd/mm/aaaa" class="form-control" id="reservationDate">
+                                            <input type="text" placeholder="dd/mm/aaaa" class="form-control" id="reservationDate" readonly>
                                             <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-day"></i></span></div>
                                             
-                                            <select id="availableHours" class="browser-default custom-select">
-                                                <option value="-1" selected>Tria una hora</option>
+                                            <select id="availableHours" class="browser-default custom-select" disabled>
+                                                <option value="-1" selected>Tria una data primer</option>
                                             </select>
                                             <div class="input-group-append">
                                                 <div class="input-group-text">
