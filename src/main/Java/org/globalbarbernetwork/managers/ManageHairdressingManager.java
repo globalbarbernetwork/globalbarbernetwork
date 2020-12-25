@@ -413,7 +413,6 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
     private Map<String, Object> getScheduleFromRequest(HttpServletRequest request) {
         HashMap<String, Object> data = new HashMap<>();
-//        Enumeration<String> parameterNames = request.getParameterNames();
 
         for (int i = 0; i < 7; i++) {
             HashMap<String, String> rangeHoursValues = new HashMap<>();
@@ -439,19 +438,6 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             data.put(Integer.toString(i), rangeHours);
         }
 
-//        while (parameterNames.hasMoreElements()) {
-//            String paramName = parameterNames.nextElement();
-//            String[] days = paramName.split("-");
-//            String day = days[2].substring(days[2].length() - 1);
-//            String range = days[0];
-//            String rangeTime = days[1];
-//            String[] paramValues = request.getParameterValues(paramName);
-//            for (int i = 0; i < paramValues.length; i++) {
-//                rangeHoursValues.put(rangeTime, paramValues[i]);
-//                rangeHours.put(range, rangeHoursValues);
-//                data.put(day, rangeHours);
-//            }
-//        }
         return data;
 
     }
