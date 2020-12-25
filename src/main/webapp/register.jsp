@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <jsp:useBean id="msgErrorEmail" scope="request" class="java.lang.String"/>
+<jsp:useBean id="msgErrorPhone" scope="request" class="java.lang.String"/>
 <jsp:useBean id="client" scope="request" class="org.globalbarbernetwork.entities.Client"/>
 
 <!DOCTYPE html>
@@ -23,7 +24,7 @@
             <div class="card-login">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Registre</h4>
+                        <h4 class="card-title text-center">Registre</h4>
                     </div>
                     <div class="card-body p-5" >
                         <div id="container">
@@ -42,8 +43,8 @@
                                         <small id="errorInput" class="text-danger">${ msgErrorEmail }</small>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control" name="mobilePhone" pattern="^\d{9}$" id="mobilePhone" placeholder="Telèfon Mòbil" title="Omple aquest camp" value="${client.phoneNumber}" required>
-                                        <small id="errorInput" class="text-danger"></small>
+                                        <input type="text" class="form-control <%= !msgErrorPhone.isEmpty() ? "is-invalid" : " "%>" name="mobilePhone" pattern="^\d{9}$" id="mobilePhone" placeholder="Telèfon Mòbil" title="Omple aquest camp" value="${client.phoneNumber}" required>
+                                        <small id="errorInput" class="text-danger">${ msgErrorPhone }</small>
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group mb-3 show_hide_password">

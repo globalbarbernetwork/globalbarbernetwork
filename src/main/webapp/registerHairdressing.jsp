@@ -7,6 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <jsp:useBean id="msgErrorEmail" scope="request" class="java.lang.String"/>
+<jsp:useBean id="msgErrorPhone" scope="request" class="java.lang.String"/>
 <jsp:useBean id="hairdrsg" scope="request" class="org.globalbarbernetwork.entities.Hairdressing"/>
 
 <!DOCTYPE html>
@@ -23,7 +24,7 @@
             <div class="card-login">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="card-title">Registre Empresa</h4>
+                        <h4 class="card-title text-center">Registre Empresa</h4>
                     </div>
                     <div class="card-body p-5" >
                         <div id="container">
@@ -42,7 +43,7 @@
 
                                     <div class="form-row">
                                         <div class="form-group col-6">
-                                            <input type="email" class="form-control" name="email" id="email" placeholder="Correu Electrònic" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$" title="Omple aquest camp" value="${hairdrsg.email}" required>
+                                            <input type="email" class="form-control <%= !msgErrorEmail.isEmpty() ? "is-invalid" : " "%>" name="email" id="email" placeholder="Correu Electrònic" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,4}$" title="Omple aquest camp" value="${hairdrsg.email}" required>
                                             <small id="errorInput" class="text-danger">${ msgErrorEmail }</small>
                                         </div>
                                         <div class="form-group col-6">
@@ -53,8 +54,8 @@
 
                                     <div class="form-row">
                                         <div class="form-group col-6">
-                                            <input type="text" class="form-control" name="phoneNumber" pattern="^\d{9}$" id="phoneNumber" placeholder="Telèfon" title="Omple aquest camp" value="${hairdrsg.phoneNumber}" required>
-                                            <small id="errorInput" class="text-danger"></small>
+                                            <input type="text" class="form-control <%= !msgErrorPhone.isEmpty() ? "is-invalid" : " "%>" name="phoneNumber" pattern="^\d{9}$" id="phoneNumber" placeholder="Telèfon" title="Omple aquest camp" value="${hairdrsg.phoneNumber}" required>
+                                            <small id="errorInput" class="text-danger">${ msgErrorPhone }</small>
                                         </div>
                                         <div class="form-group col-6">
                                             <input type="text" class="form-control" name="city" id="city" placeholder="Ciutat" value="${hairdrsg.city}" disabled>
