@@ -17,7 +17,9 @@
             <div class="card-body">        
                 <div class="tab-content" id="myTabContent2">
 
-                    <c:forEach var="day" items="${days}" varStatus="loop">                    
+                    <c:forEach var="day" items="${days}" varStatus="loop">      
+                        <c:set var="index" value="${loop.index+1}"></c:set>    
+                        <c:if test="${index == 7}"><c:set var="index" value="0"></c:set></c:if>
                         <h4>${day}</h4><hr>
                         <div class="form-group row">
                             <div class="col-6">
@@ -29,13 +31,13 @@
                                         <label for="example-time-input" class="col-form-label">Horari obertura: </label>                                    
                                     </div>
                                     <div class="col-4">
-                                        <input id="range1-start-day${loop.index}" type="time" class="form-control">
+                                        <input id="range1-start-day${index}" name="range1-start-day${index}" type="time" class="form-control">
                                     </div>
                                     <div class="col-2">
                                         <label for="example-time-input" class="col-form-label">Horari tancament: </label>                                    
                                     </div>                                
                                     <div class="col-4">
-                                        <input id="range1-end-day${loop.index}" type="time" class="form-control">
+                                        <input id="range1-end-day${index}" name="range1-end-day${index}" type="time" class="form-control">
                                     </div>                                                        
                                 </div>
                             </div>           
@@ -48,13 +50,13 @@
                                         <label for="example-time-input" class="col-form-label">Horari obertura: </label>                                    
                                     </div>
                                     <div class="col-4">
-                                        <input id="range2-start-day${loop.index}" type="time" class="form-control">
+                                        <input id="range2-start-day${index}" name="range2-start-day${index}" type="time" class="form-control">
                                     </div>
                                     <div class="col-2">
                                         <label for="example-time-input" class="col-form-label">Horari tancament: </label>                                    
                                     </div>                                
                                     <div class="col-4">
-                                        <input id="range2-end-day${loop.index}" type="time" class="form-control">
+                                        <input id="range2-end-day${index}" name="range2-end-day${index}" type="time" class="form-control">
                                     </div>                                
                                 </div>
                             </div>

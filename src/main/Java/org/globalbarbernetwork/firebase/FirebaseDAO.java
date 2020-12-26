@@ -220,22 +220,24 @@ public class FirebaseDAO {
     }
 
     public Map<String, Object> getTimetableHairdressing(String uid) {
-        CollectionReference hairdressings = db.collection("schedule");
-        Query query = hairdressings.whereEqualTo("uid", uid);
-        ApiFuture<QuerySnapshot> querySnapshot = query.get();
+        DocumentReference docRef = db.collection("schedule").document(uid);
+        ApiFuture<DocumentSnapshot> future = docRef.get();
         try {
-            for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+            DocumentSnapshot document = future.get();
+            if (document.exists()) {
                 return document.getData();
             }
-        } catch (InterruptedException | ExecutionException ex) {
-            ex.printStackTrace();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
 
     public List<Employee> getAllEmployeesByHairdressing(String idHairdressing) {
         List<Employee> listEmployees = new ArrayList<>();
-        ApiFuture<QuerySnapshot> hairdressings = db.collection("employeesHairdressing").document(idHairdressing).collection("employees").get();
+        ApiFuture<QuerySnapshot> hairdressings = db.collection("employees").document(idHairdressing).collection("employees").get();
         try {
             for (QueryDocumentSnapshot document : hairdressings.get().getDocuments()) {
                 listEmployees.add(document.toObject(Employee.class));
@@ -251,7 +253,7 @@ public class FirebaseDAO {
 
     public Employee getEmployeeByIDNumber(String idHairdressing, String idNumber) {
         Employee employee = null;
-        ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(idHairdressing).collection("employees").whereEqualTo("idNumber", idNumber).get();
+        ApiFuture<QuerySnapshot> future = db.collection("employees").document(idHairdressing).collection("employees").whereEqualTo("idNumber", idNumber).get();
         try {
             for (QueryDocumentSnapshot document : future.get().getDocuments()) {
                 employee = document.toObject(Employee.class);
@@ -266,11 +268,11 @@ public class FirebaseDAO {
     }
 
     public void insertEmployee(Employee newEmployee) {
-        db.collection("employeesHairdressing").document(newEmployee.getIdHairdressing()).collection("employees").document().set(newEmployee);
+        db.collection("employees").document(newEmployee.getIdHairdressing()).collection("employees").document().set(newEmployee);
     }
 
     public void deleteEmployee(String idNumber, String idHairdressing) {
-        ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(idHairdressing).collection("employees").whereEqualTo("idNumber", idNumber).get();
+        ApiFuture<QuerySnapshot> future = db.collection("employees").document(idHairdressing).collection("employees").whereEqualTo("idNumber", idNumber).get();
         try {
             for (QueryDocumentSnapshot document : future.get().getDocuments()) {
                 document.getReference().delete();
@@ -283,7 +285,7 @@ public class FirebaseDAO {
     }
 
     public void updateEmployee(Employee newEmployee) {
-        ApiFuture<QuerySnapshot> future = db.collection("employeesHairdressing").document(newEmployee.getIdHairdressing()).collection("employees").whereEqualTo("idNumber", newEmployee.getIdNumber()).get();
+        ApiFuture<QuerySnapshot> future = db.collection("employees").document(newEmployee.getIdHairdressing()).collection("employees").whereEqualTo("idNumber", newEmployee.getIdNumber()).get();
         try {
             for (QueryDocumentSnapshot document : future.get().getDocuments()) {
                 document.getReference().update(
@@ -359,7 +361,7 @@ public class FirebaseDAO {
 
     public List<Service> getAllServicesByHairdressing(String idHairdressing) {
         List<Service> listServices = new ArrayList<>();
-        ApiFuture<QuerySnapshot> services = db.collection("servicesHairdressing").document(idHairdressing).collection("services").get();
+        ApiFuture<QuerySnapshot> services = db.collection("services").document(idHairdressing).collection("services").get();
         try {
             for (QueryDocumentSnapshot document : services.get().getDocuments()) {
                 listServices.add(document.toObject(Service.class));
@@ -374,11 +376,11 @@ public class FirebaseDAO {
     }
 
     public void insertService(User activeUser, Service service) {
-        db.collection("servicesHairdressing").document(activeUser.getUID()).collection("services").document().set(service);
+        db.collection("services").document(activeUser.getUID()).collection("services").document().set(service);
     }
 
     public void updateService(User activeUser, Service service) {
-        ApiFuture<QuerySnapshot> future = db.collection("servicesHairdressing").document(activeUser.getUID()).collection("services").whereEqualTo("id", service.getId()).get();
+        ApiFuture<QuerySnapshot> future = db.collection("services").document(activeUser.getUID()).collection("services").whereEqualTo("id", service.getId()).get();
         try {
             for (QueryDocumentSnapshot document : future.get().getDocuments()) {
                 document.getReference().update(
@@ -396,7 +398,7 @@ public class FirebaseDAO {
     }
 
     public void deleteService(User activeUser, Integer idService) {
-        ApiFuture<QuerySnapshot> future = db.collection("servicesHairdressing").document(activeUser.getUID()).collection("services").whereEqualTo("id", idService).get();
+        ApiFuture<QuerySnapshot> future = db.collection("services").document(activeUser.getUID()).collection("services").whereEqualTo("id", idService).get();
         try {
             for (QueryDocumentSnapshot document : future.get().getDocuments()) {
                 document.getReference().delete();
@@ -424,4 +426,9 @@ public class FirebaseDAO {
             Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    public void updateSchedule(Map<String, Object> schedule, User user) {
+        db.collection("schedule").document(user.getUID()).set(schedule);
+    }
+
 }
