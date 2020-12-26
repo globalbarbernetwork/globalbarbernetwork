@@ -19,6 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Author     : IOC DAW
 */
 
+.checkbox-input-bigger{
+    width: 17px !important;
+    height: 17px !important;
+}
+
 #dataTable_wrapper {
     padding: 3% 5% 5% 5%;
 }

@@ -28,7 +28,7 @@
                     <a class="nav-link <%= !selectedTab ? "active" : ""%>" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${!selectedTab}">Treballadors</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="schedule-tab" data-toggle="tab" href="#schedule" role="tab" aria-controls="schedule" aria-selected="#">Treballadors</a>
+                    <a class="nav-link" id="schedule-tab" data-toggle="tab" href="#schedule" role="tab" aria-controls="schedule" aria-selected="#">Horari</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">

@@ -414,13 +414,13 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     private Map<String, Object> getScheduleFromRequest(HttpServletRequest request) {
         HashMap<String, Object> data = new HashMap<>();
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 1; i < 8; i++) {
             HashMap<String, String> rangeHoursValues = new HashMap<>();
             HashMap<String, Map<String, String>> rangeHours = new HashMap<>();
-            String range1StartValue = new String(), range1EndValue = new String(), range2StartValue = new String(), range2EndValue = new String();
+            String range1StartValue = new String(), range1EndValue = new String(), range2StartValue = new String(), range2EndValue = new String();                        
 
-            range1StartValue = request.getParameter("range1-start-day" + i);
-            range1EndValue = request.getParameter("range1-end-day" + i);
+            range1StartValue = request.getParameter("range1-start-day" + i).isEmpty()? "00:00" : request.getParameter("range1-start-day" + i);
+            range1EndValue = request.getParameter("range1-end-day" + i).isEmpty()? "00:00" : request.getParameter("range1-end-day" + i);
             rangeHoursValues.put("startHour", range1StartValue);
             rangeHoursValues.put("endHour", range1EndValue);
 
@@ -429,8 +429,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
             rangeHoursValues = new HashMap<>();
 
-            range2StartValue = request.getParameter("range2-start-day" + i);
-            range2EndValue = request.getParameter("range2-end-day" + i);
+            range2StartValue = request.getParameter("range2-start-day" + i).isEmpty()? "00:00" : request.getParameter("range2-start-day" + i);
+            range2EndValue = request.getParameter("range2-end-day" + i).isEmpty()? "00:00" : request.getParameter("range2-end-day" + i);
             rangeHoursValues.put("startHour", range2StartValue);
             rangeHoursValues.put("endHour", range2EndValue);
 

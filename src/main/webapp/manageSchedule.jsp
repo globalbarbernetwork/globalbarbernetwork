@@ -18,14 +18,17 @@
                 <div class="tab-content" id="myTabContent2">
 
                     <c:forEach var="day" items="${days}" varStatus="loop">      
-                        <c:set var="index" value="${loop.index+1}"></c:set>    
-                        <c:if test="${index == 7}"><c:set var="index" value="0"></c:set></c:if>
+                        <c:set var="index" value="${loop.index+1}"></c:set>                            
                         <h4>${day}</h4><hr>
                         <div class="form-group row">
                             <div class="col-6">
                                 <div class="row">
                                     <div class="col-12">
-                                        <label for="example-time-input" class="col-form-label font-weight-bold">Primer rang horari: </label>                                  
+                                        <div class="form-check disable-rang-horari">
+                                            <input type="checkbox" class="form-check-input checkbox-input-bigger mr-5" id="range1-check-${index}">
+                                            <label class="form-check-label" for="exampleCheck1">Deshabilitar rang horari</label>
+                                        </div>
+                                        <label for="example-time-input" class="col-form-label font-weight-bold">Primer rang horari: </label>                                           
                                     </div>
                                     <div class="col-2">
                                         <label for="example-time-input" class="col-form-label">Horari obertura: </label>                                    
@@ -44,7 +47,11 @@
                             <div class="col-6">
                                 <div class="row">
                                     <div class="col-12">
-                                        <label for="example-time-input" class="col-form-label font-weight-bold">Segon rang horari: </label>                                  
+                                        <div class="form-check disable-rang-horari">
+                                            <input type="checkbox" class="form-check-input checkbox-input-bigger mr-5" id="range2-check-${index}">
+                                            <label class="form-check-label" for="exampleCheck1">Deshabilitar rang horari</label>
+                                        </div>
+                                        <label for="example-time-input" class="col-form-label font-weight-bold">Segon rang horari: </label>                                          
                                     </div>
                                     <div class="col-2">
                                         <label for="example-time-input" class="col-form-label">Horari obertura: </label>                                    
