@@ -19,6 +19,8 @@ package org.globalbarbernetwork.managers;
 import com.google.cloud.Timestamp;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -361,6 +363,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     public void addService(HttpServletRequest request, User activeUser) {
         String name = (String) request.getParameter("nameService") != null ? request.getParameter("nameService") : "";
         String durationService = (String) request.getParameter("durationService") != null ? request.getParameter("durationService") : "";
+        String priceService = (String) request.getParameter("priceService") != null ? request.getParameter("priceService") : "";
 
         int autoIncrementalID = 1;
 
@@ -370,7 +373,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             autoIncrementalID = tmpService.getId() + 1;
         }
 
-        Service service = new Service(autoIncrementalID, name, convertDurationToMin(durationService));
+        Service service = new Service(autoIncrementalID, name, convertDurationToMin(durationService), Double.parseDouble(priceService.replace(",", ".")));
         firebaseDAO.insertService(activeUser, service);
     }
 
@@ -378,9 +381,10 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         String id = (String) request.getParameter("idServiceToUpdate") != null ? request.getParameter("idServiceToUpdate") : "";
         String name = (String) request.getParameter("nameService") != null ? request.getParameter("nameService") : "";
         String durationService = (String) request.getParameter("durationService") != null ? request.getParameter("durationService") : "";
+        String priceService = (String) request.getParameter("priceService") != null ? request.getParameter("priceService") : "";
 
         if (activeUser != null) {
-            Service service = new Service(Integer.valueOf(id), name, convertDurationToMin(durationService));
+            Service service = new Service(Integer.valueOf(id), name, convertDurationToMin(durationService), Double.parseDouble(priceService.replace(",", ".")));
             firebaseDAO.updateService(activeUser, service);
         }
 

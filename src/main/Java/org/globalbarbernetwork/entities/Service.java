@@ -28,14 +28,16 @@ public class Service {
     private Integer id;
     private String name;
     private Integer duration;
+    private Double price;
 
     public Service() {
     }
 
-    public Service(Integer id, String name, Integer duration) {
+    public Service(Integer id, String name, Integer duration, Double price) {
         this.id = id;
         this.name = name;
         this.duration = duration;
+        this.price = price;
     }
 
     public Integer getId() {
@@ -62,8 +64,23 @@ public class Service {
         this.duration = duration;
     }
 
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
     public String convertMinToFormat(int minutes) {
         Long minute = new Long(minutes);
         return LocalTime.MIN.plus(Duration.ofMinutes(minute)).toString();
     }
+    
+    public String convertPriceToFormat(Double price) {
+        String tmpPrice = String.format("%.2f", price);
+        return tmpPrice.replace(".", ",");
+    }
+    
+    
 }
