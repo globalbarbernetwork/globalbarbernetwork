@@ -13,7 +13,7 @@
     <div class="container-fluid mt-5">
         <div class="card">
             <div class="card-header">
-                <h4 style="display: inline-block">Asignar horaris</h4>
+                <h4 style="display: inline-block">Assignar horaris</h4>
                 <input class="btn btn-success w20 float-right" type="submit" value="Guardar">
             </div>
             <div class="card-body">        
