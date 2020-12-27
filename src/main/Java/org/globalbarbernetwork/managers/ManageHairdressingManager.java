@@ -41,6 +41,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.entities.Employee;
+import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.entities.Service;
 import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
@@ -168,7 +169,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                 request.setAttribute("selectedTab", false);
             } else {
                 request.setAttribute("selectedTab", true);
-                request.setAttribute("incrementMin", INCREMENT_MINUTES);        
+                request.setAttribute("incrementMin", INCREMENT_MINUTES);
             }
 
             if (rd != null) {
@@ -435,8 +436,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             HashMap<String, Map<String, String>> rangeHours = new HashMap<>();
             String range1StartValue = new String(), range1EndValue = new String(), range2StartValue = new String(), range2EndValue = new String();
 
-            range1StartValue = Objects.isNull(request.getParameter("range1-start-day" + i)) ? "00:00" : request.getParameter("range1-start-day" + i);
-            range1EndValue = Objects.isNull(request.getParameter("range1-end-day" + i)) ? "00:00" : request.getParameter("range1-end-day" + i);
+            range1StartValue = Objects.isNull(request.getParameter("range1-start-day" + i)) ? "" : request.getParameter("range1-start-day" + i);
+            range1EndValue = Objects.isNull(request.getParameter("range1-end-day" + i)) ? "" : request.getParameter("range1-end-day" + i);
             rangeHoursValues.put("startHour", range1StartValue);
             rangeHoursValues.put("endHour", range1EndValue);
 
@@ -445,8 +446,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
             rangeHoursValues = new HashMap<>();
 
-            range2StartValue = Objects.isNull(request.getParameter("range2-start-day" + i)) ? "00:00" : request.getParameter("range2-start-day" + i);
-            range2EndValue = Objects.isNull(request.getParameter("range2-end-day" + i)) ? "00:00" : request.getParameter("range2-end-day" + i);
+            range2StartValue = Objects.isNull(request.getParameter("range2-start-day" + i)) ? "" : request.getParameter("range2-start-day" + i);
+            range2EndValue = Objects.isNull(request.getParameter("range2-end-day" + i)) ? "" : request.getParameter("range2-end-day" + i);
             rangeHoursValues.put("startHour", range2StartValue);
             rangeHoursValues.put("endHour", range2EndValue);
 
@@ -472,12 +473,30 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         return daysOfWeek;
     }
 
-    public void loadHolidays(HttpServletRequest request, User activeUser) {
-
+    public void loadHolidays(HttpServletRequest request, User activeUser) {        
+        request.setAttribute("holidays", firebaseDAO.getHairdressingHolidays(activeUser.getUID()));
     }
 
     public void updateHolidays(HttpServletRequest request, User activeUser) {
+        String holidays = request.getParameter("selectedHairdressingHolidaysDates");
+        Map<String, Object> docData = new HashMap<>();
 
+        ArrayList<Date> listHolidays = new ArrayList<>();
+        String[] arrayHolidays = !holidays.split(",")[0].equals("") ? holidays.split(",") : new String[0];
+
+        try {
+            if (arrayHolidays.length > 0) {
+                for (String holiday : arrayHolidays) {
+                    Date date = new SimpleDateFormat("dd/MM/yyyy").parse(holiday);
+                    listHolidays.add(date);
+                }
+            }
+        } catch (ParseException ex) {
+            Logger.getLogger(ManageHairdressingManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        docData.put("holidays", listHolidays);
+        firebaseDAO.updateHairdressingHolidays(activeUser, docData);
     }
 
 }

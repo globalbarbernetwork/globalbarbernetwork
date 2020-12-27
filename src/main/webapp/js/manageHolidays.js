@@ -18,6 +18,7 @@
 $(document).ready(function () {
     initializeDatepickerHairdressingHolidays();
     stylizeDatePicker();
+    loadHairdressingHolidays();
 });
 
 function initializeDatepickerHairdressingHolidays() {
@@ -32,21 +33,28 @@ function initializeDatepickerHairdressingHolidays() {
         autoclose: true,
         multidate: true
     });
-    
+
     $('#datepickerHairdressingHolidays').on('changeDate', function () {
         $('#selectedHairdressingHolidaysDates').val($('#datepickerHairdressingHolidays').datepicker('getFormattedDate'));
     });
-    
+
 }
 
 function stylizeDatePicker() {
     var thead = $('#datepickerHairdressingHolidays').find('thead:first').children('tr').eq(1);
     thead.addClass(" thead-hairdressing-schedule ");
     $(thead).children('th').addClass(" th-hairdressing-schedule ");
-    
+
 //    var tfoot = $('#datepickerHairdressingHolidays').find('tfoot:first').children('tr').eq(1);    
 //    tfoot.addClass(" tfoot-hairdressing-schedule ");
 //    $(tfoot).children('th').addClass(" th-hairdressing-schedule ");
+}
+
+function loadHairdressingHolidays() {
+    var data = $('#holidays').val(); 
+    console.log(data.toString());
+    $("#datepickerHairdressingHolidays").data('datepicker').setDates(data);
+    $("#datepickerHairdressingHolidays").data('datepicker')._setDate(new Date(), 'view');
 }
 
 
