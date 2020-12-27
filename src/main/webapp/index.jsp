@@ -38,29 +38,40 @@
                     <div class="modal-body">
                         <c:choose>
                             <c:when test="${user.type == 'client'}">
-                                <div id="formModalReserve" class="form-group mb-4">
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="chooseHairdresser" onchange="showOrHideHairdressers(this.checked);">
-                                        <label class="custom-control-label" for="chooseHairdresser">Vull escollir al meu perruquer de confiança</label>
-                                    </div>
-                                    <select id="hairdressers" class="browser-default custom-select" style="display:none;">
-                                        <option value="-1" selected>Escull un/a perruquer/a</option>
-                                    </select>
-                                    <select id="services" class="browser-default custom-select">
-                                        <option value="-1" selected>Escull un servei</option>
-                                    </select>
-                                    <div class="datepicker date input-group shadow-sm">
-                                        <input type="text" placeholder="Data de la reserva" class="form-control" id="reservationDate">
-                                        <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-day"></i></span></div>
-                                        <select id="availableHours" class="browser-default custom-select">
-                                            <option value="0" selected>Escull una hora</option>
-                                            <option value="1">11:00H</option>
-                                            <option value="2">13:00H</option>
-                                            <option value="3">17:30H</option>
+                                <form>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="chooseHairdresser" onchange="showOrHideHairdressers(this.checked);">
+                                            <label class="custom-control-label" for="chooseHairdresser">Vull escollir al meu perruquer de confiança</label>
+                                        </div>
+                                        <select id="hairdressers" class="browser-default custom-select mt-2 shadow-sm" style="display:none;">
+                                            <option value="-1" selected>Escull un/a perruquer/a</option>
                                         </select>
                                     </div>
+                                    <div class="form-group">
+                                        <label for="services">Servei</label>
+                                        <select id="services" class="browser-default custom-select shadow-sm">
+                                            <option value="-1" selected>Escull un servei</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="reservationDate">Data i hora de la reserva</label>
+                                        <div class="datepicker date input-group shadow-sm p-0">
+                                            <input type="text" placeholder="dd/mm/aaaa" class="form-control" id="reservationDate" readonly>
+                                            <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-day"></i></span></div>
+                                            
+                                            <select id="availableHours" class="browser-default custom-select" disabled>
+                                                <option value="-1" selected>Tria una data primer</option>
+                                            </select>
+                                            <div class="input-group-append">
+                                                <div class="input-group-text">
+                                                    <span><i class="fas fa-clock"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <input id="selectedIdHairdressing" name="selectedIdHairdressing" type="hidden"/>
-                                </div>
+                                </form>
                             </c:when>
                             <c:otherwise>
                                 <div id="errorModalReserve">
@@ -73,7 +84,7 @@
                         <c:choose>
                             <c:when test="${user.type == 'client'}">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel·lar</button>
-                                <button type="button" class="btn btn-primary">Reservar</button>
+                                <button type="button" class="btn btn-success">Reservar</button>
                             </c:when>
                             <c:otherwise>
                                 <button type="button" class="btn btn-primary" data-dismiss="modal">Acceptar</button>

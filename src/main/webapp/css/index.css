@@ -49,3 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     color: #F70000 !important;
     font-weight: bold;
 }
+
+.form-control[readonly] {
+    background-color: #fff;
+}

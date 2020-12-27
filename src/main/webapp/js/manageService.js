@@ -16,9 +16,11 @@
  */
 
 var contextPath;
+var incrementMin;
 
 $(document).ready(function () {
     contextPath = $("#contextPath").val();
+    incrementMin = $("#incrementMin").val();
 
     $("#btnConfirmAddEditService").attr('disabled', true);
 
@@ -130,7 +132,7 @@ function cleanModalClose() {
     $("#nameService").val("");
     $("#nameService").removeClass("is-invalid");
     $("#priceService").val("");
-    $("#timePickerService").val("00:15");
+    $("#timePickerService").val(intervalToHHMM(':'));
     $("#btnConfirmAddEditService").attr('disabled', true);
 }
 
@@ -138,11 +140,11 @@ function initializeTimepicker() {
     $('input#timePickerService').timepicker({
         timeFormat: 'HH:mm',
         change: putValueToDuration,
-        interval: 15,
-        minTime: '00:15',
+        interval: incrementMin,
+        minTime: intervalToHHMM(':'),
         maxTime: '06:00',
-        defaultTime: '00_15',
-        startTime: '00:15',
+        defaultTime: intervalToHHMM('_'),
+        startTime: intervalToHHMM(':'),
         dynamic: false,
         dropdown: true,
         scrollbar: true
@@ -152,4 +154,19 @@ function initializeTimepicker() {
 function putValueToDuration() {
     $("#durationService").val($("#timePickerService").val());
     validInputs($("#timePickerService"));
+}
+
+function intervalToHHMM(separator) {
+    var sec_num = incrementMin*60; // don't forget the second param
+    var hours = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+
+    if (hours < 10) {
+        hours = "0" + hours;
+    }
+    if (minutes < 10) {
+        minutes = "0" + minutes;
+    }
+    console.log(hours + separator + minutes);
+    return hours + separator + minutes;
 }
