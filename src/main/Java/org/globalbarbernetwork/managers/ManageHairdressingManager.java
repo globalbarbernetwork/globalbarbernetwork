@@ -163,6 +163,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                 request.setAttribute("selectedTab", false);
             } else {
                 request.setAttribute("selectedTab", true);
+                request.setAttribute("incrementMin", INCREMENT_MINUTES);        
             }
 
             if (rd != null) {

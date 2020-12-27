@@ -13,8 +13,8 @@
                 </th>
                 <th class="th-sm w40">Nom</th>
                 <th class="th-sm w20">Duració Aproximada (h)</th>
-                <th class="th-sm w10">Preu (&euro;)</th>
-                <th class="th-sm w15"></th>
+                <th class="th-sm w15">Preu (&euro;)</th>
+                <th class="th-sm w10"></th>
             </tr>
         </thead>
         <tbody>
@@ -25,8 +25,8 @@
                 </td>
                 <td class="w40">${service.name}</td>
                 <td class="w20">${service.getDurationFormatted()}</td>
-                <td class="w10">${service.getPriceFormatted()}</td>
-                <td class="centerButton w15">
+                <td class="w15">${service.getPriceFormatted()}</td>
+                <td class="centerButton w10">
                     <button id="btnDelete${service.id}" class="btn btn-danger btn-sm" title="Eliminar servei" data-title="Delete" data-toggle="modal" data-target="#modalDeleteService" data-id="${service.id}" data-name="${service.name}" onclick="deleteService(this)"><span class="fal fa-trash"></span></button>
                 </td>
             </tr>
@@ -98,3 +98,5 @@
         </div>
     </div>
 </div>
+                    
+<input type="hidden" id="incrementMin" name="incrementMin" value="${incrementMin}">

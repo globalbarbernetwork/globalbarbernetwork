@@ -7,6 +7,7 @@
 <jsp:useBean id="employees" scope="request" class="java.util.List<org.globalbarbernetwork.entities.Employee>"/>
 <jsp:useBean id="services" scope="request" class="java.util.List<org.globalbarbernetwork.entities.Service>"/>
 <jsp:useBean id="selectedTab" scope="request" class="java.lang.Boolean"/>
+<jsp:useBean id="incrementMin" scope="request" class="java.lang.Integer"/>
 
 <!DOCTYPE html>
 <html>

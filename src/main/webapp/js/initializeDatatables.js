@@ -23,7 +23,7 @@ function initializeDataTables() {
     $('#dataTableServices').DataTable({
         "pagingType": "numbers",
         "order": [],
-        "columnDefs": [{orderable: false, targets: [0, 3]}],
+        "columnDefs": [{orderable: false, targets: [0, 4]}],
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Catalan.json"
         }
