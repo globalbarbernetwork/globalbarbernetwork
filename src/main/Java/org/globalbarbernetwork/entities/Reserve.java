@@ -16,6 +16,8 @@
  */
 package org.globalbarbernetwork.entities;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -24,24 +26,26 @@ import java.util.Date;
  */
 public class Reserve {
     private String id;
-    private Integer idHairdressing;
-    private Date timeIni;
+    private String idClient;
+    private String idHairdressing;
+    private String idEmployee;
+    private String idService;
+    private Date timeInit;
     private Date timeFinal;
-    private String uidEmployee;
-    private Boolean active;
-    private String uid_client;
+    private boolean active;
 
     public Reserve() {
     }
 
-    public Reserve(String id, Integer idHairdressing, Date timeIni, Date timeFinal, String uidEmployee, Boolean active, String uid_client) {
+    public Reserve(String id, String idClient, String idHairdressing, String idEmployee, String idService, Date timeIni, Date timeFinal, boolean active) {
         this.id = id;
+        this.idClient = idClient;
         this.idHairdressing = idHairdressing;
-        this.timeIni = timeIni;
+        this.idEmployee = idEmployee;
+        this.idService = idService;
+        this.timeInit = timeIni;
         this.timeFinal = timeFinal;
-        this.uidEmployee = uidEmployee;
         this.active = active;
-        this.uid_client = uid_client;
     }
 
     public String getId() {
@@ -52,20 +56,44 @@ public class Reserve {
         this.id = id;
     }
 
-    public Integer getIdHairdressing() {
+    public String getIdClient() {
+        return idClient;
+    }
+
+    public void setIdClient(String idClient) {
+        this.idClient = idClient;
+    }
+
+    public String getIdHairdressing() {
         return idHairdressing;
     }
 
-    public void setIdHairdressing(Integer idHairdressing) {
+    public void setIdHairdressing(String idHairdressing) {
         this.idHairdressing = idHairdressing;
     }
 
-    public Date getTimeIni() {
-        return timeIni;
+    public String getIdEmployee() {
+        return idEmployee;
     }
 
-    public void setTimeIni(Date timeIni) {
-        this.timeIni = timeIni;
+    public void setIdEmployee(String idEmployee) {
+        this.idEmployee = idEmployee;
+    }
+
+    public String getIdService() {
+        return idService;
+    }
+
+    public void setIdService(String idService) {
+        this.idService = idService;
+    }
+
+    public Date getTimeInit() {
+        return timeInit;
+    }
+
+    public void setTimeInit(Date timeIni) {
+        this.timeInit = timeIni;
     }
 
     public Date getTimeFinal() {
@@ -76,27 +104,31 @@ public class Reserve {
         this.timeFinal = timeFinal;
     }
 
-    public String getUidEmployee() {
-        return uidEmployee;
-    }
-
-    public void setUidEmployee(String uidEmployee) {
-        this.uidEmployee = uidEmployee;
-    }
-
-    public Boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
-
-    public String getUid_client() {
-        return uid_client;
+    
+    public LocalDateTime getTimeInitLocalDate() {
+        return this.timeInit.toInstant()
+                .atZone(ZoneId.of("Europe/Madrid"))
+                .toLocalDateTime();
     }
-
-    public void setUid_client(String uid_client) {
-        this.uid_client = uid_client;
+    
+    public LocalDateTime getTimeFinalLocalDate() {
+        return this.timeFinal.toInstant()
+                .atZone(ZoneId.of("Europe/Madrid"))
+                .toLocalDateTime();
+    }
+    
+    public void setTimeInitDate(LocalDateTime timeIni) {
+        this.timeInit = Date.from(timeIni.atZone(ZoneId.of("Europe/Madrid")).toInstant());
+    }
+    
+    public void setTimeFinalDate(LocalDateTime timeFinal) {
+        this.timeFinal = Date.from(timeFinal.atZone(ZoneId.of("Europe/Madrid")).toInstant());
     }
 }

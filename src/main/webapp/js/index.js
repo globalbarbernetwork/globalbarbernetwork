@@ -41,6 +41,8 @@ $(document).ready(function () {
 
     // Cuando cambia la fecha de reserva, se recogen las horas disponibles.
     $("#reservationDate").on('changeDate', function (e) {
+        var dateS = e.date;
+        console.log("Month :"+dateS.getMonth());
         if (e.date != undefined) {
             getAvailableHours();
         } else {
@@ -113,7 +115,7 @@ function loadInfoModalReserve(element) {
         success: function (data) {
             servicesJSONArray = data.jsonArray;
             for (var i in servicesJSONArray) {
-                $("#services").append(new Option(servicesJSONArray[i].nameAndDuration, servicesJSONArray[i].idService));
+                $("#services").append(new Option(servicesJSONArray[i].descService, servicesJSONArray[i].idService));
             }
         },
         error: function () {

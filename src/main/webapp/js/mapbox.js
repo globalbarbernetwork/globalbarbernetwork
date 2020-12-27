@@ -137,26 +137,18 @@ function loadHairdressings() {
                     var dayOfWeek = date.getDay() !== 0 ? date.getDay() : 7;
                     if (data !== null) {
                         var timetableJSON = data;
+                        console.log(timetableJSON);
                         var restartCount = true;
                         var totalDays = 7;
                         for (var i = dayOfWeek; i <= totalDays; i++) {
                             if (dayOfWeek === i) {
                                 horari += "<div class='dropdown-toggle' data-toggle='collapse' href='#collapseOtherDays' aria-expanded='false' aria-controls='collapseOtherDays'>";
-                                if (i === 7) {
-                                    horari += "<strong>" + timetableJSON[0].dayOfWeek + " " + timetableJSON[0].rangesHours + "</strong>";
-                                } else {
-                                    horari += "<strong>" + timetableJSON[i].dayOfWeek + " " + timetableJSON[i].rangesHours + "</strong>";
-                                }
+                                horari += "<strong>" + timetableJSON[i].dayOfWeek + " " + timetableJSON[i].rangesHours + "</strong>";
                                 horari += "</div>";
                             } else {
                                 horari2 += "<tr>";
-                                if (i === 7) {
-                                    horari2 += "<td>" + timetableJSON[0].dayOfWeek + "</td>";
-                                    horari2 += "<td>" + timetableJSON[0].rangesHours + "</td>";
-                                } else {
-                                    horari2 += "<td>" + timetableJSON[i].dayOfWeek + "</td>";
-                                    horari2 += "<td>" + timetableJSON[i].rangesHours + "</td>";
-                                }
+                                horari2 += "<td>" + timetableJSON[i].dayOfWeek + "</td>";
+                                horari2 += "<td>" + timetableJSON[i].rangesHours + "</td>";
                                 horari2 += "</tr>";
                             }
 

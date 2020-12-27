@@ -18,11 +18,10 @@ package org.globalbarbernetwork.managers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -57,9 +56,6 @@ public class ScheduleManager implements ManagerInterface {
 
                     String uid = request.getParameter("uidHairdressing");
                     Map<String, Object> timetable = firebaseDAO.getTimetableHairdressing(uid);
-                    if (timetable != null) {
-                        timetable.remove("uid");
-                    }
 
                     JSONObject json = null;
                     try ( PrintWriter out = response.getWriter()) {
@@ -91,11 +87,19 @@ public class ScheduleManager implements ManagerInterface {
                     String idHairdressing = request.getParameter("idHairdressingSelected");
                     String idHairdresser = request.getParameter("idHairdresserSelected");
                     String idService = request.getParameter("idServiceSelected");
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                    Date date = sdf.parse(request.getParameter("selectedDate"));
+                                        
+                    DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate date = LocalDate.parse(request.getParameter("selectedDate"), pattern);
+                    
+                    System.out.println(date.getDayOfWeek().getValue());
+                    System.out.println(date.getDayOfMonth());
+                    System.out.println(date.getMonthValue());
+                    System.out.println(date.getYear());
+                    
+                    
 
                     Map<String, Object> timetableHairdressing = firebaseDAO.getTimetableHairdressing(idHairdressing);
-                    String dayOfWeek = String.valueOf(date.getDay());
+                    String dayOfWeek = String.valueOf(date.getDayOfWeek().getValue());
 
                     Map<String, Object> timetableDay = (Map<String, Object>) timetableHairdressing.get(dayOfWeek);
 
@@ -110,9 +114,9 @@ public class ScheduleManager implements ManagerInterface {
                     
                     // Excluir horas de reservas del peluquero seleccionado
                     if (idHairdresser != null) {
-                        
+                        //Reservas peluquero del día, activas.
                     } else { // Excluir todas las horas con reserva
-                        // Recoger empleados disponibles para el dia solicitado
+                        // Recoger empleados disponibles para el dia solicitado                       
                         // Recoger reservas de cada empleado disponible para el dia solicitado
                         // Mirar si hay alguno disponible para el dia y hora escogido.
                     }
@@ -133,8 +137,6 @@ public class ScheduleManager implements ManagerInterface {
             } catch (IOException ex) {
                 Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (ParseException ex) {
-            Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -161,9 +163,9 @@ public class ScheduleManager implements ManagerInterface {
     }
 
     private String getNameOfDayOfWeek(String dayOfWeek) {
-        String[] namesOfDays = new String[]{"Diumenge", "Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte"};
+        String[] namesOfDays = new String[]{"Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte", "Diumenge"};
 
-        return namesOfDays[Integer.parseInt(dayOfWeek)];
+        return namesOfDays[Integer.parseInt(dayOfWeek) - 1];
     }
 
     private int convertDurationToMin(String duration) {

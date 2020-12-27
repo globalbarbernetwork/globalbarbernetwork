@@ -328,7 +328,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                 jsonOrderedMap = new LinkedHashMap<>();
 
                 jsonOrderedMap.put("idService", service.getId());
-                jsonOrderedMap.put("nameAndDuration", service.getName() + " (" + service.convertMinToFormat(service.getDuration()) + " h)");
+                jsonOrderedMap.put("descService", service.getName() + " - " + service.getPriceFormatted() + " €");
 
                 JSONObject member = new JSONObject(jsonOrderedMap);
                 array.put(member);
