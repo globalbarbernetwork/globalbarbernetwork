@@ -54,5 +54,6 @@
         <script src="${contextPath}/js/initializeDatatables.js"></script>
         <script src="${contextPath}/js/manageEmployee.js"></script>
         <script src="${contextPath}/js/manageService.js"></script>
+        <script src="${contextPath}/js/manageSchedule.js"></script>
     </body>
 </html>

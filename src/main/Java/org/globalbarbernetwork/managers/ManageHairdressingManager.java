@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -154,6 +155,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                     break;
                 case UPDATE_SCHEDULE:
                     this.updateSchedule(request, activeUser);
+                    rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
                     break;
             }
 
@@ -402,11 +404,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         return Integer.parseInt(tmpDuration[0]) * 60 + Integer.parseInt(tmpDuration[1]);
     }
 
-    public Map<String, Object> loadSchedule(HttpServletRequest request, User activeUser) {
+    public void loadSchedule(HttpServletRequest request, User activeUser) {
         Map<String, Object> data = new HashMap<>();
         data = firebaseDAO.getTimetableHairdressing(activeUser.getUID());
-        request.setAttribute("shchedule", data);
-        return data;
+
+        request.setAttribute("schedule", data);
+        request.setAttribute("daysOfWeek", this.getDaysOfWeek());
     }
 
     public void updateSchedule(HttpServletRequest request, User activeUser) {
@@ -423,8 +426,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             HashMap<String, Map<String, String>> rangeHours = new HashMap<>();
             String range1StartValue = new String(), range1EndValue = new String(), range2StartValue = new String(), range2EndValue = new String();
 
-            range1StartValue = request.getParameter("range1-start-day" + i).isEmpty() ? "00:00" : request.getParameter("range1-start-day" + i);
-            range1EndValue = request.getParameter("range1-end-day" + i).isEmpty() ? "00:00" : request.getParameter("range1-end-day" + i);
+            range1StartValue = Objects.isNull(request.getParameter("range1-start-day" + i)) ? "00:00" : request.getParameter("range1-start-day" + i);
+            range1EndValue = Objects.isNull(request.getParameter("range1-end-day" + i)) ? "00:00" : request.getParameter("range1-end-day" + i);
             rangeHoursValues.put("startHour", range1StartValue);
             rangeHoursValues.put("endHour", range1EndValue);
 
@@ -433,8 +436,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
             rangeHoursValues = new HashMap<>();
 
-            range2StartValue = request.getParameter("range2-start-day" + i).isEmpty() ? "00:00" : request.getParameter("range2-start-day" + i);
-            range2EndValue = request.getParameter("range2-end-day" + i).isEmpty() ? "00:00" : request.getParameter("range2-end-day" + i);
+            range2StartValue = Objects.isNull(request.getParameter("range2-start-day" + i)) ? "00:00" : request.getParameter("range2-start-day" + i);
+            range2EndValue = Objects.isNull(request.getParameter("range2-end-day" + i)) ? "00:00" : request.getParameter("range2-end-day" + i);
             rangeHoursValues.put("startHour", range2StartValue);
             rangeHoursValues.put("endHour", range2EndValue);
 
@@ -444,6 +447,20 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
         return data;
 
+    }
+
+    private Map<String, String> getDaysOfWeek() {
+        Map<String, String> daysOfWeek = new HashMap<>();
+
+        daysOfWeek.put("1", "Dilluns");
+        daysOfWeek.put("2", "Dimarts");
+        daysOfWeek.put("3", "Dimecres");
+        daysOfWeek.put("4", "Dijous");
+        daysOfWeek.put("5", "Divendres");
+        daysOfWeek.put("6", "Dissabte");
+        daysOfWeek.put("7", "Diumenge");
+        
+        return daysOfWeek;
     }
 
 }
