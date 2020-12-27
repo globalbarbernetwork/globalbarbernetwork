@@ -306,8 +306,8 @@ function initializeDatepickerEmployeeHolidays() {
 }
 
 function cleanModalGestioVacances() {
-    $("#datepickerEmployeeHolidays").data('datepicker').clearDates();
-    $("#datepickerEmployeeHolidays").data('datepicker').setViewMode(0);
+    $("#datepickerEmployeeHolidays").datepicker('clearDates');
+    $("#datepickerEmployeeHolidays").datepicker('setViewMode', 0);
     $("#idHairdressing").val("");
     $("#selectedIdEmployee").val("");
 }
@@ -328,9 +328,10 @@ function loadInfoModalHolidays(element) {
             idHairdressing: idHairdressing,
             idEmployee: idEmployee
         },
+        dataType: "json",
         success: function (data) {
-            $("#datepickerEmployeeHolidays").data('datepicker').setDates(data.jsonArray);
-            $("#datepickerEmployeeHolidays").data('datepicker')._setDate(new Date(), 'view');
+            $("#datepickerEmployeeHolidays").datepicker('setDates', data.jsonArray);
+            $("#datepickerEmployeeHolidays").datepicker('_setDates', new Date(), 'view');
         },
         error: function () {
             console.log("No se ha podido obtener la información");
