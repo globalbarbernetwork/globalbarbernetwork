@@ -19,6 +19,8 @@ package org.globalbarbernetwork.managers;
 import com.google.cloud.Timestamp;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -360,6 +362,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     public void addService(HttpServletRequest request, User activeUser) {
         String name = (String) request.getParameter("nameService") != null ? request.getParameter("nameService") : "";
         String durationService = (String) request.getParameter("durationService") != null ? request.getParameter("durationService") : "";
+        String priceService = (String) request.getParameter("priceService") != null ? request.getParameter("priceService") : "";
 
         int autoIncrementalID = 1;
 
@@ -369,7 +372,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             autoIncrementalID = tmpService.getId() + 1;
         }
 
-        Service service = new Service(autoIncrementalID, name, convertDurationToMin(durationService));
+        Service service = new Service(autoIncrementalID, name, convertDurationToMin(durationService), Double.parseDouble(priceService.replace(",", ".")));
         firebaseDAO.insertService(activeUser, service);
     }
 
@@ -377,9 +380,10 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         String id = (String) request.getParameter("idServiceToUpdate") != null ? request.getParameter("idServiceToUpdate") : "";
         String name = (String) request.getParameter("nameService") != null ? request.getParameter("nameService") : "";
         String durationService = (String) request.getParameter("durationService") != null ? request.getParameter("durationService") : "";
+        String priceService = (String) request.getParameter("priceService") != null ? request.getParameter("priceService") : "";
 
         if (activeUser != null) {
-            Service service = new Service(Integer.valueOf(id), name, convertDurationToMin(durationService));
+            Service service = new Service(Integer.valueOf(id), name, convertDurationToMin(durationService), Double.parseDouble(priceService.replace(",", ".")));
             firebaseDAO.updateService(activeUser, service);
         }
 
@@ -406,7 +410,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     }
 
     public void updateSchedule(HttpServletRequest request, User activeUser) {
-        Map<String,Object> schedule = new HashMap<>();
+        Map<String, Object> schedule = new HashMap<>();
         schedule = this.getScheduleFromRequest(request);
         firebaseDAO.updateSchedule(schedule, activeUser);
     }
@@ -417,10 +421,10 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         for (int i = 1; i < 8; i++) {
             HashMap<String, String> rangeHoursValues = new HashMap<>();
             HashMap<String, Map<String, String>> rangeHours = new HashMap<>();
-            String range1StartValue = new String(), range1EndValue = new String(), range2StartValue = new String(), range2EndValue = new String();                        
+            String range1StartValue = new String(), range1EndValue = new String(), range2StartValue = new String(), range2EndValue = new String();
 
-            range1StartValue = request.getParameter("range1-start-day" + i).isEmpty()? "00:00" : request.getParameter("range1-start-day" + i);
-            range1EndValue = request.getParameter("range1-end-day" + i).isEmpty()? "00:00" : request.getParameter("range1-end-day" + i);
+            range1StartValue = request.getParameter("range1-start-day" + i).isEmpty() ? "00:00" : request.getParameter("range1-start-day" + i);
+            range1EndValue = request.getParameter("range1-end-day" + i).isEmpty() ? "00:00" : request.getParameter("range1-end-day" + i);
             rangeHoursValues.put("startHour", range1StartValue);
             rangeHoursValues.put("endHour", range1EndValue);
 
@@ -429,8 +433,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
             rangeHoursValues = new HashMap<>();
 
-            range2StartValue = request.getParameter("range2-start-day" + i).isEmpty()? "00:00" : request.getParameter("range2-start-day" + i);
-            range2EndValue = request.getParameter("range2-end-day" + i).isEmpty()? "00:00" : request.getParameter("range2-end-day" + i);
+            range2StartValue = request.getParameter("range2-start-day" + i).isEmpty() ? "00:00" : request.getParameter("range2-start-day" + i);
+            range2EndValue = request.getParameter("range2-end-day" + i).isEmpty() ? "00:00" : request.getParameter("range2-end-day" + i);
             rangeHoursValues.put("startHour", range2StartValue);
             rangeHoursValues.put("endHour", range2EndValue);
 

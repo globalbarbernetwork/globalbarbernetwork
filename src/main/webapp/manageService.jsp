@@ -12,7 +12,8 @@
                     <button id="btnAddService" type="button" data-toggle="modal" data-target="#modalEditService" class="btn btn-info btn-rounded btn-sm"><i class="far fa-cut"></i> <i class="fal fa-plus"></i></button>
                 </th>
                 <th class="th-sm w40">Nom</th>
-                <th class="th-sm w30">Duració Aproximada (hr)</th>
+                <th class="th-sm w20">Duració Aproximada (h)</th>
+                <th class="th-sm w10">Preu (&euro;)</th>
                 <th class="th-sm w15"></th>
             </tr>
         </thead>
@@ -23,7 +24,8 @@
                     <button id="btnEdit${service.id}" class="btn btn-primary btn-sm" title="Editar servei" data-title="Edit" data-toggle="modal" data-target="#modalEditService" data-id="${service.id}" data-name="${service.name}" data-duration="${service.convertMinToFormat(service.duration)}" onclick="editService(this)"><span class="fal fa-pencil"></span></button>
                 </td>
                 <td class="w40">${service.name}</td>
-                <td class="w30">${service.convertMinToFormat(service.duration)}</td>
+                <td class="w20">${service.convertMinToFormat(service.duration)}</td>
+                <td class="w10">${service.convertPriceToFormat(service.price)}</td>
                 <td class="centerButton w15">
                     <button id="btnDelete${service.id}" class="btn btn-danger btn-sm" title="Eliminar servei" data-title="Delete" data-toggle="modal" data-target="#modalDeleteService" data-id="${service.id}" data-name="${service.name}" onclick="deleteService(this)"><span class="fal fa-trash"></span></button>
                 </td>
@@ -57,6 +59,11 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="priceService">Preu</label>
+                        <input class="form-control" type="text" id="priceService" name="priceService" placeholder="0,00" title="Omple aquest camp">
+                        <small id="errorInput" class="text-danger"></small>
                     </div>
                     <input type="hidden" id="idServiceToUpdate" name="idServiceToUpdate">
                     <input type="hidden" id="durationService" name="durationService">
