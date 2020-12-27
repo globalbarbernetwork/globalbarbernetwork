@@ -16,13 +16,18 @@
  */
 package org.globalbarbernetwork.managers;
 
+import com.google.common.collect.HashBiMap;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,9 +38,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
 import org.json.JSONObject;
-import static org.globalbarbernetwork.constants.Constants.*;
+import org.globalbarbernetwork.entities.Reserve;
+import org.globalbarbernetwork.entities.Service;
 import org.json.JSONArray;
 import org.json.JSONException;
+import static org.globalbarbernetwork.constants.Constants.*;
+import org.globalbarbernetwork.entities.Employee;
 
 /**
  *
@@ -86,17 +94,10 @@ public class ScheduleManager implements ManagerInterface {
 
                     String idHairdressing = request.getParameter("idHairdressingSelected");
                     String idHairdresser = request.getParameter("idHairdresserSelected");
-                    String idService = request.getParameter("idServiceSelected");
-                                        
+                    Integer idService = Integer.valueOf(request.getParameter("idServiceSelected"));
+
                     DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                     LocalDate date = LocalDate.parse(request.getParameter("selectedDate"), pattern);
-                    
-                    System.out.println(date.getDayOfWeek().getValue());
-                    System.out.println(date.getDayOfMonth());
-                    System.out.println(date.getMonthValue());
-                    System.out.println(date.getYear());
-                    
-                    
 
                     Map<String, Object> timetableHairdressing = firebaseDAO.getTimetableHairdressing(idHairdressing);
                     String dayOfWeek = String.valueOf(date.getDayOfWeek().getValue());
@@ -109,21 +110,88 @@ public class ScheduleManager implements ManagerInterface {
                     ArrayList<LocalTime> rangeHourComplete;
                     rangeHourComplete = (ArrayList<LocalTime>) rangeHour1.clone();
                     rangeHourComplete.addAll(rangeHour2);
-                    
-                    
-                    
+
+                    //Recoger duracion del servicio
+                    Service selectedService = firebaseDAO.getServiceById(idHairdressing, idService);
+                    DateTimeFormatter formatterWithDash = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+                    String formattedDateString = date.format(formatterWithDash);
+                    Map<LocalTime, Integer> timeToDrop = new HashMap<>();
+                    LocalTime rangeHour1Final = !((String) ((Map<String, Object>) timetableDay.get("rangeHour1")).get("endHour")).isEmpty()
+                            ? LocalTime.parse((CharSequence) ((Map<String, Object>) timetableDay.get("rangeHour1")).get("endHour")) : null;
+                    LocalTime rangeHour2Final = !((String) ((Map<String, Object>) timetableDay.get("rangeHour2")).get("endHour")).isEmpty()
+                            ? LocalTime.parse((CharSequence) ((Map<String, Object>) timetableDay.get("rangeHour2")).get("endHour")) : null;
+
                     // Excluir horas de reservas del peluquero seleccionado
-                    if (idHairdresser != null) {
-                        //Reservas peluquero del día, activas.
+                    if (idHairdresser != null && !idHairdresser.isEmpty()) {
+                        ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
+                                String.valueOf(date.getMonthValue()), formattedDateString, idHairdresser);
+
+                        for (Reserve reserve : listReservesEmployee) {
+                            LocalTime ltInit = reserve.getTimeInitLocalDate().toLocalTime();
+                            LocalTime ltFinal = reserve.getTimeFinalLocalDate().toLocalTime();
+                            LocalTime ltInitTmpBefore = ltInit.minusMinutes(selectedService.getDuration());
+                            LocalTime ltFinalTmpBefore = ltInit;
+
+                            for (Iterator it = rangeHourComplete.iterator(); it.hasNext();) {
+                                LocalTime time = (LocalTime) it.next();
+                                LocalTime ltFinalTmpAfter = time.plusMinutes(selectedService.getDuration());
+
+                                // Eliminamos las horas que coincidan con las reservas pendientes.
+                                // Eliminamos las horas que coincidan con posible reserva en base al servicio seleccionado.
+                                if ((ltInit.equals(time) || time.isAfter(ltInit) && time.isBefore(ltFinal))
+                                        || (time.isAfter(ltInitTmpBefore) && time.isBefore(ltFinalTmpBefore))
+                                        || (rangeHour1Final != null && ltFinalTmpAfter.isAfter(rangeHour1Final)
+                                        || rangeHour2Final != null && ltFinalTmpAfter.isAfter(rangeHour2Final))) {
+                                    it.remove();
+                                }
+                            }
+                        }
                     } else { // Excluir todas las horas con reserva
                         // Recoger empleados disponibles para el dia solicitado                       
                         // Recoger reservas de cada empleado disponible para el dia solicitado
                         // Mirar si hay alguno disponible para el dia y hora escogido.
-                    }
-                    
-                    //comprobaciones segun servicio
-                    
+                        List<Employee> listEmployees = firebaseDAO.getAllEmployees(idHairdressing);
+                        int num = 0;
+                        for (Employee employee : listEmployees) {
+                            ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
+                                    String.valueOf(date.getMonthValue()), formattedDateString, employee.getIdNumber());
+                            num++;
+                            for (Reserve reserve : listReservesEmployee) {
+                                LocalTime ltInit = reserve.getTimeInitLocalDate().toLocalTime();
+                                LocalTime ltFinal = reserve.getTimeFinalLocalDate().toLocalTime();
+                                LocalTime ltInitTmp = ltInit.minusMinutes(selectedService.getDuration());
+                                LocalTime ltFinalTmp = ltInit;
 
+                                for (LocalTime time : rangeHourComplete) {
+                                    LocalTime ltFinalTmpAfter = time.plusMinutes(selectedService.getDuration());
+                                    
+                                    // Eliminamos las horas que coincidan con las reservas pendientes.
+                                    // Eliminamos las horas que coincidan con posible reserva en base al servicio seleccionado.
+                                    if ((ltInit.equals(time) || time.isAfter(ltInit) && time.isBefore(ltFinal))
+                                            || (time.isAfter(ltInitTmp) && time.isBefore(ltFinalTmp))
+                                            || (rangeHour1Final != null && ltFinalTmpAfter.isAfter(rangeHour1Final)
+                                            || rangeHour2Final != null && ltFinalTmpAfter.isAfter(rangeHour2Final))) {
+                                        if (timeToDrop.get(time) != null && timeToDrop.get(time) != num) {
+                                            timeToDrop.put(time, timeToDrop.get(time) + 1);
+                                        } else if (timeToDrop.get(time) == null) {
+                                            timeToDrop.put(time, 1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        for (Map.Entry<LocalTime, Integer> entry : timeToDrop.entrySet()) {
+                            LocalTime time = entry.getKey();
+                            Integer occurrencesNotAvailableTime = entry.getValue();
+
+                            if (occurrencesNotAvailableTime.equals(listEmployees.size())) {
+                                rangeHourComplete.remove(time);
+                            }
+                        }
+                    }
+
+                    //comprobaciones segun servicio
                     getListAvailableHoursToJSON(response, rangeHourComplete);
                     break;
             }
@@ -149,11 +217,11 @@ public class ScheduleManager implements ManagerInterface {
         String range2End = timetable.get("rangeHour2").get("endHour");
 
         String range;
-        if (range1Start.equals("00:00") && range1End.equals("00:00") && range2Start.equals("00:00") && range2End.equals("00:00")) {
+        if (range1Start.equals("") && range1End.equals("") && range2Start.equals("") && range2End.equals("")) {
             range = "tancat";
-        } else if (range1Start.equals("00:00") && range1End.equals("00:00")) {
+        } else if (range1Start.equals("") && range1End.equals("")) {
             range = range2Start + "-" + range2End;
-        } else if (range2Start.equals("00:00") && range2End.equals("00:00")) {
+        } else if (range2Start.equals("") && range2End.equals("")) {
             range = range1Start + "-" + range1End;
         } else {
             range = range1Start + "-" + range1End + " / " + range2Start + "-" + range2End;
@@ -176,15 +244,16 @@ public class ScheduleManager implements ManagerInterface {
     private ArrayList<LocalTime> getListSplitHours(Map<String, Object> rangeHour) {
         boolean continueWhile = true;
         ArrayList<LocalTime> rangeHourSplit = new ArrayList();
-        LocalTime iniHour = LocalTime.parse((CharSequence) rangeHour.get("startHour"));
-        LocalTime endHour = LocalTime.parse((CharSequence) rangeHour.get("endHour"));
+        LocalTime iniHour = !((String)rangeHour.get("startHour")).isEmpty() ? LocalTime.parse((CharSequence) rangeHour.get("startHour")) : null;
+        LocalTime endHour = !((String)rangeHour.get("endHour")).isEmpty() ? LocalTime.parse((CharSequence) rangeHour.get("endHour")) : null;
 
-        while (continueWhile) {
-            rangeHourSplit.add(iniHour);
-            iniHour = iniHour.plusMinutes(INCREMENT_MINUTES);
-            if (iniHour.equals(endHour)) {
+        if (iniHour != null && endHour != null) {
+            while (continueWhile) {
                 rangeHourSplit.add(iniHour);
-                continueWhile = false;
+                iniHour = iniHour.plusMinutes(Long.valueOf(INCREMENT_MINUTES));
+                if (iniHour.equals(endHour)) {
+                    continueWhile = false;
+                }
             }
         }
         return rangeHourSplit;
@@ -205,9 +274,9 @@ public class ScheduleManager implements ManagerInterface {
                 JSONObject member = new JSONObject(jsonOrderedMap);
                 array.put(member);
             }
-            
+
             json.put("jsonArray", array);
-            
+
             out.print(json);
         } catch (IOException ex) {
             Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);

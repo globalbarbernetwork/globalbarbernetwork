@@ -130,7 +130,7 @@
             </div>
             <div class="modal-body">
                 <div class="datepicker date input-group shadow-sm">
-                    <div id="datepickerHolidays"></div>
+                    <div id="datepickerEmployeeHolidays"></div>
                     <input type="hidden" id="selectedHolidays"/>
                 </div>
                 <input type="hidden" id="idHairdressing"/>

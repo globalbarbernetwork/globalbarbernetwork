@@ -191,7 +191,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     }
 
     public List<Employee> getListEmployees(String idHairdressing) {
-        return firebaseDAO.getAllEmployeesByHairdressing(idHairdressing);
+        return firebaseDAO.getAllEmployees(idHairdressing);
     }
 
     public void addEmployee(HttpServletRequest request, User activeUser) {
@@ -365,7 +365,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     }
 
     public List<Service> getListServices(String idHairdressing) {
-        return firebaseDAO.getAllServicesByHairdressing(idHairdressing);
+        return firebaseDAO.getAllServices(idHairdressing);
     }
 
     public void addService(HttpServletRequest request, User activeUser) {
