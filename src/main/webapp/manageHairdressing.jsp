@@ -25,10 +25,13 @@
                     <a class="nav-link <%= selectedTab ? "active" : ""%>" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${selectedTab}">Serveis</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <%= !selectedTab ? "active" : ""%>" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${!selectedTab}">Treballadors</a>
+                    <a class="nav-link" id="schedule-tab" data-toggle="tab" href="#schedule" role="tab" aria-controls="schedule" aria-selected="#">Horari</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="schedule-tab" data-toggle="tab" href="#schedule" role="tab" aria-controls="schedule" aria-selected="#">Horari</a>
+                    <a class="nav-link" id="holiday-tab" data-toggle="tab" href="#holiday" role="tab" aria-controls="holiday" aria-selected="#">Festius</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link <%= !selectedTab ? "active" : ""%>" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${!selectedTab}">Treballadors</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
@@ -40,6 +43,9 @@
                 </div>
                 <div class="tab-pane fade" id="schedule" role="tabpanel" aria-labelledby="schedule-tab">
                     <%@include file="/manageSchedule.jsp"%>
+                </div>
+                <div class="tab-pane fade" id="holiday" role="tabpanel" aria-labelledby="holiday-tab">
+                    <%@include file="/manageHoliday.jsp"%>
                 </div>
             </div>
         </div>
@@ -55,5 +61,6 @@
         <script src="${contextPath}/js/manageEmployee.js"></script>
         <script src="${contextPath}/js/manageService.js"></script>
         <script src="${contextPath}/js/manageSchedule.js"></script>
+        <script src="${contextPath}/js/manageHolidays.js"></script>
     </body>
 </html>

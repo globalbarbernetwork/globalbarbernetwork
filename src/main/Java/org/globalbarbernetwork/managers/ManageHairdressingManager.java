@@ -72,6 +72,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     final static String GET_SERVICES_AJAX = "getServicesAjax";
 
     final static String UPDATE_SCHEDULE = "updateSchedule";
+    final static String UPDATE_HOLIDAYS = "updateHolidays";
 
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
 
@@ -157,6 +158,10 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                     this.updateSchedule(request, activeUser);
                     rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
                     break;
+                case UPDATE_HOLIDAYS:
+                    this.updateHolidays(request, activeUser);
+                    rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
+                    break;
             }
 
             if (action.toLowerCase().contains("employee")) {
@@ -169,6 +174,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                 sendListServices(request, activeUser);
                 sendListEmployees(request, activeUser);
                 loadSchedule(request, activeUser);
+                loadHolidays(request, activeUser);
                 this.buildMenuOptions(request, response);
                 rd.forward(request, response);
             }
@@ -405,11 +411,13 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     }
 
     public void loadSchedule(HttpServletRequest request, User activeUser) {
-        Map<String, Object> data = new HashMap<>();
-        data = firebaseDAO.getTimetableHairdressing(activeUser.getUID());
+        if (activeUser != null) {
+            Map<String, Object> data = new HashMap<>();
+            data = firebaseDAO.getTimetableHairdressing(activeUser.getUID());
 
-        request.setAttribute("schedule", data);
-        request.setAttribute("daysOfWeek", this.getDaysOfWeek());
+            request.setAttribute("schedule", data);
+            request.setAttribute("daysOfWeek", this.getDaysOfWeek());
+        }
     }
 
     public void updateSchedule(HttpServletRequest request, User activeUser) {
@@ -459,8 +467,16 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         daysOfWeek.put("5", "Divendres");
         daysOfWeek.put("6", "Dissabte");
         daysOfWeek.put("7", "Diumenge");
-        
+
         return daysOfWeek;
+    }
+
+    public void loadHolidays(HttpServletRequest request, User activeUser) {
+
+    }
+
+    public void updateHolidays(HttpServletRequest request, User activeUser) {
+
     }
 
 }
