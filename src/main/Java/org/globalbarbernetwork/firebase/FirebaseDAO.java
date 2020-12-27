@@ -44,6 +44,7 @@ import org.globalbarbernetwork.entities.Reserve;
 import org.globalbarbernetwork.entities.Service;
 import org.globalbarbernetwork.entities.User;
 import static org.globalbarbernetwork.constants.Constants.*;
+import org.json.JSONArray;
 
 /**
  *
@@ -466,12 +467,12 @@ public class FirebaseDAO {
 
         return listReserve;
     }
-
+    
     public void updateHairdressingHolidays(User hairdressing, Map<String, Object> holidays) {
         db.collection("hairdressingHolidays").document(hairdressing.getUID()).set(holidays);
     }
 
-    public ArrayList<Timestamp> getHairdressingHolidays(String idHairdressing) {
+    public JSONArray getHairdressingHolidays(String idHairdressing) {
         ArrayList<Timestamp> listHolidays = new ArrayList();
         ApiFuture<DocumentSnapshot> future = db.collection("hairdressingHolidays").document(idHairdressing).get();
         try {
@@ -485,7 +486,7 @@ public class FirebaseDAO {
             ex.printStackTrace();
         }
 
-        return listHolidays;
+        return new JSONArray(listHolidays);
     }
 
 

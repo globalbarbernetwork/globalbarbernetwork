@@ -51,8 +51,8 @@ function stylizeDatePicker() {
 }
 
 function loadHairdressingHolidays() {
-    var data = $('#holidays').val();
-    console.dir(data);
+    var data = $('#holidays').val(); 
+    console.log(data.toString());
     $("#datepickerHairdressingHolidays").data('datepicker').setDates(data);
     $("#datepickerHairdressingHolidays").data('datepicker')._setDate(new Date(), 'view');
 }

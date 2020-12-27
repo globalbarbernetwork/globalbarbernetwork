@@ -7,8 +7,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <form method="POST" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/updateHolidays">
-    <input type="hidden" name="holidays" id="holidays" value="${request.holidays}">
-    Parameter myparam: <%= request.getAttribute("holidays") %>
+    <input type="hidden" name="holidays" id="holidays" value='<%= request.getAttribute("holidays") %>'>    
     <div class="container-fluid mt-5">
         <div class="card">
             <div class="card-header">
