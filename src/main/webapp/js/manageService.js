@@ -32,7 +32,7 @@ $(document).ready(function () {
         cleanModalClose();
     });
 
-    $("#nameService").blur(function () {
+    $("#nameService, #priceService").blur(function () {
         validInputs($(this));
     });
 });
@@ -49,11 +49,27 @@ function validInputs(input) {
             input.removeClass('is-invalid');
             allInputsOk = true;
         }
-    } else if (input.attr('name') === "timePickerService"){
+    } else if (input.attr('name') === "timePickerService") {
         if (inputValue === '') {
             allInputsOk = false;
         } else {
             allInputsOk = true;
+        }
+    } else if (input.attr('name') === "priceService") {
+        if (inputValue === '') {
+            allInputsOk = false;
+            input.addClass('is-invalid');
+            input.next().text('');
+        } else {
+            if ((/^(\d*\,?\d+|\d{1,3}(,\d{1,2})*(\,\d+)?)$/).test(inputValue) === true) {
+                allInputsOk = true;
+                input.removeClass('is-invalid');
+                input.next().text('');
+            } else {
+                allInputsOk = false;
+                input.addClass('is-invalid');
+                input.next().text('* El format del preu es incorrecte: Ex. 0,90; 50; 0,9;');
+            }
         }
     }
 
@@ -113,7 +129,7 @@ function deleteService(btnDelete) {
 function cleanModalClose() {
     $("#nameService").val("");
     $("#nameService").removeClass("is-invalid");
-    $("#nameService").val("");
+    $("#priceService").val("");
     $("#timePickerService").val("00:15");
     $("#btnConfirmAddEditService").attr('disabled', true);
 }

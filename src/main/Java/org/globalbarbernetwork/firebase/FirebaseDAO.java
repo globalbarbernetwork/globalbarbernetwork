@@ -386,7 +386,8 @@ public class FirebaseDAO {
                 document.getReference().update(
                         "id", service.getId(),
                         "name", service.getName(),
-                        "duration", service.getDuration()
+                        "duration", service.getDuration(),
+                        "price", service.getPrice()
                 );
             }
 
