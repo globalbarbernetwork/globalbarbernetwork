@@ -9,7 +9,7 @@
 <jsp:useBean id="schedule" scope="request" class="java.util.HashMap"></jsp:useBean>
 <jsp:useBean id="daysOfWeek" scope="request" class="java.util.HashMap"></jsp:useBean>
 
-<form method="POST" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/updateSchedule">
+    <form method="POST" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/updateSchedule">
     <div class="container-fluid mt-5">
         <div class="card">
             <div class="card-header">
@@ -19,15 +19,15 @@
             <div class="card-body">        
                 <div class="tab-content" id="myTabContent2">    
                     <% for (int i = 1; i <= schedule.size(); i++) {
-                    HashMap rangeHour1 = ((HashMap)((HashMap) schedule.get(String.valueOf(i))).get("rangeHour1"));
-                    HashMap rangeHour2 = ((HashMap)((HashMap) schedule.get(String.valueOf(i))).get("rangeHour2"));
+                            HashMap rangeHour1 = ((HashMap) ((HashMap) schedule.get(String.valueOf(i))).get("rangeHour1"));
+                            HashMap rangeHour2 = ((HashMap) ((HashMap) schedule.get(String.valueOf(i))).get("rangeHour2"));
                     %>                    
                     <h4><%=daysOfWeek.get(String.valueOf(i))%></h4><hr>
                     <div class="form-group row">
                         <div class="col-6">
-                            <div class="form-check disable-rang-horari">
-                                <input type="checkbox" class="form-check-input checkbox-input-bigger mr-5" id="range1-check-<%=i%>">
-                                <label class="form-check-label" for="exampleCheck1">Deshabilitar rang horari</label>
+                            <div class="custom-control custom-checkbox my-1 mr-sm-2">
+                                <input type="checkbox" class="custom-control-input" id="range1-check-<%=i%>">
+                                <label class="custom-control-label" for="range1-check-<%=i%>">Deshabilitar rang horari</label>
                             </div>
                             <div class="row range1-row-<%=i%>">
                                 <div class="col-12">
@@ -48,9 +48,9 @@
                             </div>
                         </div>           
                         <div class="col-6">
-                            <div class="form-check disable-rang-horari">
-                                <input type="checkbox" class="form-check-input checkbox-input-bigger mr-5" id="range2-check-<%=i%>">
-                                <label class="form-check-label" for="exampleCheck1">Deshabilitar rang horari</label>
+                            <div class="custom-control custom-checkbox my-1 mr-sm-2">
+                                <input type="checkbox" class="custom-control-input" id="range2-check-<%=i%>">
+                                <label class="custom-control-label" for="range2-check-<%=i%>">Deshabilitar rang horari</label>
                             </div>
                             <div class="row range2-row-<%=i%>">
                                 <div class="col-12">
