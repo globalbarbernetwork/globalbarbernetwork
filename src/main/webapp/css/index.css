@@ -53,3 +53,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .form-control[readonly] {
     background-color: #fff;
 }
+
+.requiredAst {
+  color:red;
+  font-weight: 600;
+}

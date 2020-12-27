@@ -25,6 +25,7 @@ $(document).ready(function () {
 
     // Limpia los campos del modal al cerrarse
     $("#modalReserve").on('hidden.bs.modal', function () {
+        console.log("HOLAAA");
         cleanModalReserva();
     });
 
@@ -41,9 +42,8 @@ $(document).ready(function () {
 
     // Cuando cambia la fecha de reserva, se recogen las horas disponibles.
     $("#reservationDate").on('changeDate', function (e) {
-        var dateS = e.date;
-        console.log("Month :"+dateS.getMonth());
-        if (e.date != undefined) {
+        var selectedService = $("#services").val();
+        if (e.date != undefined && selectedService != -1) {
             getAvailableHours();
         } else {
             cleanSelect("availableHours", "Tria una data primer", true);
@@ -55,6 +55,8 @@ $(document).ready(function () {
         var selectedDate = $("#reservationDate").datepicker('getDate');
         if ($(this).val() != -1 && selectedDate != null) {
             getAvailableHours();
+        } else {
+            cleanSelect("availableHours", "Tria una data primer", true);
         }
     });
 
@@ -62,22 +64,48 @@ $(document).ready(function () {
     $("#hairdressers").change(function () {
         var selectedService = $("#services").val();
         var selectedDate = $("#reservationDate").datepicker('getDate');
-
+        
         if (selectedService != -1 && selectedDate != null) {
             getAvailableHours();
+        } else {
+            cleanSelect("availableHours", "Tria una data primer", true);
         }
+    });
+    
+    $("#services, #availableHours").change(function () {
+        var value = $(this).val();
+        if (value == -1){
+            $(this).addClass("is-invalid");
+        } else {
+            $(this).removeClass("is-invalid");
+        }
+        validationFieldsReserve();
+    });
+    
+    $("#reservationDate").on('changeDate', function (e) {
+        if (e.date == undefined){
+            $(this).addClass("is-invalid");
+        } else {
+            $(this).removeClass("is-invalid");
+        }
+        validationFieldsReserve();
+    });
+    
+    $("#doReserve").click(function () {        
+        doReserve();
     });
 });
 
 function initializeDatepicker() {
     $('#reservationDate').datepicker({
         language: "ca",
-        clearBtn: true,
         format: "dd/mm/yyyy",
-        autoclose: true,
-        daysOfWeekDisabled: [0, 6],
+        startDate: new Date(),
+        //daysOfWeekDisabled: [0, 6],
+        todayHighlight: true,
         daysOfWeekHighlighted: [0, 6],
-        todayHighlight: true
+        clearBtn: true,
+        autoclose: true
     });
 }
 
@@ -203,17 +231,60 @@ function cleanSelect(idSelect, nameOption, disabled) {
     $("#" + idSelect).find('option').remove();
     $("#" + idSelect).append(new Option(nameOption, -1));
     $("#" + idSelect).prop("disabled", disabled);
+    $("#" + idSelect).removeClass("is-invalid");
 }
 
 function cleanModalReserva() {
-    $("#chooseHairdresser").prop('checked', false);
-    showOrHideHairdressers(false); // Donde situarlo o que hacer con el
-
     cleanSelect("hairdressers", "Escull un/a perruquer/a", false);
 
     cleanSelect("services", "Escull un servei", false);
 
     $("#reservationDate").datepicker('clearDates');
+    $("#reservationDate").removeClass("is-invalid");
 
-    cleanSelect("availableHours", "Tria una data primer", false);
+    cleanSelect("availableHours", "Tria una data primer", true);
+    
+    $("#chooseHairdresser").prop('checked', false);
+    showOrHideHairdressers(false);
+}
+
+function doReserve() {
+    var idHairdresser = $("#hairdressers").val();
+    var idService = $("#services").val();
+    var date = $("#reservationDate").datepicker('getDate');
+    var time = $("#availableHours").val();
+    
+    $.ajax({
+        url: contextPath + '/ManagementServlet/schedule/addReserveAjax',
+        data: {
+            idHairdresser: idHairdresser,
+            idService: idService,
+            date: date,
+            time: time
+        },
+        dataType: "json",
+        success: function (data) {
+            var availableHoursJSONArray = data.jsonArray;
+
+            cleanSelect("availableHours", "Tria una hora", false);
+            for (var i in availableHoursJSONArray) {
+                $("#availableHours").append(new Option(availableHoursJSONArray[i].timeInFormat, availableHoursJSONArray[i].timeInMinutes));
+            }
+        },
+        error: function () {
+            console.log("[ERROR] Ha habido algún error durante el proceso de recogida de vacaciones.");
+        }
+    });
+}
+
+function validationFieldsReserve(){
+    var idService = $("#services").val();
+    var date = $("#reservationDate").datepicker('getDate');
+    var time = $("#availableHours").val();
+    
+    if (idService != -1 && date != null && time != -1) {
+        $("#doReserve").prop("disabled", false);
+    } else {
+        $("#doReserve").prop("disabled", true);
+    }
 }

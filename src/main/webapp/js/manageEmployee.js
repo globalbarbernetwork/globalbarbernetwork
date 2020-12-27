@@ -41,7 +41,7 @@ $(document).ready(function () {
     });
 
 
-    initializeDatepicker();
+    initializeDatepickerEmployeeHolidays();
     $("#modalHolidaysEmployee").on('hidden.bs.modal', function () {
         cleanModalGestioVacances();
     });
@@ -287,28 +287,27 @@ function initializeDatepickerContract() {
 }
 
 // Part
-function initializeDatepicker() {
-    $('#datepickerHolidays').datepicker({
-        multidate: true,
+function initializeDatepickerEmployeeHolidays() {
+    $('#datepickerEmployeeHolidays').datepicker({
         language: "ca",
-        clearBtn: true,
         format: "dd/mm/yyyy",
-        autoclose: true,
-        //daysOfWeekDisabled: [0, 6],
+        multidate: true,
         daysOfWeekHighlighted: [0, 6],
-        todayHighlight: true
+        todayHighlight: true,
+        //daysOfWeekDisabled: [0, 6],
+        clearBtn: true
     });
 
 
     // Guardamos las fechas seleccionadas en un hidden input
-    $('#datepickerHolidays').on('changeDate', function () {
-        $('#selectedHolidays').val($('#datepickerHolidays').datepicker('getFormattedDate'));
+    $('#datepickerEmployeeHolidays').on('changeDate', function () {
+        $('#selectedHolidays').val($('#datepickerEmployeeHolidays').datepicker('getFormattedDate'));
     });
 }
 
 function cleanModalGestioVacances() {
-    $("#datepickerHolidays").data('datepicker').clearDates();
-    $("#datepickerHolidays").data('datepicker').setViewMode(0);
+    $("#datepickerEmployeeHolidays").data('datepicker').clearDates();
+    $("#datepickerEmployeeHolidays").data('datepicker').setViewMode(0);
     $("#idHairdressing").val("");
     $("#selectedIdEmployee").val("");
 }
@@ -330,8 +329,8 @@ function loadInfoModalHolidays(element) {
             idEmployee: idEmployee
         },
         success: function (data) {
-            $("#datepickerHolidays").data('datepicker').setDates(data.jsonArray);
-            $("#datepickerHolidays").data('datepicker')._setDate(new Date(), 'view');
+            $("#datepickerEmployeeHolidays").data('datepicker').setDates(data.jsonArray);
+            $("#datepickerEmployeeHolidays").data('datepicker')._setDate(new Date(), 'view');
         },
         error: function () {
             console.log("No se ha podido obtener la información");

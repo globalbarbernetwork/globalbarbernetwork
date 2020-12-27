@@ -48,14 +48,14 @@
                                             <option value="-1" selected>Escull un/a perruquer/a</option>
                                         </select>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="services">Servei</label>
+                                    <div class="form-group required">
+                                        <label for="services"><span class="requiredAst">&ast;</span> Servei</label>
                                         <select id="services" class="browser-default custom-select shadow-sm">
                                             <option value="-1" selected>Escull un servei</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label for="reservationDate">Data i hora de la reserva</label>
+                                        <label for="reservationDate"><span class="requiredAst">&ast;</span> Data i hora de la reserva</label>
                                         <div class="datepicker date input-group shadow-sm p-0">
                                             <input type="text" placeholder="dd/mm/aaaa" class="form-control" id="reservationDate" readonly>
                                             <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-day"></i></span></div>
@@ -84,7 +84,7 @@
                         <c:choose>
                             <c:when test="${user.type == 'client'}">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel·lar</button>
-                                <button type="button" class="btn btn-success">Reservar</button>
+                                <button type="button" id="doReserve" class="btn btn-success" disabled>Reservar</button>
                             </c:when>
                             <c:otherwise>
                                 <button type="button" class="btn btn-primary" data-dismiss="modal">Acceptar</button>

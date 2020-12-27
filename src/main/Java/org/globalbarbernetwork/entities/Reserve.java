@@ -29,15 +29,15 @@ public class Reserve {
     private String idClient;
     private String idHairdressing;
     private String idEmployee;
-    private String idService;
+    private Integer idService;
     private Date timeInit;
     private Date timeFinal;
-    private boolean active;
+    private String state;
 
     public Reserve() {
     }
 
-    public Reserve(String id, String idClient, String idHairdressing, String idEmployee, String idService, Date timeIni, Date timeFinal, boolean active) {
+    public Reserve(String id, String idClient, String idHairdressing, String idEmployee, Integer idService, Date timeIni, Date timeFinal, String state) {
         this.id = id;
         this.idClient = idClient;
         this.idHairdressing = idHairdressing;
@@ -45,7 +45,7 @@ public class Reserve {
         this.idService = idService;
         this.timeInit = timeIni;
         this.timeFinal = timeFinal;
-        this.active = active;
+        this.state = state;
     }
 
     public String getId() {
@@ -80,11 +80,11 @@ public class Reserve {
         this.idEmployee = idEmployee;
     }
 
-    public String getIdService() {
+    public Integer getIdService() {
         return idService;
     }
 
-    public void setIdService(String idService) {
+    public void setIdService(Integer idService) {
         this.idService = idService;
     }
 
@@ -104,12 +104,12 @@ public class Reserve {
         this.timeFinal = timeFinal;
     }
 
-    public boolean isActive() {
-        return active;
+    public String getState() {
+        return state;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setState(String state) {
+        this.state = state;
     }
     
     public LocalDateTime getTimeInitLocalDate() {

@@ -40,8 +40,10 @@ import java.util.logging.Logger;
 import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.Employee;
 import org.globalbarbernetwork.entities.Hairdressing;
+import org.globalbarbernetwork.entities.Reserve;
 import org.globalbarbernetwork.entities.Service;
 import org.globalbarbernetwork.entities.User;
+import static org.globalbarbernetwork.constants.Constants.*;
 
 /**
  *
@@ -235,7 +237,7 @@ public class FirebaseDAO {
         return null;
     }
 
-    public List<Employee> getAllEmployeesByHairdressing(String idHairdressing) {
+    public List<Employee> getAllEmployees(String idHairdressing) {
         List<Employee> listEmployees = new ArrayList<>();
         ApiFuture<QuerySnapshot> hairdressings = db.collection("employees").document(idHairdressing).collection("employees").get();
         try {
@@ -359,7 +361,7 @@ public class FirebaseDAO {
         db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).delete();
     }
 
-    public List<Service> getAllServicesByHairdressing(String idHairdressing) {
+    public List<Service> getAllServices(String idHairdressing) {
         List<Service> listServices = new ArrayList<>();
         ApiFuture<QuerySnapshot> services = db.collection("services").document(idHairdressing).collection("services").get();
         try {
@@ -373,6 +375,22 @@ public class FirebaseDAO {
         }
 
         return listServices;
+    }
+    
+    public Service getServiceById(String idHairdressing, Integer idService) {
+        Service service = null;
+        ApiFuture<QuerySnapshot> services = db.collection("services").document(idHairdressing).collection("services").whereEqualTo("id", idService).get();
+        try {
+            if (services.get().size() == 1) {
+                service = (services.get().getDocuments().get(0)).toObject(Service.class);
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
+
+        return service;
     }
 
     public void insertService(User activeUser, Service service) {
@@ -431,5 +449,21 @@ public class FirebaseDAO {
     public void updateSchedule(Map<String, Object> schedule, User user) {
         db.collection("schedule").document(user.getUID()).set(schedule);
     }
+    
+    public ArrayList<Reserve> getReservesEmployee(String idHairdressing, String yearReserve, String monthReserve, String dateReserve, String idEmployee) {
+        ArrayList<Reserve> listReserve = new ArrayList();
+        ApiFuture<QuerySnapshot> reserves = db.collection("reserves").document(idHairdressing).collection(yearReserve).document(monthReserve).collection(dateReserve)
+                .whereEqualTo("idEmployee", idEmployee).whereEqualTo("state", STATE_PENDING).get();
+        try {
+             for (QueryDocumentSnapshot document : reserves.get().getDocuments()) {
+                listReserve.add(document.toObject(Reserve.class));
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
 
+        return listReserve;
+    }
 }
