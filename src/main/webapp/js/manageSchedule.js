@@ -17,20 +17,49 @@
 
 $(document).ready(function () {
 
+    var rows_range1 = $("div[class*='range1-row-']");
+    var rows_range2 = $("div[class*='range2-row-']");
+
+    rows_range1.each(function (index) {
+        var input1 = $(this).find('input');
+        var input2 = $(this).find('input');
+        
+        if (input1.val() === '00:00' || input1.val() === null && input2.val() === '00:00' || input2.val() === null) {
+            var checkbox = $(this).prev().find('input').prop("checked", true);
+            $(input1).prop("disabled", true);
+            $(input1).val(null);
+            $(input2).val(null);
+        }
+    });
+    
+    rows_range2.each(function (index) {
+        var input1 = $(this).find('input');
+        var input2 = $(this).find('input');
+        
+        if (input1.val() === '00:00' || input1.val() === null && input2.val() === '00:00' || input2.val() === null) {
+            var checkbox = $(this).prev().find('input').prop("checked", true);
+            $(input1).prop("disabled", true);
+            $(input1).val(null);
+            $(input2).val(null);
+        }
+    });
+
     $('input[type=checkbox]').on('change', function () {
         var id = $(this).attr('id');
-        var id_splited = id.split('-');
         var range_id = id.split('-')[0];
         var day = (id.split('-')[2]);
 
-        // range1-row-1
+        var range_start = $('#' + range_id + '-start-' + 'day' + day);
+        var range_end = $('#' + range_id + '-end-' + 'day' + day);
 
-        if ($(this).is(":checked")) {            
-            $('#'+range_id+'-start-'+'day'+day).prop('disabled', true);
-            $('#'+range_id+'-end-'+'day'+day).prop('disabled', true);
-        }else{
-            $('#'+range_id+'-start-'+'day'+day).prop('disabled', false);
-            $('#'+range_id+'-end-'+'day'+day).prop('disabled', false);
+        if ($(this).is(":checked")) {
+            range_start.prop('disabled', true);
+            range_end.prop('disabled', true);
+            range_start.val(null);
+            range_end.val(null);
+        } else {
+            range_start.prop('disabled', false);
+            range_end.prop('disabled', false);
         }
 
     });
