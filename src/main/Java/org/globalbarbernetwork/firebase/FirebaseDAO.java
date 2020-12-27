@@ -466,4 +466,27 @@ public class FirebaseDAO {
 
         return listReserve;
     }
+
+    public void updateHairdressingHolidays(User hairdressing, Map<String, Object> holidays) {
+        db.collection("hairdressingHolidays").document(hairdressing.getUID()).set(holidays);
+    }
+
+    public ArrayList<Timestamp> getHairdressingHolidays(String idHairdressing) {
+        ArrayList<Timestamp> listHolidays = new ArrayList();
+        ApiFuture<DocumentSnapshot> future = db.collection("hairdressingHolidays").document(idHairdressing).get();
+        try {
+            Map<String, Object> docData = future.get().getData();
+            if (docData != null) {
+                listHolidays = (ArrayList<Timestamp>) docData.get("holidays");
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
+
+        return listHolidays;
+    }
+
+
 }

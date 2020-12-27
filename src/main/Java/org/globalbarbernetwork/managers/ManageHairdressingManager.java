@@ -41,6 +41,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.entities.Employee;
+import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.entities.Service;
 import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
@@ -168,7 +169,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                 request.setAttribute("selectedTab", false);
             } else {
                 request.setAttribute("selectedTab", true);
-                request.setAttribute("incrementMin", INCREMENT_MINUTES);        
+                request.setAttribute("incrementMin", INCREMENT_MINUTES);
             }
 
             if (rd != null) {
@@ -472,12 +473,30 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         return daysOfWeek;
     }
 
-    public void loadHolidays(HttpServletRequest request, User activeUser) {
-
+    public void loadHolidays(HttpServletRequest request, User activeUser) {        
+        request.setAttribute("holidays", firebaseDAO.getHairdressingHolidays(activeUser.getUID()));
     }
 
     public void updateHolidays(HttpServletRequest request, User activeUser) {
+        String holidays = request.getParameter("selectedHairdressingHolidaysDates");
+        Map<String, Object> docData = new HashMap<>();
 
+        ArrayList<Date> listHolidays = new ArrayList<>();
+        String[] arrayHolidays = !holidays.split(",")[0].equals("") ? holidays.split(",") : new String[0];
+
+        try {
+            if (arrayHolidays.length > 0) {
+                for (String holiday : arrayHolidays) {
+                    Date date = new SimpleDateFormat("dd/MM/yyyy").parse(holiday);
+                    listHolidays.add(date);
+                }
+            }
+        } catch (ParseException ex) {
+            Logger.getLogger(ManageHairdressingManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        docData.put("holidays", listHolidays);
+        firebaseDAO.updateHairdressingHolidays(activeUser, docData);
     }
 
 }
