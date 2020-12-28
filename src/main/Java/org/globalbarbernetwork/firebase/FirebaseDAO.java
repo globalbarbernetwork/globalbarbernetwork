@@ -472,7 +472,7 @@ public class FirebaseDAO {
         db.collection("hairdressingHolidays").document(hairdressing.getUID()).set(holidays);
     }
 
-    public JSONArray getHairdressingHolidays(String idHairdressing) {
+    public ArrayList<Timestamp> getHairdressingHolidays(String idHairdressing) {
         ArrayList<Timestamp> listHolidays = new ArrayList();
         ApiFuture<DocumentSnapshot> future = db.collection("hairdressingHolidays").document(idHairdressing).get();
         try {
@@ -486,7 +486,7 @@ public class FirebaseDAO {
             ex.printStackTrace();
         }
 
-        return new JSONArray(listHolidays);
+        return listHolidays;
     }
 
 

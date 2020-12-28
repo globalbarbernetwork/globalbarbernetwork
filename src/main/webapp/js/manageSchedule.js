@@ -23,20 +23,8 @@ $(document).ready(function () {
     rows_range1.each(function (index) {
         var input1 = $(this).find('input');
         var input2 = $(this).find('input');
-        
-        if (input1.val() === '00:00' || input1.val() === null && input2.val() === '00:00' || input2.val() === null) {
-            var checkbox = $(this).prev().find('input').prop("checked", true);
-            $(input1).prop("disabled", true);
-            $(input1).val(null);
-            $(input2).val(null);
-        }
-    });
-    
-    rows_range2.each(function (index) {
-        var input1 = $(this).find('input');
-        var input2 = $(this).find('input');
-        
-        if (input1.val() === '00:00' || input1.val() === null && input2.val() === '00:00' || input2.val() === null) {
+
+        if (input1.val() === '' && input2.val() === '') {
             var checkbox = $(this).prev().find('input').prop("checked", true);
             $(input1).prop("disabled", true);
             $(input1).val(null);
@@ -44,7 +32,19 @@ $(document).ready(function () {
         }
     });
 
-    $('input[type=checkbox]').on('change', function () {
+    rows_range2.each(function (index) {
+        var input1 = $(this).find('input');
+        var input2 = $(this).find('input');
+
+        if (input1.val() === '' && input2.val() === '') {
+            var checkbox = $(this).prev().find('input').prop("checked", true);
+            $(input1).prop("disabled", true);
+            $(input1).val(null);
+            $(input2).val(null);
+        }
+    });
+
+    $('input[type=checkbox]').on('change', function () {        
         var id = $(this).attr('id');
         var range_id = id.split('-')[0];
         var day = (id.split('-')[2]);

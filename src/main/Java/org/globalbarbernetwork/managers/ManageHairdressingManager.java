@@ -19,17 +19,21 @@ package org.globalbarbernetwork.managers;
 import com.google.cloud.Timestamp;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -160,7 +164,9 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                     rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
                     break;
                 case UPDATE_HOLIDAYS:
-                    this.updateHolidays(request, activeUser);
+                    if (request.getMethod().equals(POST)) {
+                        this.updateHolidays(request, activeUser);
+                    }
                     rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
                     break;
             }
@@ -473,8 +479,24 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         return daysOfWeek;
     }
 
-    public void loadHolidays(HttpServletRequest request, User activeUser) {        
-        request.setAttribute("holidays", firebaseDAO.getHairdressingHolidays(activeUser.getUID()));
+    public void loadHolidays(HttpServletRequest request, User activeUser) {
+        if (activeUser != null) {
+            JSONArray jsonArray = new JSONArray();
+            List<String> tableData = new ArrayList<>();
+            List<Timestamp> holidays = firebaseDAO.getHairdressingHolidays(activeUser.getUID());
+
+            Collections.sort(holidays);
+            
+            for (Timestamp holiday : holidays) {
+                String date = new SimpleDateFormat("dd/MM/yyyy").format(holiday.toDate());
+                String tableDate = new SimpleDateFormat("EEEE d 'de' MMMM 'del' yyyy", this.buildCustomizedSymbols()).format(holiday.toDate());
+                jsonArray.put(date);
+                tableData.add(tableDate);
+            }
+
+            request.setAttribute("holidays", jsonArray);
+            request.setAttribute("tableData", tableData);
+        }
     }
 
     public void updateHolidays(HttpServletRequest request, User activeUser) {
@@ -494,9 +516,37 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         } catch (ParseException ex) {
             Logger.getLogger(ManageHairdressingManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         docData.put("holidays", listHolidays);
         firebaseDAO.updateHairdressingHolidays(activeUser, docData);
+    }
+
+    private DateFormatSymbols buildCustomizedSymbols() {
+            DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(Locale.forLanguageTag("ca-ES"));
+            dateFormatSymbols.setWeekdays(new String[]{
+                "Unused",
+                "Dilluns",
+                "Dimarts",
+                "Dimecres",
+                "Dijous",
+                "Divendres",
+                "Disabte",
+                "Diumenge",});
+            dateFormatSymbols.setMonths(new String[]{                
+                "Gener",
+                "Febrer",
+                "Març",
+                "Abril",
+                "Maig",
+                "Juny",
+                "Juliol",
+                "Agost",
+                "Septembre",
+                "Octubre",
+                "Novembre",
+                "Desembre",
+            });
+            return dateFormatSymbols;
     }
 
 }

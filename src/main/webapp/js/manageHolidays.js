@@ -17,6 +17,7 @@
 
 $(document).ready(function () {
     initializeDatepickerHairdressingHolidays();
+    initializeDatatable();
     stylizeDatePicker();
     loadHairdressingHolidays();
 });
@@ -44,17 +45,27 @@ function stylizeDatePicker() {
     var thead = $('#datepickerHairdressingHolidays').find('thead:first').children('tr').eq(1);
     thead.addClass(" thead-hairdressing-schedule ");
     $(thead).children('th').addClass(" th-hairdressing-schedule ");
-
-//    var tfoot = $('#datepickerHairdressingHolidays').find('tfoot:first').children('tr').eq(1);    
-//    tfoot.addClass(" tfoot-hairdressing-schedule ");
-//    $(tfoot).children('th').addClass(" th-hairdressing-schedule ");
 }
 
 function loadHairdressingHolidays() {
-    var data = $('#holidays').val(); 
-    console.log(data.toString());
-    $("#datepickerHairdressingHolidays").data('datepicker').setDates(data);
-    $("#datepickerHairdressingHolidays").data('datepicker')._setDate(new Date(), 'view');
+    var data = JSON.parse($('#holidays').val());
+    $("#datepickerHairdressingHolidays").datepicker('setDates', data);
+    $("#datepickerHairdressingHolidays").datepicker('_setDate', new Date(), 'view');
+}
+
+function initializeDatatable() {
+    $('#holidayDatatable').DataTable({
+        "pagingType": "numbers",
+        "responsive": true,
+        "searching": false,
+        columnDefs: [
+            {orderable: false, targets: 0}
+        ],
+        order: [],
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Catalan.json"
+        }
+    });
 }
 
 
