@@ -338,12 +338,12 @@ public class FirebaseDAO {
     }
 
     public void insertHolidaysEmployee(String idHairdressing, String idEmployee, Map<String, Object> holidays) {
-        db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).set(holidays);
+        db.collection("holidaysEmployee").document(idHairdressing).collection("employees").document(idEmployee).set(holidays);
     }
 
     public ArrayList<Timestamp> getHolidaysEmployee(String idHairdressing, String idEmployee) {
         ArrayList<Timestamp> listHolidays = new ArrayList();
-        ApiFuture<DocumentSnapshot> future = db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).get();
+        ApiFuture<DocumentSnapshot> future = db.collection("holidaysEmployee").document(idHairdressing).collection("employees").document(idEmployee).get();
         try {
             Map<String, Object> docData = future.get().getData();
             if (docData != null) {
@@ -359,7 +359,7 @@ public class FirebaseDAO {
     }
 
     public void deleteHolidaysEmployee(String idHairdressing, String idEmployee) {
-        db.collection("scheduleEmployees").document(idHairdressing).collection("employees").document(idEmployee).delete();
+        db.collection("holidaysEmployee").document(idHairdressing).collection("employees").document(idEmployee).delete();
     }
 
     public List<Service> getAllServices(String idHairdressing) {
@@ -378,7 +378,7 @@ public class FirebaseDAO {
         return listServices;
     }
 
-    public Service getServiceById(String idHairdressing, Integer idService) {
+    public Service getServiceById(String idHairdressing, String idService) {
         Service service = null;
         ApiFuture<QuerySnapshot> services = db.collection("services").document(idHairdressing).collection("services").whereEqualTo("id", idService).get();
         try {
@@ -487,13 +487,13 @@ public class FirebaseDAO {
         db.collection("reservesClient").document(idClient).collection("reserves").document().set(data);
     }
 
-    public void updateHairdressingHolidays(User hairdressing, Map<String, Object> holidays) {
-        db.collection("hairdressingHolidays").document(hairdressing.getUID()).set(holidays);
+    public void updateHolidays(User hairdressing, Map<String, Object> holidays) {
+        db.collection("holidays").document(hairdressing.getUID()).set(holidays);
     }
 
-    public ArrayList<Timestamp> getHairdressingHolidays(String idHairdressing) {
+    public ArrayList<Timestamp> getHolidays(String idHairdressing) {
         ArrayList<Timestamp> listHolidays = new ArrayList();
-        ApiFuture<DocumentSnapshot> future = db.collection("hairdressingHolidays").document(idHairdressing).get();
+        ApiFuture<DocumentSnapshot> future = db.collection("holidays").document(idHairdressing).get();
         try {
             Map<String, Object> docData = future.get().getData();
             if (docData != null) {
