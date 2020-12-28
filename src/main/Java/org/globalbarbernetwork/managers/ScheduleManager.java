@@ -19,6 +19,7 @@ package org.globalbarbernetwork.managers;
 import com.google.common.collect.HashBiMap;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,6 +46,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import static org.globalbarbernetwork.constants.Constants.*;
 import org.globalbarbernetwork.entities.Employee;
+import org.globalbarbernetwork.entities.User;
 
 /**
  *
@@ -55,13 +58,13 @@ public class ScheduleManager implements ManagerInterface {
     private final String GET_TIMETABLE_AJAX = "getTimetableAjax";
     private final String GET_AVAILABLE_HOURS_AJAX = "getAvailableHoursAjax";
     private final String ADD_RESERVE_AJAX = "addReserveAjax";
-    
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
         try {
             RequestDispatcher rd = null;
-
+            User activeUser = (User) request.getSession().getAttribute("user");
+            
             switch (action) {
                 case GET_TIMETABLE_AJAX:
                     response.setContentType("application/json");
@@ -80,10 +83,20 @@ public class ScheduleManager implements ManagerInterface {
                     LocalDate date = LocalDate.parse(request.getParameter("selectedDate"), pattern);
 
                     ArrayList<LocalTime> rangeHoursComplete = getListAvailableHours(idHairdressing2, idHairdresser, idService, date);
-                    
+
                     getListAvailableHoursToJSON(response, rangeHoursComplete);
                     break;
                 case ADD_RESERVE_AJAX:
+                    response.setContentType("application/json");
+
+                    String idHairdressing3 = request.getParameter("idHairdressing");
+                    String idHairdresser2 = request.getParameter("idHairdresser");
+                    Integer idService2 = Integer.valueOf(request.getParameter("idService"));
+                    DateTimeFormatter pattern2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate date2 = LocalDate.parse(request.getParameter("date"), pattern2);
+                    Integer time = Integer.valueOf(request.getParameter("time"));
+
+                    addReserve(response, activeUser, idHairdressing3, idHairdresser2, idService2, date2, time);
                     break;
             }
 
@@ -100,7 +113,7 @@ public class ScheduleManager implements ManagerInterface {
             Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     private void getTimetableToJSON(HttpServletResponse response, String idHairdressing) {
         Map<String, Object> timetable = firebaseDAO.getTimetableHairdressing(idHairdressing);
 
@@ -160,8 +173,8 @@ public class ScheduleManager implements ManagerInterface {
     private ArrayList<LocalTime> getListSplitHours(Map<String, Object> rangeHour) {
         boolean continueWhile = true;
         ArrayList<LocalTime> rangeHourSplit = new ArrayList();
-        LocalTime iniHour = !((String)rangeHour.get("startHour")).isEmpty() ? LocalTime.parse((CharSequence) rangeHour.get("startHour")) : null;
-        LocalTime endHour = !((String)rangeHour.get("endHour")).isEmpty() ? LocalTime.parse((CharSequence) rangeHour.get("endHour")) : null;
+        LocalTime iniHour = !((String) rangeHour.get("startHour")).isEmpty() ? LocalTime.parse((CharSequence) rangeHour.get("startHour")) : null;
+        LocalTime endHour = !((String) rangeHour.get("endHour")).isEmpty() ? LocalTime.parse((CharSequence) rangeHour.get("endHour")) : null;
 
         if (iniHour != null && endHour != null) {
             while (continueWhile) {
@@ -174,7 +187,7 @@ public class ScheduleManager implements ManagerInterface {
         }
         return rangeHourSplit;
     }
-    
+
     private ArrayList<LocalTime> getListAvailableHours(String idHairdressing, String idHairdresser, Integer idService, LocalDate date) {
         Map<String, Object> timetableHairdressing = firebaseDAO.getTimetableHairdressing(idHairdressing);
         String dayOfWeek = String.valueOf(date.getDayOfWeek().getValue());
@@ -263,10 +276,10 @@ public class ScheduleManager implements ManagerInterface {
                 }
             }
         }
-        
+
         return rangeHoursComplete;
     }
-    
+
     private void getListAvailableHoursToJSON(HttpServletResponse response, ArrayList<LocalTime> rangeHourComplete) throws IOException {
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
@@ -290,6 +303,100 @@ public class ScheduleManager implements ManagerInterface {
             Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (JSONException ex) {
             Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void addReserve(HttpServletResponse response, User activeUser, String idHairdressing, String idHairdresser, Integer idService, LocalDate date, Integer time) throws IOException {
+        Service selectedService = firebaseDAO.getServiceById(idHairdressing, idService);
+        DateTimeFormatter formatterWithDash = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        String formattedDateString = date.format(formatterWithDash);
+        LocalTime ltInitReserveTmp = LocalTime.parse("00:00").plusMinutes(Long.valueOf(time));
+        LocalTime ltFinalReserveTmp = ltInitReserveTmp.plusMinutes(Long.valueOf(selectedService.getDuration()));
+        boolean existOverlap = false;
+        String idEmployeeFree = "";
+
+        if (idHairdresser != null && !idHairdresser.isEmpty()) {
+            ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
+                    String.valueOf(date.getMonthValue()), formattedDateString, idHairdresser);
+
+            for (Reserve reserve : listReservesEmployee) {
+                LocalTime ltInit = reserve.getTimeInitLocalDate().toLocalTime();
+                LocalTime ltFinal = reserve.getTimeFinalLocalDate().toLocalTime();
+
+                if (ltInitReserveTmp.equals(ltInit)
+                        || (ltInitReserveTmp.isAfter(ltInit) && ltInitReserveTmp.isBefore(ltFinal))
+                        || (ltFinalReserveTmp.isAfter(ltInit) && ltFinalReserveTmp.isBefore(ltFinal))
+                        || (ltFinalReserveTmp.equals(ltFinal))) {
+                    existOverlap = true;
+                    break;
+                }
+            }
+            
+            if (!existOverlap){
+                idEmployeeFree = idHairdresser;
+            }
+
+        } else {
+            List<Employee> listEmployees = firebaseDAO.getAllEmployees(idHairdressing);
+             
+            for (Employee employee : listEmployees) {
+                ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
+                        String.valueOf(date.getMonthValue()), formattedDateString, employee.getIdNumber());
+
+                for (Reserve reserve : listReservesEmployee) {
+                    LocalTime ltInit = reserve.getTimeInitLocalDate().toLocalTime();
+                    LocalTime ltFinal = reserve.getTimeFinalLocalDate().toLocalTime();
+
+                    if (ltInitReserveTmp.equals(ltInit)
+                            || (ltInitReserveTmp.isAfter(ltInit) && ltInitReserveTmp.isBefore(ltFinal))
+                            || (ltFinalReserveTmp.isAfter(ltInit) && ltFinalReserveTmp.isBefore(ltFinal))
+                            || (ltFinalReserveTmp.equals(ltFinal))) {
+                        existOverlap = true;
+                        break;
+                    } else if (!existOverlap && listReservesEmployee.get(listReservesEmployee.size() - 1).getId().equals(reserve.getId())){
+                        idEmployeeFree = employee.getIdNumber();
+                        break;
+                    }
+                }
+                
+                if (!existOverlap && !idEmployeeFree.isEmpty()){
+                    break;
+                }
+            }
+        }
+
+        JSONObject json;
+        LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap();
+
+        if (!existOverlap) {
+            // Metodo para guardar
+            Reserve reserve = new Reserve(activeUser.getUID(), idHairdressing, idEmployeeFree, idService, STATE_PENDING);
+            LocalDateTime ldtReserve = LocalDateTime.of(date, ltInitReserveTmp);
+            reserve.setTimeInitDate(LocalDateTime.of(date, ltInitReserveTmp));
+            reserve.setTimeFinalDate(LocalDateTime.of(date, ltFinalReserveTmp));
+            
+            firebaseDAO.insertReserve(reserve, String.valueOf(ldtReserve.getYear()), String.valueOf(ldtReserve.getMonthValue()), formattedDateString);
+            // Devolver datos para printar "Reserva realitzada per el día X a l'hora Y".
+            
+            DateTimeFormatter formatter;
+            if (ldtReserve.getHour() == 13 || ldtReserve.getHour() == 01 ) {
+                formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'del' yyyy 'a la' HH:mm", Locale.forLanguageTag("ca-ES"));
+            } else {
+                formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'del' yyyy 'a les' HH:mm", Locale.forLanguageTag("ca-ES"));
+            }
+            
+            jsonOrderedMap.put("message", "Reserva realitzada pel " + ldtReserve.format(formatter));
+            
+            json = new JSONObject(jsonOrderedMap);
+        } else {
+            // Devolver el error de solapamiento.
+            response.sendError(409, "Hi ha hagut, un solapament amb un altre reserva, si us plau realitza de nou la reserva per les hores disponibles.");
+            jsonOrderedMap.put("messageError", "Hi ha hagut, un solapament amb un altre reserva, si us plau realitza de nou la reserva per les hores disponibles.");
+            json = new JSONObject(jsonOrderedMap);
+        }
+        
+        try (PrintWriter out = response.getWriter()) {
+            out.print(json);
         }
     }
 }
