@@ -23,7 +23,8 @@ html {
     height: 100%;
 }
 
-body { 
+body {    
+    background: linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,.4)), url('../img/hairdressing_sm.png');    
     margin: 0;
     padding: 0;
 }
