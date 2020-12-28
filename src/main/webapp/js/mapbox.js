@@ -123,9 +123,9 @@ function loadHairdressings() {
             
             // Llamada ajax para obtener horarios de apertura de la peluqueria
             $.ajax({
-                url: contextPath + '/ManagementServlet/schedule/timetable',
+                url: contextPath + '/ManagementServlet/schedule/getTimetableAjax',
                 data: {
-                    uidHairdressing: UID
+                    idHairdressing: UID
                 },
                 dataType: "json",
                 success: function(data) {
