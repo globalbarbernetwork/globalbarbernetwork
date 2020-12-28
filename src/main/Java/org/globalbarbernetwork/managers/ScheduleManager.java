@@ -64,7 +64,7 @@ public class ScheduleManager implements ManagerInterface {
         try {
             RequestDispatcher rd = null;
             User activeUser = (User) request.getSession().getAttribute("user");
-            
+
             switch (action) {
                 case GET_TIMETABLE_AJAX:
                     response.setContentType("application/json");
@@ -215,24 +215,33 @@ public class ScheduleManager implements ManagerInterface {
             ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
                     String.valueOf(date.getMonthValue()), formattedDateString, idHairdresser);
 
-            for (Reserve reserve : listReservesEmployee) {
-                LocalTime ltInit = reserve.getTimeInitLocalDate().toLocalTime();
-                LocalTime ltFinal = reserve.getTimeFinalLocalDate().toLocalTime();
-                LocalTime ltInitTmpBefore = ltInit.minusMinutes(selectedService.getDuration());
-                LocalTime ltFinalTmpBefore = ltInit;
+            for (Iterator it = rangeHoursComplete.iterator(); it.hasNext();) {
+                LocalTime time = (LocalTime) it.next();
+                LocalTime ltFinalTmpAfter = time.plusMinutes(selectedService.getDuration());
+                boolean existOverlap = false;
 
-                for (Iterator it = rangeHoursComplete.iterator(); it.hasNext();) {
-                    LocalTime time = (LocalTime) it.next();
-                    LocalTime ltFinalTmpAfter = time.plusMinutes(selectedService.getDuration());
+                for (Reserve reserve : listReservesEmployee) {
+                    LocalTime ltInit = reserve.obtainTimeInitLocalDate().toLocalTime();
+                    LocalTime ltFinal = reserve.obtainTimeFinalLocalDate().toLocalTime();
+                    LocalTime ltInitTmpBefore = ltInit.minusMinutes(selectedService.getDuration());
+                    LocalTime ltFinalTmpBefore = ltInit;
 
                     // Eliminamos las horas que coincidan con las reservas pendientes.
-                    // Eliminamos las horas que coincidan con posible reserva en base al servicio seleccionado.
                     if ((ltInit.equals(time) || time.isAfter(ltInit) && time.isBefore(ltFinal))
-                            || (time.isAfter(ltInitTmpBefore) && time.isBefore(ltFinalTmpBefore))
-                            || (rangeHour1Final != null && ltFinalTmpAfter.isAfter(rangeHour1Final)
-                            || rangeHour2Final != null && ltFinalTmpAfter.isAfter(rangeHour2Final))) {
-                        it.remove();
+                            || (time.isAfter(ltInitTmpBefore) && time.isBefore(ltFinalTmpBefore))) {
+                        existOverlap = true;
+                        break;
                     }
+                }
+
+                // Eliminamos las horas que coincidan con posible reserva en base al servicio seleccionado.
+                if ((rangeHour1Final != null && ltFinalTmpAfter.isAfter(rangeHour1Final)
+                        || rangeHour2Final != null && ltFinalTmpAfter.isAfter(rangeHour2Final))) {
+                    existOverlap = true;
+                }
+
+                if (existOverlap) {
+                    it.remove();
                 }
             }
         } else { // Excluir todas las horas con reserva siempre y cuando esten reservadas ocupando a todos los empleados.
@@ -242,26 +251,33 @@ public class ScheduleManager implements ManagerInterface {
                 ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
                         String.valueOf(date.getMonthValue()), formattedDateString, employee.getIdNumber());
                 num++;
-                for (Reserve reserve : listReservesEmployee) {
-                    LocalTime ltInit = reserve.getTimeInitLocalDate().toLocalTime();
-                    LocalTime ltFinal = reserve.getTimeFinalLocalDate().toLocalTime();
-                    LocalTime ltInitTmp = ltInit.minusMinutes(selectedService.getDuration());
-                    LocalTime ltFinalTmp = ltInit;
+                for (LocalTime time : rangeHoursComplete) {
+                    LocalTime ltFinalTmpAfter = time.plusMinutes(selectedService.getDuration());
 
-                    for (LocalTime time : rangeHoursComplete) {
-                        LocalTime ltFinalTmpAfter = time.plusMinutes(selectedService.getDuration());
+                    for (Reserve reserve : listReservesEmployee) {
+                        LocalTime ltInit = reserve.obtainTimeInitLocalDate().toLocalTime();
+                        LocalTime ltFinal = reserve.obtainTimeFinalLocalDate().toLocalTime();
+                        LocalTime ltInitTmp = ltInit.minusMinutes(selectedService.getDuration());
+                        LocalTime ltFinalTmp = ltInit;
 
                         // Eliminamos las horas que coincidan con las reservas pendientes.
-                        // Eliminamos las horas que coincidan con posible reserva en base al servicio seleccionado.
                         if ((ltInit.equals(time) || time.isAfter(ltInit) && time.isBefore(ltFinal))
-                                || (time.isAfter(ltInitTmp) && time.isBefore(ltFinalTmp))
-                                || (rangeHour1Final != null && ltFinalTmpAfter.isAfter(rangeHour1Final)
-                                || rangeHour2Final != null && ltFinalTmpAfter.isAfter(rangeHour2Final))) {
+                                || (time.isAfter(ltInitTmp) && time.isBefore(ltFinalTmp))) {
                             if (timeToDrop.get(time) != null && timeToDrop.get(time) != num) {
                                 timeToDrop.put(time, timeToDrop.get(time) + 1);
                             } else if (timeToDrop.get(time) == null) {
                                 timeToDrop.put(time, 1);
                             }
+                        }
+                    }
+
+                    // Eliminamos las horas que coincidan con posible reserva en base al servicio seleccionado.
+                    if ((rangeHour1Final != null && ltFinalTmpAfter.isAfter(rangeHour1Final)
+                            || rangeHour2Final != null && ltFinalTmpAfter.isAfter(rangeHour2Final))) {
+                        if (timeToDrop.get(time) != null && timeToDrop.get(time) != num) {
+                            timeToDrop.put(time, timeToDrop.get(time) + 1);
+                        } else if (timeToDrop.get(time) == null) {
+                            timeToDrop.put(time, 1);
                         }
                     }
                 }
@@ -320,8 +336,8 @@ public class ScheduleManager implements ManagerInterface {
                     String.valueOf(date.getMonthValue()), formattedDateString, idHairdresser);
 
             for (Reserve reserve : listReservesEmployee) {
-                LocalTime ltInit = reserve.getTimeInitLocalDate().toLocalTime();
-                LocalTime ltFinal = reserve.getTimeFinalLocalDate().toLocalTime();
+                LocalTime ltInit = reserve.obtainTimeInitLocalDate().toLocalTime();
+                LocalTime ltFinal = reserve.obtainTimeFinalLocalDate().toLocalTime();
 
                 if (ltInitReserveTmp.equals(ltInit)
                         || (ltInitReserveTmp.isAfter(ltInit) && ltInitReserveTmp.isBefore(ltFinal))
@@ -331,21 +347,21 @@ public class ScheduleManager implements ManagerInterface {
                     break;
                 }
             }
-            
-            if (!existOverlap){
+
+            if (!existOverlap) {
                 idEmployeeFree = idHairdresser;
             }
 
         } else {
             List<Employee> listEmployees = firebaseDAO.getAllEmployees(idHairdressing);
-             
+
             for (Employee employee : listEmployees) {
                 ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
                         String.valueOf(date.getMonthValue()), formattedDateString, employee.getIdNumber());
 
                 for (Reserve reserve : listReservesEmployee) {
-                    LocalTime ltInit = reserve.getTimeInitLocalDate().toLocalTime();
-                    LocalTime ltFinal = reserve.getTimeFinalLocalDate().toLocalTime();
+                    LocalTime ltInit = reserve.obtainTimeInitLocalDate().toLocalTime();
+                    LocalTime ltFinal = reserve.obtainTimeFinalLocalDate().toLocalTime();
 
                     if (ltInitReserveTmp.equals(ltInit)
                             || (ltInitReserveTmp.isAfter(ltInit) && ltInitReserveTmp.isBefore(ltFinal))
@@ -353,13 +369,13 @@ public class ScheduleManager implements ManagerInterface {
                             || (ltFinalReserveTmp.equals(ltFinal))) {
                         existOverlap = true;
                         break;
-                    } else if (!existOverlap && listReservesEmployee.get(listReservesEmployee.size() - 1).getId().equals(reserve.getId())){
+                    } else if (!existOverlap && listReservesEmployee.get(listReservesEmployee.size() - 1).getId().equals(reserve.getId())) {
                         idEmployeeFree = employee.getIdNumber();
                         break;
                     }
                 }
-                
-                if (!existOverlap && !idEmployeeFree.isEmpty()){
+
+                if (!existOverlap && !idEmployeeFree.isEmpty()) {
                     break;
                 }
             }
@@ -372,21 +388,21 @@ public class ScheduleManager implements ManagerInterface {
             // Metodo para guardar
             Reserve reserve = new Reserve(activeUser.getUID(), idHairdressing, idEmployeeFree, idService, STATE_PENDING);
             LocalDateTime ldtReserve = LocalDateTime.of(date, ltInitReserveTmp);
-            reserve.setTimeInitDate(LocalDateTime.of(date, ltInitReserveTmp));
-            reserve.setTimeFinalDate(LocalDateTime.of(date, ltFinalReserveTmp));
-            
+            reserve.modifyTimeInitDate(LocalDateTime.of(date, ltInitReserveTmp));
+            reserve.modifyTimeFinalDate(LocalDateTime.of(date, ltFinalReserveTmp));
+
             firebaseDAO.insertReserve(reserve, String.valueOf(ldtReserve.getYear()), String.valueOf(ldtReserve.getMonthValue()), formattedDateString);
             // Devolver datos para printar "Reserva realitzada per el día X a l'hora Y".
-            
+
             DateTimeFormatter formatter;
-            if (ldtReserve.getHour() == 13 || ldtReserve.getHour() == 01 ) {
+            if (ldtReserve.getHour() == 13 || ldtReserve.getHour() == 01) {
                 formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'del' yyyy 'a la' HH:mm", Locale.forLanguageTag("ca-ES"));
             } else {
                 formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'del' yyyy 'a les' HH:mm", Locale.forLanguageTag("ca-ES"));
             }
-            
+
             jsonOrderedMap.put("message", "Reserva realitzada pel " + ldtReserve.format(formatter));
-            
+
             json = new JSONObject(jsonOrderedMap);
         } else {
             // Devolver el error de solapamiento.
@@ -394,8 +410,8 @@ public class ScheduleManager implements ManagerInterface {
             jsonOrderedMap.put("messageError", "Hi ha hagut, un solapament amb un altre reserva, si us plau realitza de nou la reserva per les hores disponibles.");
             json = new JSONObject(jsonOrderedMap);
         }
-        
-        try (PrintWriter out = response.getWriter()) {
+
+        try ( PrintWriter out = response.getWriter()) {
             out.print(json);
         }
     }
