@@ -377,7 +377,7 @@ public class FirebaseDAO {
 
         return listServices;
     }
-    
+
     public Service getServiceById(String idHairdressing, Integer idService) {
         Service service = null;
         ApiFuture<QuerySnapshot> services = db.collection("services").document(idHairdressing).collection("services").whereEqualTo("id", idService).get();
@@ -450,13 +450,13 @@ public class FirebaseDAO {
     public void updateSchedule(Map<String, Object> schedule, User user) {
         db.collection("schedule").document(user.getUID()).set(schedule);
     }
-    
+
     public ArrayList<Reserve> getReservesEmployee(String idHairdressing, String yearReserve, String monthReserve, String dateReserve, String idEmployee) {
         ArrayList<Reserve> listReserve = new ArrayList();
         ApiFuture<QuerySnapshot> reserves = db.collection("reserves").document(idHairdressing).collection(yearReserve).document(monthReserve).collection(dateReserve)
                 .whereEqualTo("idEmployee", idEmployee).whereEqualTo("state", STATE_PENDING).get();
         try {
-             for (QueryDocumentSnapshot document : reserves.get().getDocuments()) {
+            for (QueryDocumentSnapshot document : reserves.get().getDocuments()) {
                 listReserve.add(document.toObject(Reserve.class));
             }
         } catch (InterruptedException ex) {
@@ -467,7 +467,14 @@ public class FirebaseDAO {
 
         return listReserve;
     }
-    
+
+    public void insertReserve(Reserve reserve, String yearReserve, String monthReserve, String dateReserve) {
+        String autoId = db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document().getId();
+        reserve.setId(autoId);
+        
+        db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document(autoId).set(reserve);
+    }
+
     public void updateHairdressingHolidays(User hairdressing, Map<String, Object> holidays) {
         db.collection("hairdressingHolidays").document(hairdressing.getUID()).set(holidays);
     }
@@ -488,6 +495,5 @@ public class FirebaseDAO {
 
         return listHolidays;
     }
-
 
 }

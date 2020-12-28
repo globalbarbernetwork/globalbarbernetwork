@@ -48,6 +48,14 @@ public class Reserve {
         this.state = state;
     }
 
+    public Reserve(String idClient, String idHairdressing, String idEmployee, Integer idService, String state) {
+        this.idClient = idClient;
+        this.idHairdressing = idHairdressing;
+        this.idEmployee = idEmployee;
+        this.idService = idService;
+        this.state = state;
+    }
+
     public String getId() {
         return id;
     }

@@ -257,14 +257,22 @@ function validationFieldsReserve() {
 }
 
 function doReserve() {
-    var idHairdresser = $("#hairdressers").val();
+    var idHairdressing = $("#selectedIdHairdressing").val();
+    
+    var positionHaidresser = $("#hairdressers").val();
+    var idHairdresser = null;
+    if (positionHaidresser !== "-1") {
+        idHairdresser = hairdressersJSONArray[positionHaidresser].idNumber;
+    }
+    
     var idService = $("#services").val();
-    var date = $("#reservationDate").datepicker('getDate');
+    var date = $("#reservationDate").datepicker('getFormattedDate');
     var time = $("#availableHours").val();
     
     $.ajax({
         url: contextPath + '/ManagementServlet/schedule/addReserveAjax',
         data: {
+            idHairdressing: idHairdressing,
             idHairdresser: idHairdresser,
             idService: idService,
             date: date,
@@ -272,15 +280,27 @@ function doReserve() {
         },
         dataType: "json",
         success: function (data) {
-            var availableHoursJSONArray = data.jsonArray;
-
-            cleanSelect("availableHours", "Tria una hora", false);
-            for (var i in availableHoursJSONArray) {
-                $("#availableHours").append(new Option(availableHoursJSONArray[i].timeInFormat, availableHoursJSONArray[i].timeInMinutes));
-            }
+            console.log(data);
+            $("#modalReserve").modal('hide');
+            Swal.fire({
+                icon: 'success',
+                title: 'Gravació correcte',
+                text: data.message
+            });
         },
-        error: function () {
-            console.log("[ERROR] Ha habido algún error durante el proceso de recogida de vacaciones.");
+        error: function (jqXHR, textStatus, errorThrown) {
+            if (jqXHR.status == 409) {
+                console.log("Error controlat: " + errorThrown);
+            } else {
+                console.log("Error desconocido.");
+            }
+            
+            $("#modalReserve").modal('hide');
+            Swal.fire({
+                icon: 'error',
+                title: 'Gravació incorrecte',
+                text: errorThrown
+            });
         }
     });
 }

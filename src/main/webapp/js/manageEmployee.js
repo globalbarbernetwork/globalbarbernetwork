@@ -356,7 +356,7 @@ function saveHolidaysEmployee() {
             $("#modalHolidaysEmployee").modal('hide');
             Swal.fire({
                 icon: 'success',
-                title: 'Grabación correcta',
+                title: 'Gravació correcte',
                 showConfirmButton: false,
                 timer: 1500
             });
@@ -367,7 +367,7 @@ function saveHolidaysEmployee() {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
-                text: 'Grabación incorrecta, contacta con el administrador por favor!'
+                text: 'Gravació incorrecte, contacti amb l\'administrador si us plau!'
             });
         }
     });
