@@ -28,14 +28,14 @@
                             <img src="${contextPath}/img/avatar.png" alt="Avatar" class="avatar">
                         </div>                        
                         <input type="file" hidden id="actual-btn" class="mt-5 mb-3 w-100"/>
-                        <label id="file" for="actual-btn" class="text-center btn btn-success">Cambiar imatge</label>                                                                   
+                        <label id="file" for="actual-btn" class="text-center btn btn-success">Canviar imatge</label>                                                                   
                     </div>
                 </div>
                 <div class="col-md-7">
                     <div class="card bg-dark mb-3 pt-2">
                         <div class="card-header">
                             <h3 class="mb-3">Editar Perfil</h3> 
-                            <button id="changePassword" class="btn btn-info float-right">Cambia contrasenya</button>
+                            <button id="changePassword" class="btn btn-info float-right">Canviar contrasenya</button>
                         </div>
                         <div class="card-body">
                             <form action="${contextPath}/ManagementServlet/menuOption/editProfile/client" method="post">                                  
@@ -91,7 +91,7 @@
                                     </div>       
                                 </div>                    
                                 <div class="form-group row pl-2 pr-2">
-                                    <button class="btn btn-success mt-4 w-100">Actualitza</button>
+                                    <button class="btn btn-success mt-4 w-100">Actualitzar</button>
                                 </div>   
                                 <input id="type" name="type" type="hidden" value="${client.type}"/>                                
                             </form>
