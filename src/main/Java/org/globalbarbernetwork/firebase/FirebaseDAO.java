@@ -395,7 +395,9 @@ public class FirebaseDAO {
     }
 
     public void insertService(User activeUser, Service service) {
-        db.collection("services").document(activeUser.getUID()).collection("services").document().set(service);
+        String autoId = db.collection("services").document(activeUser.getUID()).collection("services").document().getId();
+        service.setId(autoId);
+        db.collection("services").document(activeUser.getUID()).collection("services").document(autoId).set(service);
     }
 
     public void updateService(User activeUser, Service service) {
@@ -468,11 +470,21 @@ public class FirebaseDAO {
         return listReserve;
     }
 
-    public void insertReserve(Reserve reserve, String yearReserve, String monthReserve, String dateReserve) {
+    public String insertReserve(Reserve reserve, String yearReserve, String monthReserve, String dateReserve) {
         String autoId = db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document().getId();
         reserve.setId(autoId);
 
         db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document(autoId).set(reserve);
+                
+        return db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document(autoId).getPath();
+    }
+    
+    public void insertReserveClient(String idClient, String reference) {
+        Map<String, Object> data = new HashMap();
+        data.put("reserveRef", reference);
+        data.put("uidClient", idClient);
+        
+        db.collection("reservesClient").document(idClient).collection("reserves").document().set(data);
     }
 
     public void updateHairdressingHolidays(User hairdressing, Map<String, Object> holidays) {

@@ -96,7 +96,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 .nav-link.active {
-    color : #527BFF !important;
+    color : #FFF !important;
+    background-color: #343A40 !important;
+    border-color: #000 !important;
+}
+
+.nav-link {
+    color : #FFF !important;
+    background-color: #909090;
+    border-color: #7a7a7a !important;
+}
+
+a:hover {
+    color : #000 !important;
 }
 
 a {
@@ -105,4 +117,9 @@ a {
 
 .form-control[readonly] {
     background-color: #fff;
+}
+
+#myTabContent {
+    background-color: #FFF;
+    border: 1px #000 solid;
 }

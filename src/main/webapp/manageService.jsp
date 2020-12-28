@@ -21,11 +21,11 @@
         <c:forEach items="${services}" var="service">
             <tr>
                 <td class="centerButton w15">
-                    <button id="btnEdit${service.id}" class="btn btn-primary btn-sm" title="Editar servei" data-title="Edit" data-toggle="modal" data-target="#modalEditService" data-id="${service.id}" data-name="${service.name}" data-duration="${service.getDurationFormatted()}" onclick="editService(this)"><span class="fal fa-pencil"></span></button>
+                    <button id="btnEdit${service.id}" class="btn btn-primary btn-sm" title="Editar servei" data-title="Edit" data-toggle="modal" data-target="#modalEditService" data-id="${service.id}" data-name="${service.name}" data-duration="${service.obtainDurationFormatted()}" onclick="editService(this)"><span class="fal fa-pencil"></span></button>
                 </td>
                 <td class="w40">${service.name}</td>
-                <td class="w20">${service.getDurationFormatted()}</td>
-                <td class="w15">${service.getPriceFormatted()}</td>
+                <td class="w20">${service.obtainDurationFormatted()}</td>
+                <td class="w15">${service.obtainPriceFormatted()}</td>
                 <td class="centerButton w10">
                     <button id="btnDelete${service.id}" class="btn btn-danger btn-sm" title="Eliminar servei" data-title="Delete" data-toggle="modal" data-target="#modalDeleteService" data-id="${service.id}" data-name="${service.name}" onclick="deleteService(this)"><span class="fal fa-trash"></span></button>
                 </td>

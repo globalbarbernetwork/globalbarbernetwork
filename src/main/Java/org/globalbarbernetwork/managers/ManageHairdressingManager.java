@@ -393,16 +393,10 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         String durationService = (String) request.getParameter("durationService") != null ? request.getParameter("durationService") : "";
         String priceService = (String) request.getParameter("priceService") != null ? request.getParameter("priceService") : "";
 
-        int autoIncrementalID = 1;
-
-        List<Service> services = getListServices(activeUser.getUID());
-        if (services.size() > 0) {
-            Service tmpService = services.get(services.size() - 1);
-            autoIncrementalID = tmpService.getId() + 1;
+        if (activeUser != null) {
+            Service service = new Service(name, convertDurationToMin(durationService), Double.parseDouble(priceService.replace(",", ".")));
+            firebaseDAO.insertService(activeUser, service);
         }
-
-        Service service = new Service(autoIncrementalID, name, convertDurationToMin(durationService), Double.parseDouble(priceService.replace(",", ".")));
-        firebaseDAO.insertService(activeUser, service);
     }
 
     public void editService(HttpServletRequest request, User activeUser) {
@@ -412,7 +406,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         String priceService = (String) request.getParameter("priceService") != null ? request.getParameter("priceService") : "";
 
         if (activeUser != null) {
-            Service service = new Service(Integer.valueOf(id), name, convertDurationToMin(durationService), Double.parseDouble(priceService.replace(",", ".")));
+            Service service = new Service(id, name, convertDurationToMin(durationService), Double.parseDouble(priceService.replace(",", ".")));
             firebaseDAO.updateService(activeUser, service);
         }
 

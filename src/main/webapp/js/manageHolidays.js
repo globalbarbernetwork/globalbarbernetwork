@@ -17,7 +17,6 @@
 
 $(document).ready(function () {
     initializeDatepickerHairdressingHolidays();
-    initializeDatatable();
     stylizeDatePicker();
     loadHairdressingHolidays();
 });
@@ -52,20 +51,3 @@ function loadHairdressingHolidays() {
     $("#datepickerHairdressingHolidays").datepicker('setDates', data);
     $("#datepickerHairdressingHolidays").datepicker('_setDate', new Date(), 'view');
 }
-
-function initializeDatatable() {
-    $('#holidayDatatable').DataTable({
-        "pagingType": "numbers",
-        "responsive": true,
-        "searching": false,
-        columnDefs: [
-            {orderable: false, targets: 0}
-        ],
-        order: [],
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Catalan.json"
-        }
-    });
-}
-
-

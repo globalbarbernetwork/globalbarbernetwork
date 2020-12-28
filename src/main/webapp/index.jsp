@@ -77,9 +77,9 @@
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <div id="errorModalReserve">
-                                    <p>Necessites iniciar sessió per poder realitzar una reserva.</p>
-                                </div>                                
+                                <div class="alert alert-warning">
+                                    <strong>Avís!</strong> Necessites iniciar sessió per poder realitzar una reserva.
+                                </div>
                             </c:otherwise>
                         </c:choose>
                     </div>

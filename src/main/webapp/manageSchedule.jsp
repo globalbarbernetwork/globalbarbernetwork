@@ -10,7 +10,7 @@
 <jsp:useBean id="daysOfWeek" scope="request" class="java.util.HashMap"></jsp:useBean>
 
     <form method="POST" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/updateSchedule">
-    <div class="container-fluid mt-5">
+    <div class="container-fluid pt-5 pb-5">
         <div class="card">
             <div class="card-header">
                 <h4 style="display: inline-block">Assignar horaris</h4>

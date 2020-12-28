@@ -398,9 +398,10 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             reserve.modifyTimeInitDate(LocalDateTime.of(date, ltInitReserveTmp));
             reserve.modifyTimeFinalDate(LocalDateTime.of(date, ltFinalReserveTmp));
 
-            firebaseDAO.insertReserve(reserve, String.valueOf(ldtReserve.getYear()), String.valueOf(ldtReserve.getMonthValue()), formattedDateString);
+            String reserveRef = firebaseDAO.insertReserve(reserve, String.valueOf(ldtReserve.getYear()), String.valueOf(ldtReserve.getMonthValue()), formattedDateString);
+            firebaseDAO.insertReserveClient(activeUser.getUID(), reserveRef);
+            
             // Devolver datos para printar "Reserva realitzada per el día X a l'hora Y".
-
             DateTimeFormatter formatter;
             if (ldtReserve.getHour() == 13 || ldtReserve.getHour() == 01) {
                 formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'del' yyyy 'a la' HH:mm", Locale.forLanguageTag("ca-ES"));

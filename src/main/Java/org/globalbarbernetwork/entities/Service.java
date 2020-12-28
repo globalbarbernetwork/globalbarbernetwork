@@ -25,7 +25,7 @@ import java.time.LocalTime;
  */
 public class Service {
 
-    private Integer id;
+    private String id;
     private String name;
     private Integer duration;
     private Double price;
@@ -33,18 +33,24 @@ public class Service {
     public Service() {
     }
 
-    public Service(Integer id, String name, Integer duration, Double price) {
+    public Service(String id, String name, Integer duration, Double price) {
         this.id = id;
         this.name = name;
         this.duration = duration;
         this.price = price;
     }
+    
+    public Service(String name, Integer duration, Double price) {
+        this.name = name;
+        this.duration = duration;
+        this.price = price;
+    }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
