@@ -16,7 +16,7 @@
  */
 
 $(document).ready(function () {
-   initializeDataTables(); 
+    initializeDataTables();
 });
 
 function initializeDataTables() {
@@ -28,12 +28,25 @@ function initializeDataTables() {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Catalan.json"
         }
     });
-    
+
     $('#dataTable').DataTable({
         "pagingType": "numbers",
         "responsive": true,
         "order": [],
         "columnDefs": [{orderable: false, targets: [0, 7]}],
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Catalan.json"
+        }
+    });
+
+    $('#holidayDatatable').DataTable({
+        "pagingType": "numbers",
+        "responsive": true,
+        "searching": false,
+        columnDefs: [
+            {orderable: false, targets: 0}
+        ],
+        order: [],
         "language": {
             "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Catalan.json"
         }

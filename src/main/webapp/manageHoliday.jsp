@@ -8,7 +8,7 @@
 
 <form method="POST" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/updateHolidays">
     <input type="hidden" name="holidays" id="holidays" value='<%= request.getAttribute("holidays")%>'>    
-    <div class="container-fluid mt-5">
+    <div class="container-fluid pt-5 pb-5">
         <div class="card">
             <div class="card-header">
                 <h4 style="display: inline-block">Assignar festius</h4>
