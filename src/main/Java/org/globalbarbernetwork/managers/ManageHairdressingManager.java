@@ -86,6 +86,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         try {
             RequestDispatcher rd = null;
             User activeUser = (User) request.getSession().getAttribute("user");
+            request.setAttribute("incrementMin", INCREMENT_MINUTES);
 
             switch (action) {
                 case LOAD_LISTS_TO_MANAGE:
@@ -171,14 +172,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                     break;
             }
 
-            if (action.toLowerCase().contains("employee")) {
-                request.setAttribute("selectedTab", false);
-            } else {
-                request.setAttribute("selectedTab", true);
-                request.setAttribute("incrementMin", INCREMENT_MINUTES);
-            }
-
             if (rd != null) {
+                activeTab(request, action);
                 sendListServices(request, activeUser);
                 sendListEmployees(request, activeUser);
                 loadSchedule(request, activeUser);
@@ -197,6 +192,22 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
+    public void activeTab(HttpServletRequest request, String action) {
+        String[] actions = {"service", "schedule", "holiday", "employee"};
+        Map<String, Boolean> controlActiveTabs = new HashMap<>();
+        for (int i = 0; i < actions.length; i++) {
+            if (action.equalsIgnoreCase(LOAD_LISTS_TO_MANAGE) && i == 0) {
+                controlActiveTabs.put(actions[i], true);
+            } else if (action.toLowerCase().contains(actions[i])) {
+                controlActiveTabs.put(actions[i], true);
+            } else {
+                controlActiveTabs.put(actions[i], false);
+            }
+        }
+
+        request.setAttribute("selectedTab", controlActiveTabs);
+    }
+
     public List<Employee> getListEmployees(String idHairdressing) {
         return firebaseDAO.getAllEmployees(idHairdressing);
     }
@@ -209,10 +220,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         String contractEnd = (String) request.getParameter("contractEndDate") != null ? request.getParameter("contractEndDate") : "";
         String phoneNumber = (String) request.getParameter("phoneNumber") != null ? request.getParameter("phoneNumber") : "";
 
-        Employee employee = firebaseDAO.getEmployeeByIDNumber(activeUser.getUID(), idNumber);
-        if (activeUser != null && employee == null) {
-            Employee newEmployee = new Employee(name, surname, idNumber, parseStringToDate(contractIni), parseStringToDate(contractEnd), phoneNumber, activeUser.getUID());
-            firebaseDAO.insertEmployee(newEmployee);
+        if (activeUser != null) {
+            Employee employee = firebaseDAO.getEmployeeByIDNumber(activeUser.getUID(), idNumber);
+            if (employee == null) {
+                Employee newEmployee = new Employee(name, surname, idNumber, parseStringToDate(contractIni), parseStringToDate(contractEnd), phoneNumber, activeUser.getUID());
+                firebaseDAO.insertEmployee(newEmployee);
+            }
         }
     }
 

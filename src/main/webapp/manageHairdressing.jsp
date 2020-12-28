@@ -6,7 +6,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:useBean id="employees" scope="request" class="java.util.List<org.globalbarbernetwork.entities.Employee>"/>
 <jsp:useBean id="services" scope="request" class="java.util.List<org.globalbarbernetwork.entities.Service>"/>
-<jsp:useBean id="selectedTab" scope="request" class="java.lang.Boolean"/>
+<jsp:useBean id="selectedTab" scope="request" class="java.util.HashMap"/>
 <jsp:useBean id="incrementMin" scope="request" class="java.lang.Integer"/>
 
 <!DOCTYPE html>
@@ -23,30 +23,30 @@
         <div id="container">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link <%= selectedTab ? "active" : ""%>" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="${selectedTab}">Serveis</a>
+                    <a class="nav-link ${selectedTab.get("service") ? "active" : ""}" id="service-tab" data-toggle="tab" href="#service" role="tab" aria-controls="service" aria-selected="${selectedTab.get("service")}">Serveis</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="schedule-tab" data-toggle="tab" href="#schedule" role="tab" aria-controls="schedule" aria-selected="#">Horari</a>
+                    <a class="nav-link ${selectedTab.get("schedule") ? "active" : ""}" id="schedule-tab" data-toggle="tab" href="#schedule" role="tab" aria-controls="schedule" aria-selected="${selectedTab.get("schedule")}">Horari</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="holiday-tab" data-toggle="tab" href="#holiday" role="tab" aria-controls="holiday" aria-selected="#">Festius</a>
+                    <a class="nav-link ${selectedTab.get("holiday") ? "active" : ""}" id="holiday-tab" data-toggle="tab" href="#holiday" role="tab" aria-controls="holiday" aria-selected="${selectedTab.get("holiday")}">Festius</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <%= !selectedTab ? "active" : ""%>" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="${!selectedTab}">Treballadors</a>
+                    <a class="nav-link ${selectedTab.get("employee") ? "active" : ""}" id="employee-tab" data-toggle="tab" href="#employee" role="tab" aria-controls="employee" aria-selected="${selectedTab.get("employee")}">Treballadors</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade <%= selectedTab ? "show active" : ""%>" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                <div class="tab-pane fade ${selectedTab.get("service") ? " show active" : ""}" id="service" role="tabpanel" aria-labelledby="service-tab">
                     <%@include file="/manageService.jsp"%>
                 </div>
-                <div class="tab-pane fade <%= !selectedTab ? "show active" : ""%>" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    <%@include file="/manageEmployee.jsp"%>
-                </div>
-                <div class="tab-pane fade" id="schedule" role="tabpanel" aria-labelledby="schedule-tab">
+                <div class="tab-pane fade ${selectedTab.get("schedule") ? " show active" : ""}" id="schedule" role="tabpanel" aria-labelledby="schedule-tab">
                     <%@include file="/manageSchedule.jsp"%>
                 </div>
-                <div class="tab-pane fade" id="holiday" role="tabpanel" aria-labelledby="holiday-tab">
+                <div class="tab-pane fade ${selectedTab.get("holiday") ? " show active" : ""}" id="holiday" role="tabpanel" aria-labelledby="holiday-tab">
                     <%@include file="/manageHoliday.jsp"%>
+                </div>
+                <div class="tab-pane fade ${selectedTab.get("employee") ? " show active" : ""}" id="employee" role="tabpanel" aria-labelledby="employee-tab">
+                    <%@include file="/manageEmployee.jsp"%>
                 </div>
             </div>
         </div>

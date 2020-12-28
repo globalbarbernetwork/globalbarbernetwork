@@ -167,6 +167,5 @@ function intervalToHHMM(separator) {
     if (minutes < 10) {
         minutes = "0" + minutes;
     }
-    console.log(hours + separator + minutes);
     return hours + separator + minutes;
 }
