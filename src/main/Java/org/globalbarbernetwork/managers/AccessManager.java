@@ -43,6 +43,9 @@ import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.services.SmtpService;
 import org.globalbarbernetwork.firebase.MyFirebaseAuth;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  *
@@ -67,17 +70,16 @@ public class AccessManager extends Manager implements ManagerInterface {
                 if ("POST".equals(request.getMethod())) {
                     String email = request.getParameter("email");
                     String password = request.getParameter("password");
-
-                    Map<String, String> errorsInAuth = authUser(request, email, password);
-                    if (!errorsInAuth.isEmpty()) {
-                        request.setAttribute("errors", errorsInAuth);
-                        rd = request.getRequestDispatcher("/login.jsp");
-                    } else {
-                        try {
+                    try {
+                        Map<String, String> errorsInAuth = authUser(request, email, password);
+                        if (!errorsInAuth.isEmpty()) {                                                                                                    
+                            request.setAttribute("errors", new JSONObject(errorsInAuth));
+                            rd = request.getRequestDispatcher("/login.jsp");
+                        } else {
                             response.sendRedirect(request.getContextPath() + "/ManagementServlet");
-                        } catch (IOException ex) {
-                            Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                    } catch (IOException ex) {
+                        Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
                     rd = request.getRequestDispatcher("/index.jsp");
@@ -235,7 +237,7 @@ public class AccessManager extends Manager implements ManagerInterface {
 
             if (userRecord != null) {
                 if (!userRecord.isEmailVerified()) {
-                    errors.put("403", "Has de confirmar el correu");
+                    errors.put("403", "Has de confirmar el correu electrònic");
                     return errors;
                 }
             }

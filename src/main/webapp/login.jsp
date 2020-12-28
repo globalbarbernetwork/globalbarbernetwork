@@ -35,11 +35,10 @@
                             <div class="form-group mt-3">
                                 <button type='submit' class='btn btn-primary w-100'>Inicia</button>
                             </div>
-                            <input type="hidden" id='errors_field' class="" value="${errors}"/>
+                            <input type="hidden" id='errors_field' class="" value='${errors}'/>
                         </form>                     
                     </div>
-                    <div class="card-footer text-muted">
-                        ${errors}
+                    <div class="card-footer text-muted">                        
                     </div>
                 </div>
             </div>
@@ -49,5 +48,7 @@
         <%@include file="/WEB-INF/jspf/footer.jspf"%>
         <!-- Scripts comunes -->
         <%@include file="/WEB-INF/jspf/base_body.jspf"%>
+        <script src="${contextPath}/js/login.js"></script>
+
     </body>
 </html>

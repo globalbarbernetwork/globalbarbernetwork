@@ -486,7 +486,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             List<Timestamp> holidays = firebaseDAO.getHairdressingHolidays(activeUser.getUID());
 
             Collections.sort(holidays);
-            
+            //this.buildCustomizedSymbols()
+
             for (Timestamp holiday : holidays) {
                 String date = new SimpleDateFormat("dd/MM/yyyy").format(holiday.toDate());
                 String tableDate = new SimpleDateFormat("EEEE d 'de' MMMM 'del' yyyy", this.buildCustomizedSymbols()).format(holiday.toDate());
@@ -522,31 +523,30 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     }
 
     private DateFormatSymbols buildCustomizedSymbols() {
-            DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(Locale.forLanguageTag("ca-ES"));
-            dateFormatSymbols.setWeekdays(new String[]{
-                "Unused",
-                "Dilluns",
-                "Dimarts",
-                "Dimecres",
-                "Dijous",
-                "Divendres",
-                "Disabte",
-                "Diumenge",});
-            dateFormatSymbols.setMonths(new String[]{                
-                "Gener",
-                "Febrer",
-                "Març",
-                "Abril",
-                "Maig",
-                "Juny",
-                "Juliol",
-                "Agost",
-                "Septembre",
-                "Octubre",
-                "Novembre",
-                "Desembre",
-            });
-            return dateFormatSymbols;
+        DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(Locale.forLanguageTag("ca-ES"));
+        dateFormatSymbols.setWeekdays(new String[]{
+            "",
+            "Diumenge",
+            "Dilluns",
+            "Dimarts",
+            "Dimecres",
+            "Dijous",
+            "Divendres",
+            "Dissabte"});
+        dateFormatSymbols.setMonths(new String[]{
+            "Gener",
+            "Febrer",
+            "Març",
+            "Abril",
+            "Maig",
+            "Juny",
+            "Juliol",
+            "Agost",
+            "Septembre",
+            "Octubre",
+            "Novembre",
+            "Desembre"});
+        return dateFormatSymbols;
     }
 
 }
