@@ -55,6 +55,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 
 .requiredAst {
-  color:red;
-  font-weight: 600;
+    color:red;
+    font-weight: 600;
+}
+
+.alert-info {
+    padding: .30rem 1.20rem;   
 }

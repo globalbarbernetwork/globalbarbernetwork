@@ -72,6 +72,9 @@
                                     </div>
                                     <input id="selectedIdHairdressing" name="selectedIdHairdressing" type="hidden"/>
                                 </form>
+                                <div class="alert alert-info">
+                                    <strong>Info!</strong> Hauràs d'abonar l'import del servei a l'establiment.
+                                </div>
                             </c:when>
                             <c:otherwise>
                                 <div id="errorModalReserve">
