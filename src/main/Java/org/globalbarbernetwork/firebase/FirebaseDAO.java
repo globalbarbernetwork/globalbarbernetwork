@@ -395,7 +395,9 @@ public class FirebaseDAO {
     }
 
     public void insertService(User activeUser, Service service) {
-        db.collection("services").document(activeUser.getUID()).collection("services").document().set(service);
+        String autoId = db.collection("services").document(activeUser.getUID()).collection("services").document().getId();
+        service.setId(autoId);
+        db.collection("services").document(activeUser.getUID()).collection("services").document(autoId).set(service);
     }
 
     public void updateService(User activeUser, Service service) {
