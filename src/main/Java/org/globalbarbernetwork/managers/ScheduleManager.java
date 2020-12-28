@@ -77,7 +77,7 @@ public class ScheduleManager implements ManagerInterface {
 
                     String idHairdressing2 = request.getParameter("idHairdressingSelected");
                     String idHairdresser = request.getParameter("idHairdresserSelected");
-                    Integer idService = Integer.valueOf(request.getParameter("idServiceSelected"));
+                    String idService = request.getParameter("idServiceSelected");
 
                     DateTimeFormatter pattern = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                     LocalDate date = LocalDate.parse(request.getParameter("selectedDate"), pattern);
@@ -91,7 +91,7 @@ public class ScheduleManager implements ManagerInterface {
 
                     String idHairdressing3 = request.getParameter("idHairdressing");
                     String idHairdresser2 = request.getParameter("idHairdresser");
-                    Integer idService2 = Integer.valueOf(request.getParameter("idService"));
+                    String idService2 = request.getParameter("idService");
                     DateTimeFormatter pattern2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                     LocalDate date2 = LocalDate.parse(request.getParameter("date"), pattern2);
                     Integer time = Integer.valueOf(request.getParameter("time"));
@@ -188,7 +188,7 @@ public class ScheduleManager implements ManagerInterface {
         return rangeHourSplit;
     }
 
-    private ArrayList<LocalTime> getListAvailableHours(String idHairdressing, String idHairdresser, Integer idService, LocalDate date) {
+    private ArrayList<LocalTime> getListAvailableHours(String idHairdressing, String idHairdresser, String idService, LocalDate date) {
         Map<String, Object> timetableHairdressing = firebaseDAO.getTimetableHairdressing(idHairdressing);
         String dayOfWeek = String.valueOf(date.getDayOfWeek().getValue());
 
@@ -322,7 +322,7 @@ public class ScheduleManager implements ManagerInterface {
         }
     }
 
-    public void addReserve(HttpServletResponse response, User activeUser, String idHairdressing, String idHairdresser, Integer idService, LocalDate date, Integer time) throws IOException {
+    public void addReserve(HttpServletResponse response, User activeUser, String idHairdressing, String idHairdresser, String idService, LocalDate date, Integer time) throws IOException {
         Service selectedService = firebaseDAO.getServiceById(idHairdressing, idService);
         DateTimeFormatter formatterWithDash = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String formattedDateString = date.format(formatterWithDash);

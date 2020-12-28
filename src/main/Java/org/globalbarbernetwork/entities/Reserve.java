@@ -29,7 +29,7 @@ public class Reserve {
     private String idClient;
     private String idHairdressing;
     private String idEmployee;
-    private Integer idService;
+    private String idService;
     private Date timeInit;
     private Date timeFinal;
     private String state;
@@ -37,7 +37,7 @@ public class Reserve {
     public Reserve() {
     }
 
-    public Reserve(String id, String idClient, String idHairdressing, String idEmployee, Integer idService, Date timeIni, Date timeFinal, String state) {
+    public Reserve(String id, String idClient, String idHairdressing, String idEmployee, String idService, Date timeIni, Date timeFinal, String state) {
         this.id = id;
         this.idClient = idClient;
         this.idHairdressing = idHairdressing;
@@ -48,7 +48,7 @@ public class Reserve {
         this.state = state;
     }
 
-    public Reserve(String idClient, String idHairdressing, String idEmployee, Integer idService, String state) {
+    public Reserve(String idClient, String idHairdressing, String idEmployee, String idService, String state) {
         this.idClient = idClient;
         this.idHairdressing = idHairdressing;
         this.idEmployee = idEmployee;
@@ -88,11 +88,11 @@ public class Reserve {
         this.idEmployee = idEmployee;
     }
 
-    public Integer getIdService() {
+    public String getIdService() {
         return idService;
     }
 
-    public void setIdService(Integer idService) {
+    public void setIdService(String idService) {
         this.idService = idService;
     }
 
