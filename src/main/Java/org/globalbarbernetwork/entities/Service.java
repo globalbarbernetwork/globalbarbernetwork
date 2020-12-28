@@ -72,11 +72,11 @@ public class Service {
         this.price = price;
     }
 
-    public String getDurationFormatted() {
+    public String obtainDurationFormatted() {
         return LocalTime.MIN.plus(Duration.ofMinutes(new Long(this.duration))).toString();
     }
     
-    public String getPriceFormatted() {
+    public String obtainPriceFormatted() {
         return String.format("%.2f", this.price).replace(".", ",");
     }
 }

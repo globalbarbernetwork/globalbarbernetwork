@@ -120,23 +120,23 @@ public class Reserve {
         this.state = state;
     }
     
-    public LocalDateTime getTimeInitLocalDate() {
+    public LocalDateTime obtainTimeInitLocalDate() {
         return this.timeInit.toInstant()
                 .atZone(ZoneId.of("Europe/Madrid"))
                 .toLocalDateTime();
     }
     
-    public LocalDateTime getTimeFinalLocalDate() {
+    public LocalDateTime obtainTimeFinalLocalDate() {
         return this.timeFinal.toInstant()
                 .atZone(ZoneId.of("Europe/Madrid"))
                 .toLocalDateTime();
     }
     
-    public void setTimeInitDate(LocalDateTime timeIni) {
+    public void modifyTimeInitDate(LocalDateTime timeIni) {
         this.timeInit = Date.from(timeIni.atZone(ZoneId.of("Europe/Madrid")).toInstant());
     }
     
-    public void setTimeFinalDate(LocalDateTime timeFinal) {
+    public void modifyTimeFinalDate(LocalDateTime timeFinal) {
         this.timeFinal = Date.from(timeFinal.atZone(ZoneId.of("Europe/Madrid")).toInstant());
     }
 }
