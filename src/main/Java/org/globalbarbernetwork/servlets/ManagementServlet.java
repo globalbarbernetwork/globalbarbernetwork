@@ -72,6 +72,11 @@ public class ManagementServlet extends HttpServlet {
                         UserManager userManager = new UserManager();
                         userManager.execute(request, response, action);
                         break;
+                    case "schedule":
+                        action = tmpAction.length > 3 ? tmpAction[3] : "";
+                        ScheduleManager scheduleManager = new ScheduleManager();
+                        scheduleManager.execute(request, response, action);
+                        break;
                 }
             }
         }

@@ -471,7 +471,7 @@ public class FirebaseDAO {
     public void insertReserve(Reserve reserve, String yearReserve, String monthReserve, String dateReserve) {
         String autoId = db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document().getId();
         reserve.setId(autoId);
-        
+
         db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document(autoId).set(reserve);
     }
 
@@ -496,4 +496,22 @@ public class FirebaseDAO {
         return listHolidays;
     }
 
+    public List getClientHistorical(User activeUser) {
+        ArrayList<Reserve> reserves = new ArrayList();
+        ApiFuture<DocumentSnapshot> future = db.collection("reservesClients").document(activeUser.getUID()).get();
+
+        try {
+            Map<String, Object> docData = future.get().getData();
+            
+            if(docData != null){
+            
+            }
+
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return reserves;
+    }
 }

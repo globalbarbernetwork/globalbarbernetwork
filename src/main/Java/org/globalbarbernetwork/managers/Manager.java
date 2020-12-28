@@ -68,7 +68,7 @@ public class Manager {
             options.add(addMenuOption("Tancar sessió", "/ManagementServlet/access/logout", ""));
         } else if (user instanceof Client) {
             options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/client", ""));
-            options.add(addMenuOption("Historial de reserves", "ServletX", ""));
+            options.add(addMenuOption("Historial de reserves", "/ManagementServlet/menuOption/schedule/loadClientHistorical", ""));
             options.add(addMenuOption("Tancar sessió", "/ManagementServlet/access/logout", ""));
         }
 

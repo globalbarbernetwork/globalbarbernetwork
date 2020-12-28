@@ -29,6 +29,7 @@ public class Constants {
     public static final String EDIT_CLIENT_JSP = "editClient.jsp";
     public static final String EDIT_HAIRDRESSING_JSP = "editHairdressing.jsp";
     public static final String MANAGE_HAIRDRESSING_JSP = "manageHairdressing.jsp";
+    public static final String HISTORICAL_CLIENT_JSP = "clientHistorical.jsp";
     public static final Integer INCREMENT_MINUTES = 30;
     public static final String STATE_PENDING = "P";
     public static final String STATE_COMPLETED = "C";

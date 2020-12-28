@@ -52,12 +52,13 @@ import org.globalbarbernetwork.entities.User;
  *
  * @author Grup 3
  */
-public class ScheduleManager implements ManagerInterface {
+public class ScheduleManager extends Manager implements ManagerInterface {
 
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
     private final String GET_TIMETABLE_AJAX = "getTimetableAjax";
     private final String GET_AVAILABLE_HOURS_AJAX = "getAvailableHoursAjax";
     private final String ADD_RESERVE_AJAX = "addReserveAjax";
+    private final String RESERVE_HISTORICAL = "loadClientHistorical";
 
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
@@ -98,10 +99,16 @@ public class ScheduleManager implements ManagerInterface {
 
                     addReserve(response, activeUser, idHairdressing3, idHairdresser2, idService2, date2, time);
                     break;
+                case RESERVE_HISTORICAL:
+                    List historical = getClientHistorical(activeUser);
+                    request.setAttribute("historical", historical);                    
+                    rd = request.getRequestDispatcher("/" + HISTORICAL_CLIENT_JSP);
+                    break;
             }
 
             try {
                 if (rd != null) {
+                    this.buildMenuOptions(request, response);
                     rd.forward(request, response);
                 }
             } catch (ServletException ex) {
@@ -118,7 +125,7 @@ public class ScheduleManager implements ManagerInterface {
         Map<String, Object> timetable = firebaseDAO.getTimetableHairdressing(idHairdressing);
 
         JSONObject json = null;
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             if (timetable != null) {
                 LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
                 for (Map.Entry<String, Object> entry : timetable.entrySet()) {
@@ -299,7 +306,7 @@ public class ScheduleManager implements ManagerInterface {
     private void getListAvailableHoursToJSON(HttpServletResponse response, ArrayList<LocalTime> rangeHourComplete) throws IOException {
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             LinkedHashMap<String, Object> jsonOrderedMap;
 
             for (LocalTime time : rangeHourComplete) {
@@ -414,5 +421,9 @@ public class ScheduleManager implements ManagerInterface {
         try ( PrintWriter out = response.getWriter()) {
             out.print(json);
         }
+    }
+
+    private List getClientHistorical(User activeUser) {
+        return firebaseDAO.getClientHistorical(activeUser);
     }
 }
