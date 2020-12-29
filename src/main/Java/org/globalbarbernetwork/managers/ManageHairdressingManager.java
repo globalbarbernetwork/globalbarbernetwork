@@ -490,7 +490,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         if (activeUser != null) {
             JSONArray jsonArray = new JSONArray();
             List<String> tableData = new ArrayList<>();
-            List<Timestamp> holidays = firebaseDAO.getHairdressingHolidays(activeUser.getUID());
+            List<Timestamp> holidays = firebaseDAO.getHolidays(activeUser.getUID());
 
             Collections.sort(holidays);
             //this.buildCustomizedSymbols()
@@ -526,7 +526,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
 
         docData.put("holidays", listHolidays);
-        firebaseDAO.updateHairdressingHolidays(activeUser, docData);
+        firebaseDAO.updateHolidays(activeUser, docData);
     }
 
     private DateFormatSymbols buildCustomizedSymbols() {

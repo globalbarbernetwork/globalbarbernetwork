@@ -100,8 +100,8 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                     addReserve(response, activeUser, idHairdressing3, idHairdresser2, idService2, date2, time);
                     break;
                 case RESERVE_HISTORICAL:
-                    List historical = getClientHistorical(activeUser);
-                    request.setAttribute("historical", historical);                    
+                    HashMap<String, ArrayList> historical = (HashMap<String, ArrayList>) getClientHistorical(activeUser);
+                    request.setAttribute("historical", historical);                                                                    
                     rd = request.getRequestDispatcher("/" + HISTORICAL_CLIENT_JSP);
                     break;
             }
@@ -399,7 +399,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             reserve.modifyTimeFinalDate(LocalDateTime.of(date, ltFinalReserveTmp));
 
             String reserveRef = firebaseDAO.insertReserve(reserve, String.valueOf(ldtReserve.getYear()), String.valueOf(ldtReserve.getMonthValue()), formattedDateString);
-            firebaseDAO.insertReserveClient(activeUser.getUID(), reserveRef);
+            firebaseDAO.insertReserveClient(activeUser.getUID(), reserveRef, reserve.getTimeInit());
             
             // Devolver datos para printar "Reserva realitzada per el día X a l'hora Y".
             DateTimeFormatter formatter;
@@ -424,7 +424,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         }
     }
 
-    private List getClientHistorical(User activeUser) {
+    private Map getClientHistorical(User activeUser) {
         return firebaseDAO.getClientHistorical(activeUser);
     }
 }

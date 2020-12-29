@@ -127,7 +127,7 @@ public class Reserve {
     }
     
     public LocalDateTime obtainTimeFinalLocalDate() {
-        return this.timeFinal.toInstant()
+        return this.timeFinal.toInstant()   
                 .atZone(ZoneId.of("Europe/Madrid"))
                 .toLocalDateTime();
     }

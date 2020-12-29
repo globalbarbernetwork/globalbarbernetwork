@@ -108,7 +108,6 @@
         <%@include file="/WEB-INF/jspf/base_body.jspf"%>
 
         <script>
-            <%--<c:if test="${request.getAttribute('edited')}">--%>
             <c:set var="edited" value="<%= request.getAttribute("edited")%>"/>
             <c:out value="${row.file_name}"/>
             <c:if test="${edited != null}">
@@ -119,7 +118,6 @@
                 timer: 1500
             })
             </c:if>
-            <%--</c:if>--%>
         </script>
 
     </body>

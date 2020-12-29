@@ -30,7 +30,12 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
 import com.google.firebase.auth.UserRecord.UpdateRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +49,6 @@ import org.globalbarbernetwork.entities.Reserve;
 import org.globalbarbernetwork.entities.Service;
 import org.globalbarbernetwork.entities.User;
 import static org.globalbarbernetwork.constants.Constants.*;
-import org.json.JSONArray;
 
 /**
  *
@@ -475,15 +479,16 @@ public class FirebaseDAO {
         reserve.setId(autoId);
 
         db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document(autoId).set(reserve);
-                
+
         return db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document(autoId).getPath();
     }
-    
-    public void insertReserveClient(String idClient, String reference) {
+
+    public void insertReserveClient(String idClient, String reference, Date date) {
         Map<String, Object> data = new HashMap();
         data.put("reserveRef", reference);
+        data.put("date", date);
         data.put("uidClient", idClient);
-        
+
         db.collection("reservesClient").document(idClient).collection("reserves").document().set(data);
     }
 
@@ -508,22 +513,87 @@ public class FirebaseDAO {
         return listHolidays;
     }
 
-    public List getClientHistorical(User activeUser) {
-        ArrayList<Reserve> reserves = new ArrayList();
-        ApiFuture<DocumentSnapshot> future = db.collection("reservesClients").document(activeUser.getUID()).get();
+    public Map getClientHistorical(User activeUser) {
+        Map<String, ArrayList> historical = new HashMap<>();
+        Map<String, Boolean> isOnRange = new HashMap<>();
+        ArrayList<Object> reservesRef = new ArrayList();
+        ArrayList<Reserve> pendingReserves = new ArrayList();
+        ArrayList<Reserve> completedReserves = new ArrayList();
+        ApiFuture<QuerySnapshot> future = db.collection("reservesClient").document(activeUser.getUID()).collection("reserves").get();
 
         try {
-            Map<String, Object> docData = future.get().getData();
-            
-            if(docData != null){
-            
+            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+            for (DocumentSnapshot document : documents) {
+
+                String ref = (String) document.get("reserveRef");
+                isOnRange = dateIsOnRange((Timestamp) document.get("date"));
+
+                if (!isOnRange.isEmpty()) {
+
+                    if (isOnRange.get("before").equals(Boolean.TRUE)) {
+                        completedReserves.add(getReserveFromRelatedRef(ref, activeUser));
+                    } else if (isOnRange.get("after").equals(Boolean.TRUE)) {
+                        pendingReserves.add(getReserveFromRelatedRef(ref, activeUser));
+                    }
+                }
+
             }
+
+            historical.put("pendingReserves", pendingReserves);
+            historical.put("completedReserves", completedReserves);
 
         } catch (InterruptedException ex) {
             Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
             Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return reserves;
+        return historical;
     }
+
+    private Reserve getReserveFromRelatedRef(String ref, User activeUser) {
+
+        //reserves/WbQRmWrhMlYs4Z95WalXaqwq9OY2/2021/1/04-01-2021/0n6BRemvs1kwTi10JIkM        
+        String[] refData = ref.split("/");
+        DocumentReference future2 = db.collection("reserves").document(refData[1]);
+
+        String year = refData[2];
+        String month = refData[3];
+        String fullDate = refData[4];
+        String uid = refData[5];
+
+        ApiFuture<DocumentSnapshot> reserves = future2.collection(year).document(month).collection(fullDate).document(uid).get();
+
+        try {
+            return reserves.get().toObject(Reserve.class);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+    private Map<String, Boolean> dateIsOnRange(Timestamp reserveDate) {
+        Map<String, Boolean> isOnRange = new HashMap<>();
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        LocalDateTime date = reserveDate.toDate().toInstant()
+                .atZone(ZoneId.of("Europe/Madrid"))
+                .toLocalDateTime();
+
+        LocalDateTime currentDateMaxValue = currentDate.plus(Period.ofMonths(2));
+        LocalDateTime currentDateMinValue = currentDate.minus(Period.ofMonths(2));
+
+        if (date.isBefore(currentDate) && date.isAfter(currentDateMinValue)) {
+            isOnRange.put("before", Boolean.TRUE);
+        } else if (date.isAfter(currentDate) && date.isBefore(currentDateMaxValue)) {
+            isOnRange.put("after", Boolean.TRUE);
+        } else {
+            return null;
+        }
+
+        return isOnRange;
+    }
+
 }
