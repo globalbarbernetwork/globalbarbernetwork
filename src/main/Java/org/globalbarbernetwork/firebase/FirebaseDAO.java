@@ -31,6 +31,7 @@ import com.google.firebase.auth.UserRecord;
 import com.google.firebase.auth.UserRecord.CreateRequest;
 import com.google.firebase.auth.UserRecord.UpdateRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -222,7 +223,7 @@ public class FirebaseDAO {
         return listHairdressings;
     }
 
-    public Map<String, Object> getTimetableHairdressing(String uid) {
+    public Map<String, Object> getScheduleHairdressing(String uid) {
         DocumentReference docRef = db.collection("schedule").document(uid);
         ApiFuture<DocumentSnapshot> future = docRef.get();
         try {
@@ -479,9 +480,10 @@ public class FirebaseDAO {
         return db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document(autoId).getPath();
     }
     
-    public void insertReserveClient(String idClient, String reference) {
+    public void insertReserveClient(String idClient, String reference, Date date) {
         Map<String, Object> data = new HashMap();
         data.put("reserveRef", reference);
+        data.put("date", date);
         data.put("uidClient", idClient);
         
         db.collection("reservesClient").document(idClient).collection("reserves").document().set(data);

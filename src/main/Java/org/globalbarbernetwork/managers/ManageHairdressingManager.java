@@ -78,6 +78,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
     final static String UPDATE_SCHEDULE = "updateSchedule";
     final static String UPDATE_HOLIDAYS = "updateHolidays";
+    
+    final static String GET_DISABLED_DAYS_HAIDRESSING = "getDisableDaysHairdressing";
 
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
 
@@ -87,6 +89,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             RequestDispatcher rd = null;
             User activeUser = (User) request.getSession().getAttribute("user");
             request.setAttribute("incrementMin", INCREMENT_MINUTES);
+            
 
             switch (action) {
                 case LOAD_LISTS_TO_MANAGE:
@@ -169,6 +172,13 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                         this.updateHolidays(request, activeUser);
                     }
                     rd = request.getRequestDispatcher("/" + MANAGE_HAIRDRESSING_JSP);
+                    break;
+                case GET_DISABLED_DAYS_HAIDRESSING:
+                    response.setContentType("application/json");
+
+                    String idHairdressing5 = request.getParameter("idHairdressing");
+
+                    getDisabledDaysToJSON(response, idHairdressing5);
                     break;
             }
 
@@ -342,6 +352,40 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             out.print(json);
         }
     }
+    
+    public void getDisabledDaysToJSON(HttpServletResponse response, String idHairdressing) throws IOException, JSONException {
+        List<Timestamp> holidaysHairdressing = firebaseDAO.getHolidays(idHairdressing);
+        Map<String, Object> nonWorkingDaysOfWeek = firebaseDAO.getScheduleHairdressing(idHairdressing);
+        
+        JSONObject json = new JSONObject();
+        JSONArray array = new JSONArray();
+        try (PrintWriter out = response.getWriter()) {
+            for (Timestamp holiday : holidaysHairdressing) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                String dateHoliday = sdf.format(holiday.toDate());
+
+                array.put(dateHoliday);
+            }
+            json.put("jsonArrayHolidaysHairdressing", array);
+            
+            array = new JSONArray();
+            for (Map.Entry<String, Object> entry : nonWorkingDaysOfWeek.entrySet()) {
+                Integer dayOfWeek = Integer.parseInt(entry.getKey());
+                Map<String, Object> rangesHours = (Map<String, Object>) entry.getValue();
+                
+                if (((String) ((Map<String, Object>) rangesHours.get("rangeHour1")).get("startHour")).isEmpty()
+                        && ((String) ((Map<String, Object>) rangesHours.get("rangeHour1")).get("endHour")).isEmpty()
+                        && ((String) ((Map<String, Object>) rangesHours.get("rangeHour2")).get("startHour")).isEmpty()
+                        && ((String) ((Map<String, Object>) rangesHours.get("rangeHour2")).get("endHour")).isEmpty()) {
+
+                    array.put(dayOfWeek.equals(7) ? 0 : dayOfWeek);
+                }
+            }           
+            json.put("jsonArrayNonWorkingDaysOfWeek", array);
+
+            out.print(json);
+        }
+    }
 
     public void getServicesHairdressingToJSON(HttpServletResponse response, String idHairdressing) throws IOException, JSONException {
         List<Service> listServices = getListServices(idHairdressing);
@@ -428,7 +472,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     public void loadSchedule(HttpServletRequest request, User activeUser) {
         if (activeUser != null) {
             Map<String, Object> data = new HashMap<>();
-            data = firebaseDAO.getTimetableHairdressing(activeUser.getUID());
+            data = firebaseDAO.getScheduleHairdressing(activeUser.getUID());
 
             request.setAttribute("schedule", data);
             request.setAttribute("daysOfWeek", this.getDaysOfWeek());
@@ -490,7 +534,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         if (activeUser != null) {
             JSONArray jsonArray = new JSONArray();
             List<String> tableData = new ArrayList<>();
-            List<Timestamp> holidays = firebaseDAO.getHairdressingHolidays(activeUser.getUID());
+            List<Timestamp> holidays = firebaseDAO.getHolidays(activeUser.getUID());
 
             Collections.sort(holidays);
             //this.buildCustomizedSymbols()
@@ -526,7 +570,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
 
         docData.put("holidays", listHolidays);
-        firebaseDAO.updateHairdressingHolidays(activeUser, docData);
+        firebaseDAO.updateHolidays(activeUser, docData);
     }
 
     private DateFormatSymbols buildCustomizedSymbols() {

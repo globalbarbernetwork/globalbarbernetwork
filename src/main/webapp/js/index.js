@@ -16,6 +16,9 @@
  */
 var contextPath;
 var hairdressersJSONArray;
+var holidaysHairdressingJSONArray;
+var nonWorkingDaysOfWeekJSONArray;
+var holidaysEmployeeJSONArray;
 
 $(document).ready(function () {
     contextPath = $("#contextPath").val();
@@ -25,7 +28,6 @@ $(document).ready(function () {
 
     // Limpia los campos del modal al cerrarse
     $("#modalReserve").on('hidden.bs.modal', function () {
-        console.log("HOLAAA");
         cleanModalReserva();
     });
 
@@ -36,6 +38,7 @@ $(document).ready(function () {
         if (positionEmployee != -1) {
             disableHolidaysSelectedEmployee(positionEmployee);
         } else {
+            holidaysEmployeeJSONArray = [];
             $("#reservationDate").datepicker('setDatesDisabled', []);
         }
     });
@@ -97,15 +100,39 @@ $(document).ready(function () {
 });
 
 function initializeDatepicker() {
+    var today = new Date();
+    var limit = new Date(today.setMonth(today.getMonth() + 2));
+    
     $('#reservationDate').datepicker({
         language: "ca",
         format: "dd/mm/yyyy",
         startDate: new Date(),
-        //daysOfWeekDisabled: [0, 6],
+        endDate: limit,
         todayHighlight: true,
         daysOfWeekHighlighted: [0, 6],
         clearBtn: true,
-        autoclose: true
+        autoclose: true,
+        beforeShowDay: function (date) {
+            var dd = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+            var mm = (date.getMonth() + 1) < 10 ? "0" + (date.getMonth()+1) : date.getMonth()+1;
+            var yyyy = date.getFullYear();
+            
+            var dateFormat = dd + "/" + mm + "/" + yyyy;
+            
+            var today = new Date();
+            var dd2 = today.getDate() < 10 ? "0" + today.getDate() : today.getDate();
+            var mm2 = (today.getMonth() + 1) < 10 ? "0" + (today.getMonth()+1) : today.getMonth()+1;
+            var yyyy2 = today.getFullYear();
+            
+            if (holidaysHairdressingJSONArray != undefined && holidaysHairdressingJSONArray.includes(dateFormat)) {
+                return {enabled: false, classes: "disabled-date disabled-date-hairdressing", tooltip: "Perruqueria tancada"};
+            } else if (holidaysEmployeeJSONArray != undefined && (parseInt(dd) >= parseInt(dd2) && parseInt(mm) >= parseInt(mm2) && parseInt(yyyy) >= parseInt(yyyy2)) 
+                    && holidaysEmployeeJSONArray.includes(dateFormat)) {
+                return {enabled: false, classes: "disabled-date disabled-date-employee", tooltip: "Perruquer/a no disponible per aquest dia"};
+            } else if (nonWorkingDaysOfWeekJSONArray != undefined && nonWorkingDaysOfWeekJSONArray.includes(date.getDay())) {
+                return {tooltip: "Perruqueria tancada"};
+            }
+        }
     });
 }
 
@@ -113,12 +140,40 @@ function loadInfoModalReserve(element) {
     var idHairdressingSelected = $(element).data("uid");
     $("#selectedIdHairdressing").val(idHairdressingSelected);
     $("#modalReserveLongTitle").text("Realitzar reserva en " + $(element).data("company"));
+    
+    disableHolidaysSelectedHairdressing(idHairdressingSelected);
 
+    loadSelectEmployees(idHairdressingSelected);
+
+    loadSelectServices(idHairdressingSelected);
+}
+
+function disableHolidaysSelectedHairdressing(idHairdressing) {
+    $.ajax({
+        url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getDisableDaysHairdressing',
+        data: {
+            idHairdressing: idHairdressing
+        },
+        dataType: "json",
+        success: function (data) {
+            holidaysHairdressingJSONArray = data.jsonArrayHolidaysHairdressing;
+            nonWorkingDaysOfWeekJSONArray = data.jsonArrayNonWorkingDaysOfWeek;
+            
+            $("#reservationDate").datepicker('setDatesDisabled', holidaysHairdressingJSONArray);
+            $("#reservationDate").datepicker('setDaysOfWeekDisabled', nonWorkingDaysOfWeekJSONArray);
+        },
+        error: function () {
+            console.log("No se ha podido obtener la información");
+        }
+    });
+}
+
+function loadSelectEmployees(idHairdressing) {
     // Carga empleados
     $.ajax({
         url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getEmployeesAjax',
         data: {
-            idHairdressing: idHairdressingSelected
+            idHairdressing: idHairdressing
         },
         dataType: "json",
         success: function (data) {
@@ -132,12 +187,14 @@ function loadInfoModalReserve(element) {
             console.log("No se ha podido obtener la información");
         }
     });
+}
 
+function loadSelectServices(idHairdressing) {
     // Carga servicios
     $.ajax({
         url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getServicesAjax',
         data: {
-            idHairdressing: idHairdressingSelected
+            idHairdressing: idHairdressing
         },
         dataType: "json",
         success: function (data) {
@@ -174,13 +231,16 @@ function disableHolidaysSelectedEmployee(positionEmployee) {
             idEmployee: idEmployee
         },
         success: function (data) {
-            var holidaysEmployeeJSONArray = data.jsonArray;
+            holidaysEmployeeJSONArray = data.jsonArray;
             var selectedDate = $("#reservationDate").datepicker('getFormattedDate');
 
             if (holidaysEmployeeJSONArray.includes(selectedDate)) {
                 $("#reservationDate").datepicker('setDate', null);
             }
-            $("#reservationDate").datepicker('setDatesDisabled', holidaysEmployeeJSONArray);
+            
+            //Seteamos a 0 para que se active la función beforeShowDay y ahi entonces deshabilitarlos cumpliendo X condiciones,
+            //ya que si deshabilitamos aquí todos los días pero después no cumplen X condición pues seguirán deshabilitados.
+            $("#reservationDate").datepicker('setDatesDisabled', []);
         },
         error: function () {
             console.log("[ERROR] Ha habido algún error durante el proceso de recogida de vacaciones.");
@@ -280,7 +340,6 @@ function doReserve() {
         },
         dataType: "json",
         success: function (data) {
-            console.log(data);
             $("#modalReserve").modal('hide');
             Swal.fire({
                 icon: 'success',

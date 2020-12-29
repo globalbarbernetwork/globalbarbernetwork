@@ -115,7 +115,7 @@ public class ScheduleManager implements ManagerInterface {
     }
 
     private void getTimetableToJSON(HttpServletResponse response, String idHairdressing) {
-        Map<String, Object> timetable = firebaseDAO.getTimetableHairdressing(idHairdressing);
+        Map<String, Object> timetable = firebaseDAO.getScheduleHairdressing(idHairdressing);
 
         JSONObject json = null;
         try ( PrintWriter out = response.getWriter()) {
@@ -189,7 +189,7 @@ public class ScheduleManager implements ManagerInterface {
     }
 
     private ArrayList<LocalTime> getListAvailableHours(String idHairdressing, String idHairdresser, String idService, LocalDate date) {
-        Map<String, Object> timetableHairdressing = firebaseDAO.getTimetableHairdressing(idHairdressing);
+        Map<String, Object> timetableHairdressing = firebaseDAO.getScheduleHairdressing(idHairdressing);
         String dayOfWeek = String.valueOf(date.getDayOfWeek().getValue());
 
         Map<String, Object> timetableDay = (Map<String, Object>) timetableHairdressing.get(dayOfWeek);
@@ -392,7 +392,7 @@ public class ScheduleManager implements ManagerInterface {
             reserve.modifyTimeFinalDate(LocalDateTime.of(date, ltFinalReserveTmp));
 
             String reserveRef = firebaseDAO.insertReserve(reserve, String.valueOf(ldtReserve.getYear()), String.valueOf(ldtReserve.getMonthValue()), formattedDateString);
-            firebaseDAO.insertReserveClient(activeUser.getUID(), reserveRef);
+            firebaseDAO.insertReserveClient(activeUser.getUID(), reserveRef, reserve.getTimeInit());
             
             // Devolver datos para printar "Reserva realitzada per el día X a l'hora Y".
             DateTimeFormatter formatter;

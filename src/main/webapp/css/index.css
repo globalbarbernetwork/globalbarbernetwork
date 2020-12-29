@@ -45,9 +45,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     margin-bottom: 3rem;
 }
 
+.today {
+    color: #00C600 !important;
+}
+
+.old.today {
+    color: #999 !important;
+}
+
+.day {
+    color: #00C600;
+    font-weight: 600;
+}
+
+.event {
+    color: #FFF !important;
+}
+
+.old.day, .new.day {
+    font-weight: 400 !important;
+}
+
+.old.disabled-date, .new.disabled-date {
+    color: #999 !important;
+}
+
 .disabled-date {
     color: #F70000 !important;
-    font-weight: bold;
+}
+
+.disabled-date-employee {
+    color: #F79115 !important;
+}
+
+.disabled {
+    color: #777470;
+    font-weight: 500;
 }
 
 .form-control[readonly] {
