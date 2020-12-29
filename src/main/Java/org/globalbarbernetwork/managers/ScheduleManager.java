@@ -16,6 +16,9 @@
  */
 package org.globalbarbernetwork.managers;
 
+import com.google.cloud.Timestamp;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.common.collect.HashBiMap;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -23,6 +26,8 @@ import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Period;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +42,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.globalbarbernetwork.bo.ReserveBO;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
 import org.json.JSONObject;
@@ -100,9 +106,13 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                     addReserve(response, activeUser, idHairdressing3, idHairdresser2, idService2, date2, time);
                     break;
                 case RESERVE_HISTORICAL:
-                    HashMap<String, ArrayList> historical = (HashMap<String, ArrayList>) getClientHistorical(activeUser);
-                    request.setAttribute("historical", historical);                                                                    
-                    rd = request.getRequestDispatcher("/" + HISTORICAL_CLIENT_JSP);
+                    if (activeUser != null) {
+                        HashMap<String, ArrayList> historical = (HashMap<String, ArrayList>) getClientHistorical(activeUser);
+                        request.setAttribute("historical", historical);
+                        rd = request.getRequestDispatcher("/" + HISTORICAL_CLIENT_JSP);
+                    } else {
+                        rd = request.getRequestDispatcher("/" + LOGIN_JSP);
+                    }
                     break;
             }
 
@@ -400,7 +410,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
 
             String reserveRef = firebaseDAO.insertReserve(reserve, String.valueOf(ldtReserve.getYear()), String.valueOf(ldtReserve.getMonthValue()), formattedDateString);
             firebaseDAO.insertReserveClient(activeUser.getUID(), reserveRef, reserve.getTimeInit());
-            
+
             // Devolver datos para printar "Reserva realitzada per el día X a l'hora Y".
             DateTimeFormatter formatter;
             if (ldtReserve.getHour() == 13 || ldtReserve.getHour() == 01) {
@@ -419,12 +429,70 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             json = new JSONObject(jsonOrderedMap);
         }
 
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             out.print(json);
         }
     }
 
     private Map getClientHistorical(User activeUser) {
-        return firebaseDAO.getClientHistorical(activeUser);
+        Map<String, ArrayList> historical = new HashMap<>();
+        Map<String, Boolean> isOnRange = new HashMap<>();
+        ArrayList<Map> completedReserves = new ArrayList<>();
+        ArrayList<Map> pendingReserves = new ArrayList<>();
+        Map<String, Object> pendingReserve = new HashMap<>();
+        Map<String, Object> completedReserve = new HashMap<>();
+        ReserveBO reserveBO = new ReserveBO();
+
+        List<QueryDocumentSnapshot> documents = firebaseDAO.getClientHistorical(activeUser);
+        for (DocumentSnapshot document : documents) {
+            pendingReserve = new HashMap<>();
+            completedReserve = new HashMap<>();
+            String ref = (String) document.get("reserveRef");
+            isOnRange = dateIsOnRange((Timestamp) document.get("date"));
+
+            if (!isOnRange.isEmpty()) {
+                Reserve reserve = firebaseDAO.getReserveFromRelatedRef(ref, activeUser);
+                if (isOnRange.get("before") != null && isOnRange.get("before").equals(Boolean.TRUE)) {
+                    completedReserve.put("hairdressing", reserveBO.getHairdressing(reserve.getIdHairdressing()));
+                    completedReserve.put("reserve", reserve);
+                    completedReserve.put("service", reserveBO.getService(reserve.getIdHairdressing(), reserve.getIdService()));
+                    completedReserves.add(completedReserve);
+                } else if (isOnRange.get("after") != null && isOnRange.get("after").equals(Boolean.TRUE)) {
+                    pendingReserve.put("hairdressing", reserveBO.getHairdressing(reserve.getIdHairdressing()));
+                    pendingReserve.put("reserve", reserve);
+                    pendingReserve.put("service", reserveBO.getService(reserve.getIdHairdressing(), reserve.getIdService()));
+                    pendingReserves.add(pendingReserve);
+                }
+            }
+
+            historical.put("pendingReserves", pendingReserves);
+            historical.put("completedReserves", completedReserves);
+
+        }
+
+        return historical;
     }
+
+    private Map<String, Boolean> dateIsOnRange(Timestamp reserveDate) {
+        Map<String, Boolean> isOnRange = new HashMap<>();
+        LocalDateTime currentDate = LocalDateTime.now();
+
+        LocalDateTime date = reserveDate.toDate().toInstant()
+                .atZone(ZoneId.of("Europe/Madrid"))
+                .toLocalDateTime();
+
+        LocalDateTime currentDateMaxValue = currentDate.plus(Period.ofMonths(2));
+        LocalDateTime currentDateMinValue = currentDate.minus(Period.ofMonths(2));
+
+        if (date.isBefore(currentDate) && date.isAfter(currentDateMinValue)) {
+            isOnRange.put("before", Boolean.TRUE);
+        } else if (date.isAfter(currentDate) && date.isBefore(currentDateMaxValue)) {
+            isOnRange.put("after", Boolean.TRUE);
+        } else {
+            return null;
+        }
+
+        return isOnRange;
+    }
+
 }

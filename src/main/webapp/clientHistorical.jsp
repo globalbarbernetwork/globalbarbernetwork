@@ -4,11 +4,17 @@
     Author     : Grup 3
 --%>
 
+<%@page import="java.util.Date"%>
+<%@page import="org.globalbarbernetwork.entities.Service"%>
+<%@page import="org.globalbarbernetwork.entities.Reserve"%>
+<%@page import="org.globalbarbernetwork.entities.Hairdressing"%>
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.ArrayList"%>
 <%@page import="java.util.Objects"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <jsp:useBean id="listHairdressingsJSON" scope="request" class="java.lang.String"/>
-<jsp:useBean id="reserves" scope="request" class="java.util.HashMap<java.lang.String, java.util.ArrayList>"/>
+<jsp:useBean id="historical" scope="request" class="java.util.HashMap"/>
 
 <!DOCTYPE html>
 <html>
@@ -37,17 +43,24 @@
                                     </div>                                    
                                     <div class="collapse multi-collapse show" id="multiCollapseExample1">                                        
                                         <div class="card-body">
-                                            <c:forEach items="<%= reserves.get("pendingReserves") %>">                                                                                            
-                                                <div class="card" style="width: 18rem;">
-                                                    <img class="card-img-top" src="${contextPath}/img/test_sm.svg" alt="Card image cap">
+                                            <% Integer loop = 0;%>
+                                            <c:forEach var="reserve" items="<%= historical.get("pendingReserves")%>" varStatus="loop">                                                  
+                                                <c:set var="hairdressing" value="<%= ((Hairdressing) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("hairdressing")).getDisplayName()%>"></c:set>
+                                                <c:set var="service" value="<%= ((Service) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("service")).getName()%>"></c:set>                                                
+                                                <c:set var="servicePrice" value="<%= ((Service) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("service")).getPrice()%>"></c:set>                                                
+                                                <c:set var="timeFinal" value="<%= ((Reserve) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("reserve")).getTimeFinal()%>"></c:set>
+                                                <c:set var="timeInit" value="<%= ((Reserve) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("reserve")).getTimeInit()%>"></c:set>
+                                                    <div class="card d-inline-block ml-2" style="width: 18rem;">
+                                                        <img class="card-img-top" src="${contextPath}/img/test_sm.svg" alt="Card image cap">
                                                     <div class="card-body">
-                                                        <h5 class="card-title">Card title</h5>
-                                                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                                                        <h5 class="card-title">${hairdressing}</h5>
+                                                        <p class="card-text"><span class='font-weight-bold' style="font-size: 1.2rem;">${servicePrice}&euro;</span> - ${service}</p>
+                                                        <p class="card-text">${timeInit}-${timeFinal}</p>                                                        
                                                     </div>
                                                 </div>
+                                                <% loop++; %>
                                             </c:forEach>
-                                            <% if (reserves.get("pendingReserves").isEmpty()) { %>                                                                                        
+                                            <%  if (((ArrayList) historical.get("pendingReserves")).isEmpty()) { %>                                               
                                             <div>
                                                 <span>No se ha hecho ninguna reserva</span>
                                             </div>
@@ -63,14 +76,29 @@
                                     </div>           
                                     <div class="collapse multi-collapse" id="multiCollapseExample2">
                                         <div class="card-body">
-                                            <div class="card" style="width: 18rem;">
-                                                <img class="card-img-top" src="${contextPath}/img/test_sm.svg" alt="Card image cap">
-                                                <div class="card-body">
-                                                    <h5 class="card-title">Card title</h5>
-                                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                                            <% Integer loop2 = 0;%>
+                                            <c:forEach var="reserve" items="<%= historical.get("completedReserves")%>" varStatus="loop">      
+                                                <c:set var="hairdressing" value="<%= ((Hairdressing) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("hairdressing")).getDisplayName()%>"></c:set>
+                                                <c:set var="service" value="<%= ((Service) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("service")).getName()%>"></c:set>                                                
+                                                <c:set var="servicePrice" value="<%= ((Service) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("service")).getPrice()%>"></c:set>                                                
+                                                <c:set var="timeFinal" value="<%= ((Reserve) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("reserve")).obtainTimeFinalLocalDate() %>"></c:set>  
+                                                <c:set var="timeInit" value="<%= ((Reserve) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("reserve")).obtainTimeInitLocalDate()%>"></c:set>
+                                                    <div class="card d-inline-block ml-2" style="width: 18rem;">
+                                                        <img class="card-img-top" src="${contextPath}/img/test_sm.svg" alt="Card image cap">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title">${hairdressing}</h5>
+                                                        <p class="card-text"><span class='font-weight-bold' style="font-size: 1.2rem;">${servicePrice}&euro;</span> - ${service}</p>
+                                                        <p class="card-text">${timeInit.dayOfMonth}&sol;${timeInit.monthValue}&sol;${timeInit.year}</p>                                                        
+                                                        <p class="card-text">${timeInit.hour}&ratio;${timeInit.minute}</p>                                                        
+                                                    </div>
                                                 </div>
+                                                <% loop2++; %>
+                                            </c:forEach>
+                                            <%  if (((ArrayList) historical.get("completedReserves")).isEmpty()) { %>                                               
+                                            <div>
+                                                <span>No se ha hecho ninguna reserva</span>
                                             </div>
+                                            <% }%>
                                         </div>
                                     </div>      
                                 </div>

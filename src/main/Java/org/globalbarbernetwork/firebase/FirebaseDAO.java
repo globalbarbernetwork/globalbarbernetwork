@@ -513,44 +513,23 @@ public class FirebaseDAO {
         return listHolidays;
     }
 
-    public Map getClientHistorical(User activeUser) {
-        Map<String, ArrayList> historical = new HashMap<>();
-        Map<String, Boolean> isOnRange = new HashMap<>();
-        ArrayList<Object> reservesRef = new ArrayList();
-        ArrayList<Reserve> pendingReserves = new ArrayList();
-        ArrayList<Reserve> completedReserves = new ArrayList();
+    public List<QueryDocumentSnapshot> getClientHistorical(User activeUser) {
         ApiFuture<QuerySnapshot> future = db.collection("reservesClient").document(activeUser.getUID()).collection("reserves").get();
-
+        List<QueryDocumentSnapshot> documents = null;
+        
         try {
-            List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-            for (DocumentSnapshot document : documents) {
-
-                String ref = (String) document.get("reserveRef");
-                isOnRange = dateIsOnRange((Timestamp) document.get("date"));
-
-                if (!isOnRange.isEmpty()) {
-
-                    if (isOnRange.get("before").equals(Boolean.TRUE)) {
-                        completedReserves.add(getReserveFromRelatedRef(ref, activeUser));
-                    } else if (isOnRange.get("after").equals(Boolean.TRUE)) {
-                        pendingReserves.add(getReserveFromRelatedRef(ref, activeUser));
-                    }
-                }
-
-            }
-
-            historical.put("pendingReserves", pendingReserves);
-            historical.put("completedReserves", completedReserves);
-
+            documents = future.get().getDocuments();
         } catch (InterruptedException ex) {
             Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
             Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return historical;
+        
+        return documents;
+
     }
 
-    private Reserve getReserveFromRelatedRef(String ref, User activeUser) {
+    public Reserve getReserveFromRelatedRef(String ref, User activeUser) {
 
         //reserves/WbQRmWrhMlYs4Z95WalXaqwq9OY2/2021/1/04-01-2021/0n6BRemvs1kwTi10JIkM        
         String[] refData = ref.split("/");
@@ -572,28 +551,6 @@ public class FirebaseDAO {
         }
 
         return null;
-    }
-
-    private Map<String, Boolean> dateIsOnRange(Timestamp reserveDate) {
-        Map<String, Boolean> isOnRange = new HashMap<>();
-        LocalDateTime currentDate = LocalDateTime.now();
-
-        LocalDateTime date = reserveDate.toDate().toInstant()
-                .atZone(ZoneId.of("Europe/Madrid"))
-                .toLocalDateTime();
-
-        LocalDateTime currentDateMaxValue = currentDate.plus(Period.ofMonths(2));
-        LocalDateTime currentDateMinValue = currentDate.minus(Period.ofMonths(2));
-
-        if (date.isBefore(currentDate) && date.isAfter(currentDateMinValue)) {
-            isOnRange.put("before", Boolean.TRUE);
-        } else if (date.isAfter(currentDate) && date.isBefore(currentDateMaxValue)) {
-            isOnRange.put("after", Boolean.TRUE);
-        } else {
-            return null;
-        }
-
-        return isOnRange;
     }
 
 }
