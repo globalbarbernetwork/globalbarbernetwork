@@ -13,6 +13,8 @@
 <%@page import="java.util.Objects"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
+<%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
+
 <jsp:useBean id="listHairdressingsJSON" scope="request" class="java.lang.String"/>
 <jsp:useBean id="historical" scope="request" class="java.util.HashMap"/>
 
@@ -22,7 +24,7 @@
         <!-- Scripts comunes -->
         <%@include file="/WEB-INF/jspf/base_head.jspf"%>
         <link href='https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css' rel='stylesheet'>
-        <link rel="stylesheet" href="${contextPath}/css/index.css">
+        <link rel="stylesheet" href="${contextPath}/css/historicalClient.css">
     </head>
     <body>
         <!-- Header -->
@@ -31,14 +33,14 @@
         <div class="container-fluid p-5">
             <div class="row">
                 <div class="card col p-0">
-                    <div class="card-header">
+                    <div class="card-header historic-header">
                         <h4>Historial de reserves</h4>                        
                     </div>
                     <div class="card-body p-5">
                         <div class="row">
                             <div class="col-12">
                                 <div class="card">
-                                    <div class="card-header">
+                                    <div class="card-header header-proxims-esdeveniments">
                                         <h5 class="mb-0"><a data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="true" aria-controls="multiCollapseExample1">Proxims esdeveniments</a></h5>
                                     </div>                                    
                                     <div class="collapse multi-collapse show" id="multiCollapseExample1">                                        
@@ -48,14 +50,17 @@
                                                 <c:set var="hairdressing" value="<%= ((Hairdressing) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("hairdressing")).getDisplayName()%>"></c:set>
                                                 <c:set var="service" value="<%= ((Service) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("service")).getName()%>"></c:set>                                                
                                                 <c:set var="servicePrice" value="<%= ((Service) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("service")).getPrice()%>"></c:set>                                                
-                                                <c:set var="timeFinal" value="<%= ((Reserve) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("reserve")).getTimeFinal()%>"></c:set>
-                                                <c:set var="timeInit" value="<%= ((Reserve) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("reserve")).getTimeInit()%>"></c:set>
-                                                    <div class="card d-inline-block ml-2" style="width: 18rem;">
-                                                        <img class="card-img-top" src="${contextPath}/img/test_sm.svg" alt="Card image cap">
+                                                <c:set var="timeFinal" value="<%= ((Reserve) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("reserve")).obtainTimeFinalLocalDate()%>"></c:set>
+                                                <c:set var="timeInit" value="<%= ((Reserve) ((HashMap) ((ArrayList) historical.get("pendingReserves")).get(loop)).get("reserve")).obtainTimeInitLocalDate()%>"></c:set>
+                                                <javatime:format value="${timeInit}" pattern="HH:mm" var="iniParseDate"/>
+                                                <javatime:format value="${timeFinal}" pattern="HH:mm" var="finalParseDate"/>
+                                                <div class="card d-inline-block ml-2" style="width: 18rem;">
+                                                    <img class="card-img-top" src="${contextPath}/img/test_sm.svg" alt="Card image cap">
                                                     <div class="card-body">
                                                         <h5 class="card-title">${hairdressing}</h5>
                                                         <p class="card-text"><span class='font-weight-bold' style="font-size: 1.2rem;">${servicePrice}&euro;</span> - ${service}</p>
-                                                        <p class="card-text">${timeInit}-${timeFinal}</p>                                                        
+                                                        <span class="card-text float-right">${timeInit.dayOfMonth}&sol;${timeInit.monthValue}&sol;${timeInit.year}</span>
+                                                        <span class="card-text">${iniParseDate} - ${finalParseDate}</span>                                                        
                                                     </div>
                                                 </div>
                                                 <% loop++; %>
@@ -71,7 +76,7 @@
                             </div>
                             <div class="col-12 mt-2">
                                 <div class="card">
-                                    <div class="card-header">
+                                    <div class="card-header header-finalitzats-esdeveniments">
                                         <h5 class="mb-0"><a data-toggle="collapse" data-target="#multiCollapseExample2" role="button" aria-expanded="false" aria-controls="multiCollapseExample2" style="color: #007bff">Esdeveniments finalitzats</a></h5>
                                     </div>           
                                     <div class="collapse multi-collapse" id="multiCollapseExample2">
@@ -81,15 +86,17 @@
                                                 <c:set var="hairdressing" value="<%= ((Hairdressing) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("hairdressing")).getDisplayName()%>"></c:set>
                                                 <c:set var="service" value="<%= ((Service) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("service")).getName()%>"></c:set>                                                
                                                 <c:set var="servicePrice" value="<%= ((Service) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("service")).getPrice()%>"></c:set>                                                
-                                                <c:set var="timeFinal" value="<%= ((Reserve) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("reserve")).obtainTimeFinalLocalDate() %>"></c:set>  
+                                                <c:set var="timeFinal" value="<%= ((Reserve) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("reserve")).obtainTimeFinalLocalDate()%>"></c:set>  
                                                 <c:set var="timeInit" value="<%= ((Reserve) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("reserve")).obtainTimeInitLocalDate()%>"></c:set>
-                                                    <div class="card d-inline-block ml-2" style="width: 18rem;">
-                                                        <img class="card-img-top" src="${contextPath}/img/test_sm.svg" alt="Card image cap">
+                                                <javatime:format value="${timeInit}" pattern="HH:mm" var="iniParseDate2"/>
+                                                <javatime:format value="${timeFinal}" pattern="HH:mm" var="finalParseDate2"/>
+                                                <div class="card d-inline-block ml-2" style="width: 18rem;">
+                                                    <img class="card-img-top" src="${contextPath}/img/test_sm.svg" alt="Card image cap">
                                                     <div class="card-body">
                                                         <h5 class="card-title">${hairdressing}</h5>
                                                         <p class="card-text"><span class='font-weight-bold' style="font-size: 1.2rem;">${servicePrice}&euro;</span> - ${service}</p>
-                                                        <p class="card-text">${timeInit.dayOfMonth}&sol;${timeInit.monthValue}&sol;${timeInit.year}</p>                                                        
-                                                        <p class="card-text">${timeInit.hour}&ratio;${timeInit.minute}</p>                                                        
+                                                        <span class="card-text float-right">${timeInit.dayOfMonth}&sol;${timeInit.monthValue}&sol;${timeInit.year}</span>
+                                                        <span class="card-text">${iniParseDate2} - ${finalParseDate2}</span>                                                                            
                                                     </div>
                                                 </div>
                                                 <% loop2++; %>
