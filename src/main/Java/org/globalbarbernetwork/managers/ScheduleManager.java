@@ -19,10 +19,8 @@ package org.globalbarbernetwork.managers;
 import com.google.cloud.Timestamp;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.common.collect.HashBiMap;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -226,7 +224,8 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                 ? LocalTime.parse((CharSequence) ((Map<String, Object>) timetableDay.get("rangeHour1")).get("endHour")) : null;
         LocalTime rangeHour2Final = !((String) ((Map<String, Object>) timetableDay.get("rangeHour2")).get("endHour")).isEmpty()
                 ? LocalTime.parse((CharSequence) ((Map<String, Object>) timetableDay.get("rangeHour2")).get("endHour")) : null;
-
+        LocalDateTime ldtNow = LocalDateTime.now();
+        
         // Excluir horas de reservas del peluquero seleccionado
         if (idHairdresser != null && !idHairdresser.isEmpty()) {
             ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
@@ -257,7 +256,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                     existOverlap = true;
                 }
 
-                if (existOverlap) {
+                if (existOverlap || ldtNow.toLocalDate().equals(date) && time.isBefore(ldtNow.toLocalTime())) {
                     it.remove();
                 }
             }
@@ -296,6 +295,10 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                         } else if (timeToDrop.get(time) == null) {
                             timeToDrop.put(time, 1);
                         }
+                    }
+                    
+                    if (ldtNow.toLocalDate().equals(date) && time.isBefore(ldtNow.toLocalTime())) {
+                        timeToDrop.put(time, listEmployees.size());
                     }
                 }
             }

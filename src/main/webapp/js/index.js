@@ -271,10 +271,14 @@ function getAvailableHours() {
         dataType: "json",
         success: function (data) {
             var availableHoursJSONArray = data.jsonArray;
-
-            cleanSelect("availableHours", "Tria una hora", false);
-            for (var i in availableHoursJSONArray) {
-                $("#availableHours").append(new Option(availableHoursJSONArray[i].timeInFormat, availableHoursJSONArray[i].timeInMinutes));
+            
+            if (availableHoursJSONArray.length == 0) {
+                cleanSelect("availableHours", "Hores no disponibles", true);
+            } else {
+                cleanSelect("availableHours", "Tria una hora", false);
+                for (var i in availableHoursJSONArray) {
+                    $("#availableHours").append(new Option(availableHoursJSONArray[i].timeInFormat, availableHoursJSONArray[i].timeInMinutes));
+                }
             }
         },
         error: function () {
