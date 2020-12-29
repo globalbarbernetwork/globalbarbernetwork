@@ -41,6 +41,7 @@ $(document).ready(function () {
 
 
     initializeDatepickerEmployeeHolidays();
+    stylizeDatePicker("datepickerEmployeeHolidays"); //function de manageHolidays.js
     $("#modalHolidaysEmployee").on('hidden.bs.modal', function () {
         cleanModalGestioVacances();
     });
@@ -286,7 +287,6 @@ function initializeDatepickerEmployeeHolidays() {
         multidate: true,
         daysOfWeekHighlighted: [0, 6],
         todayHighlight: true,
-        //daysOfWeekDisabled: [0, 6],
         clearBtn: true
     });
 
@@ -313,7 +313,33 @@ function loadInfoModalHolidays(element) {
     $("#idHairdressing").val(idHairdressing);
     $("#selectedIdEmployee").val(idEmployee);
 
+    disableHolidaysHairdressingAndGetHolidaysEmployee(idHairdressing, idEmployee);
+}
 
+function disableHolidaysHairdressingAndGetHolidaysEmployee(idHairdressing, idEmployee) {
+    $.ajax({
+        url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getDisableDaysHairdressing',
+        data: {
+            idHairdressing: idHairdressing
+        },
+        dataType: "json",
+        success: function (data) {
+            var holidaysHairdressingJSONArray = data.jsonArrayHolidaysHairdressing;
+            var nonWorkingDaysOfWeekJSONArray = data.jsonArrayNonWorkingDaysOfWeek;
+
+           $("#datepickerEmployeeHolidays").datepicker('setDatesDisabled', holidaysHairdressingJSONArray);
+           $("#datepickerEmployeeHolidays").datepicker('setDaysOfWeekDisabled', nonWorkingDaysOfWeekJSONArray);
+           
+           getHolidaysEmployee(idHairdressing, idEmployee);
+        },
+        error: function () {
+            console.log("No se ha podido obtener la información");
+        }
+    });
+}
+
+function getHolidaysEmployee(idHairdressing, idEmployee) {
+    // Recoge festivos del empleado
     $.ajax({
         url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/getHolidaysEmployeeAjax',
         data: {

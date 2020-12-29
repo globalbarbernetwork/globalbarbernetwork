@@ -82,6 +82,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     height: 4rem !important;
 }
 
+.disabled-date {
+    color: #F70000 !important;
+}
+
 .customDataTable thead {
     background: #343a40;
     color: white;
