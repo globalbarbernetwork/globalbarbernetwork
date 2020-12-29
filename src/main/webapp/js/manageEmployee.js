@@ -20,7 +20,6 @@ var contextPath;
 $(document).ready(function () {
     contextPath = $("#contextPath").val();
 
-    //initializeDataTable();
     initializeDatepickerContract();
     $("#btnConfirmAddEdit").attr('disabled', true);
 
@@ -29,13 +28,13 @@ $(document).ready(function () {
     });
 
     $("#modalEditEmployee").on('hidden.bs.modal', function () {
-        cleanModalClose();
+        cleanModalEmployee();
     });
 
     $("#contractIniDate, #contractEndDate").on('change', function () {
         checkDates($(this));
     });
-    
+
     $("#modalEditEmployee").find("input[type=text]").blur(function () {
         validFieldsEmployee($(this));
     });
@@ -50,17 +49,6 @@ $(document).ready(function () {
     });
 });
 
-function initializeDataTable() {
-    $('#dataTable').DataTable({
-        "pagingType": "numbers",
-        "responsive": true,
-        "order": [],
-        "columnDefs": [{orderable: false, targets: [0, 7]}],
-        "language": {
-            "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Catalan.json"
-        }
-    });
-}
 
 function editEmployee(btnEdit) {
     var btnAddModal = $("#modalEditEmployee").find(".modal-footer").children();
@@ -72,6 +60,9 @@ function editEmployee(btnEdit) {
     var td = 1;
     $("#modalEditEmployee").find("input[type=text]").each(function () {
         $(this).val($(row.get(td)).text());
+        if ($(this).attr('id') == "contractIniDate" || $(this).attr('id') == "contractEndDate") {
+            $(this).datepicker('setDates', $(row.get(td)).text());
+        }
         td++;
     });
 
@@ -163,13 +154,19 @@ function checkIfIdNumberExists(inputIdNumber) {
     );
 }
 
-function cleanModalClose() {
-    $("#modalEditEmployee").find("input").each(function () {
-        $(this).val("");
-        $(this).removeClass("is-invalid");
-        $(this).next().text("");
-        $("#idNumber").prop('disabled', false);
+function cleanModalEmployee() {
+    $("#modalEditEmployee").find("input[type=text]").each(function () {
+        if ($(this).parent().hasClass('datepicker')) {
+            $(this).datepicker('clearDates');
+            $(this).parent().next().text("");
+            $(this).removeClass("is-invalid");
+        } else {
+            $(this).val("");
+            $(this).next().text("");
+            $(this).removeClass("is-invalid");
+        }
     });
+    $("#idNumber").prop('disabled', false);
 }
 
 function validFieldsEmployee(input) {
@@ -207,11 +204,12 @@ function validFieldsEmployee(input) {
                 input.removeClass('is-invalid');
             }
             break;
-    };
+    }
+    ;
     checkIfAllInputsOK();
 }
 
-function checkIfAllInputsOK(){
+function checkIfAllInputsOK() {
     allInputsOk = !$("#modalEditEmployee").find("input[type=text]").hasClass("is-invalid");
     $("#modalEditEmployee").find("input[type=text]").each(function () {
         if ($(this).val() === '') {
@@ -228,33 +226,27 @@ function checkIfAllInputsOK(){
 
 function checkDates(input) {
     var iniBiggerThanEndDate;
-    var contractIniDate = $("#contractIniDate").val();
-    var contractEndDate = $("#contractEndDate").val();
+    var contractIniDate = $("#contractIniDate").datepicker('getDate');
+    var contractEndDate = $("#contractEndDate").datepicker('getDate');
 
     if (input.val().length == 0) {
-        input.next().text("");
+        input.parent().next().text("");
         input.addClass('is-invalid');
     } else {
-        if (contractIniDate != "" && contractEndDate != "") {
-            var iniCorrectFormat = contractIniDate.split("/");
-            var ini = new Date(iniCorrectFormat[2], iniCorrectFormat[1]-1, iniCorrectFormat[0]);
-            
-            var endCorrectFormat = contractEndDate.split("/");
-            var end = new Date(endCorrectFormat[2], endCorrectFormat[1]-1, endCorrectFormat[0]);
-            
-            iniBiggerThanEndDate = ini.getTime() >= end.getTime();
+        if (contractIniDate != null && contractEndDate != null) {
+            iniBiggerThanEndDate = contractIniDate >= contractEndDate;
         }
         var textError = "* La data inici no pot ser igual o major que la data final";
         if (input.attr('name') == "contractEndDate") {
             textError = "* La data final no pot ser igual o menor que la data inici";
         }
-        
+
         $("#contractIniDate").removeClass('is-invalid');
         $("#contractIniDate").parent().next().text("");
-        
+
         $("#contractEndDate").removeClass('is-invalid');
         $("#contractEndDate").parent().next().text("");
-        
+
         if (iniBiggerThanEndDate) {
             input.addClass('is-invalid');
             input.parent().next().text(textError);
@@ -275,7 +267,7 @@ function initializeDatepickerContract() {
         daysOfWeekHighlighted: [0, 6],
         todayHighlight: true
     });
-    
+
     $('#contractEndDate').datepicker({
         language: "ca",
         clearBtn: true,
@@ -283,7 +275,7 @@ function initializeDatepickerContract() {
         autoclose: true,
         daysOfWeekHighlighted: [0, 6],
         todayHighlight: true
-    });  
+    });
 }
 
 // Part

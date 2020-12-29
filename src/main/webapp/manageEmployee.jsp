@@ -71,15 +71,15 @@
                     <div class="form-group">
                         <label for="contractIniDate">Data Inici Contracte</label>
                         <div class="datepicker date input-group">
-                            <input type="text" placeholder="dd/mm/aaaa" class="form-control" id="contractIniDate" name="contractIniDate" title="Omple aquest camp">
+                            <input type="text" placeholder="dd/mm/aaaa" class="form-control" id="contractIniDate" name="contractIniDate" title="Omple aquest camp" readonly>
                             <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-day"></i></span></div>
                         </div>
                         <small id="errorInputIniDate" class="text-danger"></small>
                     </div>
                     <div class="form-group">
-                        <label for="endDateContract">Data Final Contracte</label>
+                        <label for="contractEndDate">Data Final Contracte</label>
                         <div class="datepicker date input-group">
-                            <input type="text" placeholder="dd/mm/aaaa" class="form-control" id="contractEndDate" name="contractEndDate" title="Omple aquest camp">
+                            <input type="text" placeholder="dd/mm/aaaa" class="form-control" id="contractEndDate" name="contractEndDate" title="Omple aquest camp" readonly>
                             <div class="input-group-append"><span class="input-group-text"><i class="fas fa-calendar-day"></i></span></div>
                         </div>
                         <small id="errorInputEndDate" class="text-danger"></small>

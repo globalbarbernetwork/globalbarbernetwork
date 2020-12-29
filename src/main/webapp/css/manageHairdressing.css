@@ -107,8 +107,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     border-color: #7a7a7a !important;
 }
 
-a:hover {
+.black-on-hover:hover {
     color : #000 !important;
+}
+
+.black-on-hover, .nav-link.active {
+    color : #FFF !important;
 }
 
 a {
