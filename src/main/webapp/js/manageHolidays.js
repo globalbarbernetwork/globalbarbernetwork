@@ -17,7 +17,7 @@
 
 $(document).ready(function () {
     initializeDatepickerHairdressingHolidays();
-    stylizeDatePicker();
+    stylizeDatePicker("datepickerHairdressingHolidays");
     loadHairdressingHolidays();
 });
 
@@ -40,8 +40,8 @@ function initializeDatepickerHairdressingHolidays() {
 
 }
 
-function stylizeDatePicker() {
-    var thead = $('#datepickerHairdressingHolidays').find('thead:first').children('tr').eq(1);
+function stylizeDatePicker(idDatepicker) {
+    var thead = $('#' + idDatepicker).find('thead:first').children('tr').eq(1);
     thead.addClass(" thead-hairdressing-schedule ");
     $(thead).children('th').addClass(" th-hairdressing-schedule ");
 }
