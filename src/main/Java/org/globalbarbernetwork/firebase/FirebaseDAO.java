@@ -226,7 +226,7 @@ public class FirebaseDAO {
         return listHairdressings;
     }
 
-    public Map<String, Object> getTimetableHairdressing(String uid) {
+    public Map<String, Object> getScheduleHairdressing(String uid) {
         DocumentReference docRef = db.collection("schedule").document(uid);
         ApiFuture<DocumentSnapshot> future = docRef.get();
         try {

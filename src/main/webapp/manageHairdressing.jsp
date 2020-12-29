@@ -23,16 +23,16 @@
         <div id="container">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link ${selectedTab.get("service") ? "active" : ""}" id="service-tab" data-toggle="tab" href="#service" role="tab" aria-controls="service" aria-selected="${selectedTab.get("service")}">Serveis</a>
+                    <a class="black-on-hover nav-link ${selectedTab.get("service") ? "active" : ""}" id="service-tab" data-toggle="tab" href="#service" role="tab" aria-controls="service" aria-selected="${selectedTab.get("service")}">Serveis</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link ${selectedTab.get("schedule") ? "active" : ""}" id="schedule-tab" data-toggle="tab" href="#schedule" role="tab" aria-controls="schedule" aria-selected="${selectedTab.get("schedule")}">Horari</a>
+                    <a class="black-on-hover nav-link ${selectedTab.get("schedule") ? "active" : ""}" id="schedule-tab" data-toggle="tab" href="#schedule" role="tab" aria-controls="schedule" aria-selected="${selectedTab.get("schedule")}">Horari</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link ${selectedTab.get("holiday") ? "active" : ""}" id="holiday-tab" data-toggle="tab" href="#holiday" role="tab" aria-controls="holiday" aria-selected="${selectedTab.get("holiday")}">Festius</a>
+                    <a class="black-on-hover nav-link ${selectedTab.get("holiday") ? "active" : ""}" id="holiday-tab" data-toggle="tab" href="#holiday" role="tab" aria-controls="holiday" aria-selected="${selectedTab.get("holiday")}">Festius</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link ${selectedTab.get("employee") ? "active" : ""}" id="employee-tab" data-toggle="tab" href="#employee" role="tab" aria-controls="employee" aria-selected="${selectedTab.get("employee")}">Treballadors</a>
+                    <a class="black-on-hover nav-link ${selectedTab.get("employee") ? "active" : ""}" id="employee-tab" data-toggle="tab" href="#employee" role="tab" aria-controls="employee" aria-selected="${selectedTab.get("employee")}">Treballadors</a>
                 </li>
             </ul>
             <div class="tab-content" id="myTabContent">

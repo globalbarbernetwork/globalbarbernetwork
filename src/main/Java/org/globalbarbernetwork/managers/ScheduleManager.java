@@ -122,7 +122,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
     }
 
     private void getTimetableToJSON(HttpServletResponse response, String idHairdressing) {
-        Map<String, Object> timetable = firebaseDAO.getTimetableHairdressing(idHairdressing);
+        Map<String, Object> timetable = firebaseDAO.getScheduleHairdressing(idHairdressing);
 
         JSONObject json = null;
         try (PrintWriter out = response.getWriter()) {
@@ -196,7 +196,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
     }
 
     private ArrayList<LocalTime> getListAvailableHours(String idHairdressing, String idHairdresser, String idService, LocalDate date) {
-        Map<String, Object> timetableHairdressing = firebaseDAO.getTimetableHairdressing(idHairdressing);
+        Map<String, Object> timetableHairdressing = firebaseDAO.getScheduleHairdressing(idHairdressing);
         String dayOfWeek = String.valueOf(date.getDayOfWeek().getValue());
 
         Map<String, Object> timetableDay = (Map<String, Object>) timetableHairdressing.get(dayOfWeek);
