@@ -32,9 +32,17 @@ import javax.mail.internet.MimeMessage;
  * @author Grup 3
  */
 public class SmtpService {
+
     private Properties props;
-    
+
+    /**
+     *
+     * It is a constructor that initialize a properties for read configuration
+     * and variables
+     *
+     */
     public SmtpService() {
+
         props = new Properties();
         try {
             InputStream is = new FileInputStream("D:/tmp/config.properties");
@@ -43,8 +51,17 @@ public class SmtpService {
             ex.printStackTrace();
         }
     }
-    
+
+    /**
+     *
+     * Send email
+     *
+     * @param recipient the recipient
+     * @param subject the subject
+     * @param body the body
+     */
     public void sendEmail(String recipient, String subject, String body) {
+
         Session session = Session.getDefaultInstance(props);
         MimeMessage message = new MimeMessage(session);
         Transport transport = null;

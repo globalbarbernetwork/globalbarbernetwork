@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 IOC DAW
+ * Copyright (C) 2020 Grup 3
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import java.time.LocalTime;
 
 /**
  *
- * @author IOC DAW
+ * @author Grup 3
  */
 public class Service {
 

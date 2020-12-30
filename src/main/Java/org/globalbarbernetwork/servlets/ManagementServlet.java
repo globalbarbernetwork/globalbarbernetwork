@@ -37,7 +37,7 @@ public class ManagementServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * methods that derives to the different managers.
      *
      * @param request servlet request
      * @param response servlet response
@@ -118,6 +118,7 @@ public class ManagementServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
+
         return "Short description";
     }// </editor-fold>
 

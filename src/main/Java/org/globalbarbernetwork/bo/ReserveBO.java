@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Adrian
+ * Copyright (C) 2020 Grup 3
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,9 @@
  */
 package org.globalbarbernetwork.bo;
 
-import javax.servlet.http.HttpServletRequest;
-import org.globalbarbernetwork.entities.Client;
 import org.globalbarbernetwork.entities.Employee;
 import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.entities.Service;
-import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
 
 /**
@@ -32,19 +29,50 @@ public class ReserveBO {
 
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
 
+    /**
+     *
+     * It is a empty constructor.
+     *
+     */
     public ReserveBO() {
+
     }
 
+    /**
+     *
+     * Gets the hairdressing
+     *
+     * @param uid the uid hairdressing
+     * @return the hairdressing
+     */
     public Hairdressing getHairdressing(String uid) {
+
         return firebaseDAO.getHairdressing(uid);
     }
 
+    /**
+     *
+     * Gets the service of a specific hairdressing
+     *
+     * @param uidHairdressing the uid hairdressing
+     * @param uidService the id service
+     * @return the service
+     */
     public Service getService(String uidHairdressing, String uidService) {
+
         return firebaseDAO.getServiceById(uidHairdressing, uidService);
     }
-    
-    public Employee getEmployee(String hairdressing, String dni){
+
+    /**
+     *
+     * Gets the employee of a specific hairdressing
+     *
+     * @param hairdressing the hairdressing
+     * @param dni the id employee
+     * @return the employee
+     */
+    public Employee getEmployee(String hairdressing, String dni) {
+
         return firebaseDAO.getEmployeeByIDNumber(hairdressing, dni);
     }
-    
 }
