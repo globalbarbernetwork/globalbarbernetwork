@@ -29,6 +29,8 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -481,8 +483,28 @@ public class ScheduleManager extends Manager implements ManagerInterface {
 
         }
 
-        historical.put("pendingReserves", pendingReserves);
-        historical.put("completedReserves", completedReserves);
+        Collections.sort(pendingReserves, new Comparator<Map<String, Object>>() {
+            @Override
+            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+                Reserve reserve1 = (Reserve) o1.get("reserve");
+                Reserve reserve2 = (Reserve) o2.get("reserve");
+                return reserve1.obtainTimeInitLocalDate().compareTo(reserve2.obtainTimeInitLocalDate());
+            }
+        });
+        
+        Collections.sort(completedReserves, new Comparator<Map<String, Object>>() {
+            @Override
+            public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+                Reserve reserve1 = (Reserve) o1.get("reserve");
+                Reserve reserve2 = (Reserve) o2.get("reserve");
+                return reserve1.obtainTimeInitLocalDate().compareTo(reserve2.obtainTimeInitLocalDate());
+            }
+        });
+        
+        historical.put(
+                "pendingReserves", pendingReserves);
+        historical.put(
+                "completedReserves", completedReserves);
 
         return historical;
     }

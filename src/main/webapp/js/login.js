@@ -15,20 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-$(document).ready(function(){
-    var errors = JSON.parse($('#errors_field').val());
-    
-    if(errors[401]){
+$(document).ready(function () {
+    var errors = $('#errors_field').val();
+    if (errors) {
+        JSON.parse(errors);
+    }
+
+    if (errors[401]) {
         $('#email').addClass("is-invalid");
         $('#password').addClass("is-invalid");
-        $('#password').parent().append("<small class='text-danger float-left mt-1 mb-3' style='font-size: 14px !important'>* "+errors[401]+"</small>");
+        $('#password').parent().append("<small class='text-danger float-left mt-1 mb-3' style='font-size: 14px !important'>* " + errors[401] + "</small>");
     }
-    
-    if(errors[403]){
-        $('#email').addClass("is-invalid");        
-        $('#email').parent().append("<small class='text-danger float-left mt-1 mb-3' style='font-size: 14px !important'>* "+errors[403]+"</small>");
+
+    if (errors[403]) {
+        $('#email').addClass("is-invalid");
+        $('#email').parent().append("<small class='text-danger float-left mt-1 mb-3' style='font-size: 14px !important'>* " + errors[403] + "</small>");
     }
-    
+
 });
 
 

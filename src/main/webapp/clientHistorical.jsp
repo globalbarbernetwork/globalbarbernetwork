@@ -103,7 +103,7 @@
                                             <h5 class="mb-0"><a data-toggle="collapse" data-target="#multiCollapseExample2" role="button" aria-expanded="false" aria-controls="multiCollapseExample2" style="color: #007bff">Esdeveniments anteriors</a></h5>
                                         </div>           
                                         <div class="collapse multi-collapse" id="multiCollapseExample2">
-                                            <div class='card-body <%= (((ArrayList) historical.get("completedReserves")).isEmpty() ? "" : "overflow-auto") %>'>
+                                            <div class="card-body <%= (((ArrayList) historical.get("completedReserves")).isEmpty() ? "" : " overflow-auto ") %>">
                                                 <% Integer loop2 = 0;%>
                                                 <c:forEach var="tmpReserve" items="<%= historical.get("completedReserves")%>" varStatus="loop">      
                                                     <c:set var="hairdressing" value="<%= ((Hairdressing) ((HashMap) ((ArrayList) historical.get("completedReserves")).get(loop2)).get("hairdressing")).getDisplayName()%>"></c:set>
@@ -117,10 +117,10 @@
                                                     <javatime:format value="${timeFinal}" pattern="HH:mm" var="finalParseDate2"/>
                                                     <c:choose>
                                                         <c:when test="${reserve != null && reserve.state == 'C'}">
-                                                            <div class="card d-inline-block ml-2 card-border-closed" style="width: 18rem;">
+                                                            <div class="card d-inline-block ml-2 card-border-closed mb-5" style="width: 18rem;">
                                                             </c:when>                                                         
                                                             <c:when test="${reserve != null && reserve.state == 'A'}">
-                                                                <div class="card d-inline-block ml-2 card-border-anuled" style="width: 18rem;">
+                                                                <div class="card d-inline-block ml-2 card-border-anuled mb-5" style="width: 18rem;">
                                                                 </c:when>                                                         
                                                             </c:choose>
                                                             <img class="card-img-top" src="${contextPath}/img/global_logo.png" alt="Card image cap">
