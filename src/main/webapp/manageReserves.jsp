@@ -22,7 +22,7 @@
         <%@include file="/WEB-INF/jspf/header.jspf"%>
 
         <!-- Manage reserves -->
-        <div class="container-fluid pt-5 pb-5">
+        <div class="container-fluid pt-5">
             <div class="card">
                 <div class="card-header">
                     <h4 style="display: inline-block">Gestió reserves</h4>
@@ -46,4 +46,3 @@
         <script src="${contextPath}/js/manageReserves.js"></script>
     </body>
 </html>
-

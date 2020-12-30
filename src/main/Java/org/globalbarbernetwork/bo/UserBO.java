@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Adrian
+ * Copyright (C) 2020 Grup 3
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,22 @@ public class UserBO {
 
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
 
+    /**
+     *
+     * It is a empty constructor.
+     *
+     */
     public UserBO() {
+
     }
 
+    /**
+     *
+     * Gets the user by type (client or hairdressing)
+     *
+     * @param uid the uid
+     * @return the user by type
+     */
     public User getUserByType(String uid) {
 
         User tmpUser = firebaseDAO.getUser(uid);
@@ -52,6 +65,12 @@ public class UserBO {
         return user;
     }
 
+    /**
+     *
+     * Insert user by type (client or hairdressing)
+     *
+     * @param user the user
+     */
     public void insertUserByType(User user) {
 
         if (user != null) {
@@ -68,7 +87,14 @@ public class UserBO {
         }
     }
 
-    public void updateClient(Client client, HttpServletRequest request) {                
+    /**
+     *
+     * Update client
+     *
+     * @param client the client
+     * @param request the request
+     */
+    public void updateClient(Client client, HttpServletRequest request) {
 
         client.setDisplayName(request.getParameter("displayName"));
         client.setName(request.getParameter("name"));
@@ -77,11 +103,18 @@ public class UserBO {
 
         request.getSession().setAttribute("user", client);
 
-        firebaseDAO.updateClient(client);        
+        firebaseDAO.updateClient(client);
     }
 
-    public void updateHairdressing(Hairdressing hairdressing, HttpServletRequest request) {                
-        
+    /**
+     *
+     * Update hairdressing
+     *
+     * @param hairdressing the hairdressing
+     * @param request the request
+     */
+    public void updateHairdressing(Hairdressing hairdressing, HttpServletRequest request) {
+
         hairdressing.setDisplayName(request.getParameter("displayName"));
         hairdressing.setAddress(request.getParameter("address"));
         hairdressing.setCompanyName(request.getParameter("companyName"));
@@ -92,11 +125,19 @@ public class UserBO {
         hairdressing.setZipCode(request.getParameter("zipCode"));
         firebaseDAO.updateHairdressing(hairdressing);
 
-        request.getSession().setAttribute("user", hairdressing);                
+        request.getSession().setAttribute("user", hairdressing);
     }
-    
-    public void changePassword(User user, HttpServletRequest request){
+
+    /**
+     *
+     * Change password user
+     *
+     * @param user the user
+     * @param request the request
+     */
+    public void changePassword(User user, HttpServletRequest request) {
+
         String newPassword = request.getParameter("newPassword");
-        firebaseDAO.changePassword(user.getUID(), newPassword);        
+        firebaseDAO.changePassword(user.getUID(), newPassword);
     }
 }

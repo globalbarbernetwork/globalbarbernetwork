@@ -1,7 +1,7 @@
 <%-- 
     Document   : manageHairdressing
     Created on : Dec 5, 2020, 8:25:34 PM
-    Author     : IOC DAW
+    Author     : Grup 3
 --%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <jsp:useBean id="employees" scope="request" class="java.util.List<org.globalbarbernetwork.entities.Employee>"/>

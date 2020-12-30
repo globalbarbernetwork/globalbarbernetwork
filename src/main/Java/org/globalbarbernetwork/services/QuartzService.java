@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 IOC DAW
+ * Copyright (C) 2020 Grup 3
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@ package org.globalbarbernetwork.services;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,11 +28,8 @@ import javax.servlet.annotation.WebListener;
 import org.globalbarbernetwork.jobs.StateReserveJob;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import org.quartz.CronTrigger;
-import org.quartz.Job;
 import static org.quartz.JobBuilder.newJob;
 import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerBuilder;
@@ -41,7 +37,7 @@ import org.quartz.impl.StdSchedulerFactory;
 
 /**
  *
- * @author IOC DAW
+ * @author Grup 3
  */
 @WebListener
 public class QuartzService implements ServletContextListener {
@@ -50,7 +46,14 @@ public class QuartzService implements ServletContextListener {
     private boolean activeQuartz;
     private Properties props;
 
+    /**
+     *
+     * Quartz service constructor that initialize properties for read
+     * configuration
+     *
+     */
     public QuartzService() {
+
         props = new Properties();
         try {
             InputStream is = new FileInputStream("D:/tmp/config.properties");
@@ -60,7 +63,13 @@ public class QuartzService implements ServletContextListener {
         }
     }
 
+    /**
+     *
+     * Method that handles calls to jobs
+     *
+     */
     public void callJobs() {
+
         try {
             System.out.println("Estamos Dentro Gente del MAIN");
             StdSchedulerFactory factory = new StdSchedulerFactory();
@@ -83,7 +92,15 @@ public class QuartzService implements ServletContextListener {
     }
 
     @Override
+
+    /**
+     *
+     * Context initialized that call method callJobs
+     *
+     * @param sce the ServletContextEvent
+     */
     public void contextInitialized(ServletContextEvent sce) {
+
         activeQuartz = Boolean.parseBoolean(props.getProperty("activeQuartz"));
         if (activeQuartz) {
             callJobs();
@@ -91,7 +108,15 @@ public class QuartzService implements ServletContextListener {
     }
 
     @Override
+
+    /**
+     *
+     * Context destroyed that shutdown scheduler
+     *
+     * @param sce the ServletContextEvent
+     */
     public void contextDestroyed(ServletContextEvent sce) {
+
         if (activeQuartz) {
             try {
                 scheduler.shutdown(true);
