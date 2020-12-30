@@ -18,6 +18,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Created on : Dec 6, 2020, 7:29:30 PM
     Author     : IOC DAW
 */
+
+.card-body.overflow-auto{
+    height: 480px !important;
+}
+
+.card-border-closed{
+    border: 1px solid #099300 !important;
+}
+
+.closed-status span{
+    color: white !important;
+    font-size: 1.1rem !important;    
+}
+
+.closed-status{
+    background-color: #099300 !important
+}
+
+.card-border-anuled{
+    border: 1px solid #b20000 !important;
+}
+
+.anuled-status span{
+    color: white !important;
+    font-size: 1.1rem !important;    
+}
+
+.anuled-status{
+    background-color: #b20000 !important
+}
+
+.card-border-pending{
+    border: 1px solid #6495ed !important;
+}
+.pending-status span{
+    color: white !important;
+    font-size: 1.1rem !important;    
+}
+
+.pending-status{
+    background-color: #6495ed !important
+}
+
 .historic-header{
     background-color: #343A40 !important;   
 }

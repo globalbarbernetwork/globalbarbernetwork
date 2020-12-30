@@ -415,15 +415,15 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             reserve.modifyTimeFinalDate(LocalDateTime.of(date, ltFinalReserveTmp));
 
             String reserveRef = firebaseDAO.insertReserve(reserve, String.valueOf(ldtReserve.getYear()), String.valueOf(ldtReserve.getMonthValue()), formattedDateString);
-            
+
             // Se guardan la referencia de la reserva para eliminarlo facilmente
             String reserveClientRef = firebaseDAO.insertReserveClient(activeUser.getUID(), reserveRef);
-            
+
             // Se guardan la referencia de la reserva y la referencia de la tabla de la reserva cliente para eliminarlo facilmente
             String reserveEmployeeRef = firebaseDAO.insertReserveEmployee(reserve.getIdHairdressing(), reserve.getIdEmployee(), reserveRef, reserveClientRef);
-            
+
             // Se añade la referencia de la reserva empleado creada anteriormente para eliminarlo facilmente
-            firebaseDAO.updateReserveClient(activeUser.getUID(), reserveClientRef, reserveRef, reserveEmployeeRef);          
+            firebaseDAO.updateReserveClient(activeUser.getUID(), reserveClientRef, reserveRef, reserveEmployeeRef);
 
             // Devolver datos para printar "Reserva realitzada per el día X a l'hora Y".
             DateTimeFormatter formatter;
@@ -451,8 +451,8 @@ public class ScheduleManager extends Manager implements ManagerInterface {
     private Map getClientHistorical(User activeUser) {
         Map<String, ArrayList> historical = new HashMap<>();
         Map<String, Boolean> isOnRange = new HashMap<>();
-        ArrayList<Map> completedReserves = new ArrayList<>();
-        ArrayList<Map> pendingReserves = new ArrayList<>();
+        ArrayList<Map<String, Object>> completedReserves = new ArrayList<>();
+        ArrayList<Map<String, Object>> pendingReserves = new ArrayList<>();
         Map<String, Object> pendingReserve = new HashMap<>();
         Map<String, Object> completedReserve = new HashMap<>();
         ReserveBO reserveBO = new ReserveBO();
@@ -462,7 +462,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             pendingReserve = new HashMap<>();
             completedReserve = new HashMap<>();
 
-            isOnRange = dateIsOnRange(reserve.getTimeInit());
+            isOnRange = dateIsOnRange(reserve.obtainTimeFinalLocalDate());
             if (!isOnRange.isEmpty()) {
                 if (isOnRange.get("before") != null && isOnRange.get("before").equals(Boolean.TRUE)) {
                     completedReserve.put("hairdressing", reserveBO.getHairdressing(reserve.getIdHairdressing()));
@@ -479,28 +479,24 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                 }
             }
 
-            historical.put("pendingReserves", pendingReserves);
-            historical.put("completedReserves", completedReserves);
-
         }
+
+        historical.put("pendingReserves", pendingReserves);
+        historical.put("completedReserves", completedReserves);
 
         return historical;
     }
 
-    private Map<String, Boolean> dateIsOnRange(Date reserveDate) {
+    private Map<String, Boolean> dateIsOnRange(LocalDateTime reserveDate) {
         Map<String, Boolean> isOnRange = new HashMap<>();
         LocalDateTime currentDate = LocalDateTime.now();
-
-        LocalDateTime date = reserveDate.toInstant()
-                .atZone(ZoneId.of("Europe/Madrid"))
-                .toLocalDateTime();
 
         LocalDateTime currentDateMaxValue = currentDate.plus(Period.ofMonths(2));
         LocalDateTime currentDateMinValue = currentDate.minus(Period.ofMonths(2));
 
-        if (date.isBefore(currentDate) && date.isAfter(currentDateMinValue)) {
+        if (reserveDate.isBefore(currentDate) && reserveDate.isAfter(currentDateMinValue)) {
             isOnRange.put("before", Boolean.TRUE);
-        } else if (date.isAfter(currentDate) && date.isBefore(currentDateMaxValue)) {
+        } else if (reserveDate.isAfter(currentDate) && reserveDate.isBefore(currentDateMaxValue)) {
             isOnRange.put("after", Boolean.TRUE);
         } else {
             return null;
