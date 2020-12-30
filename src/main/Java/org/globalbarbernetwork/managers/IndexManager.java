@@ -41,15 +41,24 @@ public class IndexManager extends Manager implements ManagerInterface {
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
 
     @Override
+
+    /**
+     * This method will be executed on load IndexManager
+     *
+     * @param request the request
+     * @param response the response
+     * @param action the action
+     */
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
+
         try {
             RequestDispatcher rd = request.getRequestDispatcher("/index.jsp");
-            
-            String listHairdressingsJSON = getListHairdressingsToJSON();            
-            request.setAttribute("listHairdressingsJSON", listHairdressingsJSON);  
-            
+
+            String listHairdressingsJSON = getListHairdressingsToJSON();
+            request.setAttribute("listHairdressingsJSON", listHairdressingsJSON);
+
             this.buildMenuOptions(request, response);
-            
+
             rd.forward(request, response);
         } catch (ServletException ex) {
             Logger.getLogger(IndexManager.class.getName()).log(Level.SEVERE, null, ex);
@@ -58,7 +67,13 @@ public class IndexManager extends Manager implements ManagerInterface {
         }
     }
 
+    /**
+     * This method will return all hairdressings stored in JSON
+     *
+     * @return list hairdressings in JSON
+     */
     private String getListHairdressingsToJSON() {
+
         List<Hairdressing> hairdressings = firebaseDAO.getAllHairdressings();
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
@@ -91,7 +106,7 @@ public class IndexManager extends Manager implements ManagerInterface {
             JSONObject member = new JSONObject(jsonOrderedMap);
             array.put(member);
         }
-        
+
         try {
             json.put("jsonArray", array);
         } catch (JSONException ex) {
@@ -99,6 +114,6 @@ public class IndexManager extends Manager implements ManagerInterface {
         }
 
         return json.toString();
-    }   
+    }
 
 }

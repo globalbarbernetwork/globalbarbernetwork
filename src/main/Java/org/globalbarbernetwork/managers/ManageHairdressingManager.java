@@ -20,16 +20,11 @@ import com.google.cloud.Timestamp;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormatSymbols;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,13 +34,11 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.globalbarbernetwork.constants.Constants.*;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.entities.Employee;
-import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.entities.Reserve;
 import org.globalbarbernetwork.entities.Service;
 import org.globalbarbernetwork.entities.User;
@@ -54,6 +47,8 @@ import org.globalbarbernetwork.interfaces.ManagerInterface;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import static org.globalbarbernetwork.constants.Constants.*;
 
 /**
  *
@@ -80,18 +75,27 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
     final static String UPDATE_SCHEDULE = "updateSchedule";
     final static String UPDATE_HOLIDAYS = "updateHolidays";
-    
+
     final static String GET_DISABLED_DAYS_HAIDRESSING = "getDisableDaysHairdressing";
 
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
 
     @Override
+
+    /**
+     *
+     * This method will be executed on load ManageHairdressingManager
+     *
+     * @param request the request
+     * @param response the response
+     * @param action the action
+     */
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
+
         try {
             RequestDispatcher rd = null;
             User activeUser = (User) request.getSession().getAttribute("user");
             request.setAttribute("incrementMin", INCREMENT_MINUTES);
-            
 
             switch (action) {
                 case LOAD_LISTS_TO_MANAGE:
@@ -208,6 +212,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
+    /**
+     * This method will return the active tab in the screen
+     *
+     * @param request the request
+     * @param action the action
+     */
     public void activeTab(HttpServletRequest request, String action) {
         String[] actions = {"service", "schedule", "holiday", "employee"};
         Map<String, Boolean> controlActiveTabs = new HashMap<>();
@@ -224,10 +234,22 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         request.setAttribute("selectedTab", controlActiveTabs);
     }
 
+    /**
+     * This method will get the list of all employees for a hairdressing
+     *
+     * @param idHairdressing the id hairdressing
+     * @return the list employees
+     */
     public List<Employee> getListEmployees(String idHairdressing) {
         return firebaseDAO.getAllEmployees(idHairdressing);
     }
 
+    /**
+     * This method will create an employee in Firebase DB
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void addEmployee(HttpServletRequest request, User activeUser) {
         String name = (String) request.getParameter("name") != null ? request.getParameter("name") : "";
         String surname = (String) request.getParameter("surname") != null ? request.getParameter("surname") : "";
@@ -245,8 +267,13 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
+    /**
+     * This method will edit employee data in Firebase DB
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void editEmployee(HttpServletRequest request, User activeUser) {
-
         String name = (String) request.getParameter("name") != null ? request.getParameter("name") : "";
         String surname = (String) request.getParameter("surname") != null ? request.getParameter("surname") : "";
         String idNumber = (String) request.getParameter("idNumberEmployeeToEdit") != null ? request.getParameter("idNumberEmployeeToEdit") : "";
@@ -261,6 +288,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
     }
 
+    /**
+     * This method will delete an employee and all his data recursively
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void deleteEmployee(HttpServletRequest request, User activeUser) {
         //-------------------------------------------------
         // TODO : En el momento que se elimine la identidad nacional de un empleado, habrá que eliminar todos los registros de todas las tablas dodne se encuentre dicho empleado
@@ -275,17 +308,30 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
+    /**
+     * This method will send a list of employees to the request
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void sendListEmployees(HttpServletRequest request, User activeUser) {
         if (activeUser != null) {
             request.setAttribute("employees", getListEmployees(activeUser.getUID()));
         }
     }
 
+    /**
+     * This method check if employee exist in a hairdressing, thats it an API call.
+     *
+     * @param request the request
+     * @param response the response
+     * @param activeUser the active user
+     */
     public void checkIfEmployeeExistsInHairdressing(HttpServletRequest request, HttpServletResponse response, User activeUser) {
         String idNumberEmployee = request.getParameter("idNumberEmployee");
         Employee employee = firebaseDAO.getEmployeeByIDNumber(activeUser.getUID(), idNumberEmployee);
         boolean idNumberExistInHaird = employee != null;
-        
+
         JSONObject json = null;
         try (PrintWriter out = response.getWriter()) {
             LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
@@ -296,7 +342,14 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    /**     
+     * This method check if an employee has reserves, that it an API call.
+     *
+     * @param request the request
+     * @param response the response
+     * @param activeUser the active user
+     */
     public void checkIfEmployeeHasReserves(HttpServletRequest request, HttpServletResponse response, User activeUser) {
         String idNumberEmployee = request.getParameter("idNumberEmployee");
         List<Reserve> reserves = firebaseDAO.getAllReservesEmployee(activeUser.getUID(), idNumberEmployee);;
@@ -313,6 +366,13 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
+    /**
+     * This method will retrieve list of employees in a hairdressing in JSON, this is an AJAX call
+     *
+     * @param response the response
+     * @param idHairdressing the id hairdressing
+     * @throws IOException
+     */
     public void getListEmployeesToJSON(HttpServletResponse response, String idHairdressing) throws IOException {
         List<Employee> listEmployees = getListEmployees(idHairdressing);
 
@@ -341,6 +401,14 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
+    /**     
+     * This method will insert the holidays for an employee in the hairdressing employee holidays collection
+     *
+     * @param idHairdressing the id hairdressing
+     * @param idEmployee the id employee
+     * @param holidays the holidays
+     * @throws ParseException
+     */
     public void saveHolidaysEmployee(String idHairdressing, String idEmployee, String holidays) throws ParseException {
         Map<String, Object> docData = new HashMap<>();
 
@@ -358,6 +426,15 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         firebaseDAO.insertHolidaysEmployee(idHairdressing, idEmployee, docData);
     }
 
+    /**     
+     * This method will retrieve all the employee holidays in JSON, that's it an API call.
+     *
+     * @param response the response
+     * @param idHairdressing the id hairdressing
+     * @param idEmployee the id employee
+     * @throws IOException
+     * @throws JSONException
+     */
     public void getHolidaysEmployeeToJSON(HttpServletResponse response, String idHairdressing, String idEmployee) throws IOException, JSONException {
         List<Timestamp> listHolidays = firebaseDAO.getHolidaysEmployee(idHairdressing, idEmployee);
 
@@ -375,11 +452,19 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
             out.print(json);
         }
     }
-    
+
+    /**
+     * This method will return all the disabled days in JSON format, that's it an AJAX call
+     *
+     * @param response the response
+     * @param idHairdressing the id hairdressing
+     * @throws IOException
+     * @throws JSONException
+     */
     public void getDisabledDaysToJSON(HttpServletResponse response, String idHairdressing) throws IOException, JSONException {
         List<Timestamp> holidaysHairdressing = firebaseDAO.getHolidays(idHairdressing);
         Map<String, Object> nonWorkingDaysOfWeek = firebaseDAO.getScheduleHairdressing(idHairdressing);
-        
+
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
         try (PrintWriter out = response.getWriter()) {
@@ -390,12 +475,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                 array.put(dateHoliday);
             }
             json.put("jsonArrayHolidaysHairdressing", array);
-            
+
             array = new JSONArray();
             for (Map.Entry<String, Object> entry : nonWorkingDaysOfWeek.entrySet()) {
                 Integer dayOfWeek = Integer.parseInt(entry.getKey());
                 Map<String, Object> rangesHours = (Map<String, Object>) entry.getValue();
-                
+
                 if (((String) ((Map<String, Object>) rangesHours.get("rangeHour1")).get("startHour")).isEmpty()
                         && ((String) ((Map<String, Object>) rangesHours.get("rangeHour1")).get("endHour")).isEmpty()
                         && ((String) ((Map<String, Object>) rangesHours.get("rangeHour2")).get("startHour")).isEmpty()
@@ -403,13 +488,21 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
                     array.put(dayOfWeek.equals(7) ? 0 : dayOfWeek);
                 }
-            }           
+            }
             json.put("jsonArrayNonWorkingDaysOfWeek", array);
 
             out.print(json);
         }
     }
 
+    /**    
+     * This method will get all the hairdressing services and will return the data in JSON, that's it a AJAX call
+     *
+     * @param response the response
+     * @param idHairdressing the id hairdressing
+     * @throws IOException
+     * @throws JSONException
+     */
     public void getServicesHairdressingToJSON(HttpServletResponse response, String idHairdressing) throws IOException, JSONException {
         List<Service> listServices = getListServices(idHairdressing);
 
@@ -433,6 +526,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
+    /**     
+     * This method will parse an String to Date with an especific format
+     *
+     * @param dateInFormatString the date in format string
+     * @return Date
+     */
     public Date parseStringToDate(String dateInFormatString) {
         Date dateInFormatDate = null;
         if (!"".equals(dateInFormatString)) {
@@ -445,17 +544,36 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         return dateInFormatDate;
     }
 
+    /**
+     * This method will send the list of services to a request variable
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void sendListServices(HttpServletRequest request, User activeUser) {
         if (activeUser != null) {
             request.setAttribute("services", getListServices(activeUser.getUID()));
         }
     }
 
+    /**
+     * This method will retrieve all stored services for a hairdressing
+     *
+     * @param idHairdressing the id hairdressing
+     * @return the list services
+     */
     public List<Service> getListServices(String idHairdressing) {
         return firebaseDAO.getAllServices(idHairdressing);
     }
 
+    /**     
+     * This method will create a service, this will write in Firebase DB
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void addService(HttpServletRequest request, User activeUser) {
+
         String name = (String) request.getParameter("nameService") != null ? request.getParameter("nameService") : "";
         String durationService = (String) request.getParameter("durationService") != null ? request.getParameter("durationService") : "";
         String priceService = (String) request.getParameter("priceService") != null ? request.getParameter("priceService") : "";
@@ -466,6 +584,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
+    /**
+     * This method will edit a service, gets the submited data and save it in Firebase
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void editService(HttpServletRequest request, User activeUser) {
         String id = (String) request.getParameter("idServiceToUpdate") != null ? request.getParameter("idServiceToUpdate") : "";
         String name = (String) request.getParameter("nameService") != null ? request.getParameter("nameService") : "";
@@ -479,6 +603,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
     }
 
+    /**
+     * This method will delete the submited service
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void deleteService(HttpServletRequest request, User activeUser) {
         String id = (String) request.getParameter("idServiceToDelete") != null ? request.getParameter("idServiceToDelete") : "";
 
@@ -487,11 +617,23 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
+    /**
+     * This method covnerts the duration in minuts
+     *
+     * @param duration the duration
+     * @return int
+     */
     public int convertDurationToMin(String duration) {
         String[] tmpDuration = duration.split(":");
         return Integer.parseInt(tmpDuration[0]) * 60 + Integer.parseInt(tmpDuration[1]);
     }
 
+    /**     
+     * This method will load the hairdressing schedule
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void loadSchedule(HttpServletRequest request, User activeUser) {
         if (activeUser != null) {
             Map<String, Object> data = new HashMap<>();
@@ -502,12 +644,25 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
+    /**
+     * This method will update shcedule range hours for a hairdressing
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void updateSchedule(HttpServletRequest request, User activeUser) {
         Map<String, Object> schedule = new HashMap<>();
         schedule = this.getScheduleFromRequest(request);
         firebaseDAO.updateSchedule(schedule, activeUser);
     }
 
+    /**
+     * This method receives all the submitted parameters and treats them to
+     * build a map with the defined schedule
+     *
+     * @param request the request
+     * @return the schedule from request
+     */
     private Map<String, Object> getScheduleFromRequest(HttpServletRequest request) {
         HashMap<String, Object> data = new HashMap<>();
 
@@ -539,7 +694,13 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
     }
 
+    /**
+     * This method will return the number of days in a week formatted in a Map
+     *
+     * @return the days of week
+     */
     private Map<String, String> getDaysOfWeek() {
+
         Map<String, String> daysOfWeek = new HashMap<>();
 
         daysOfWeek.put("1", "Dilluns");
@@ -553,6 +714,13 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         return daysOfWeek;
     }
 
+    /**
+     * This method will load all the holidays for a hairdressing, for show it in
+     * the calendar
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void loadHolidays(HttpServletRequest request, User activeUser) {
         if (activeUser != null) {
             JSONArray jsonArray = new JSONArray();
@@ -574,6 +742,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
+    /**
+     * This method will add a list of holidays to a hairdressing
+     *
+     * @param request the request
+     * @param activeUser the active user
+     */
     public void updateHolidays(HttpServletRequest request, User activeUser) {
         String holidays = request.getParameter("selectedHairdressingHolidaysDates");
         Map<String, Object> docData = new HashMap<>();
@@ -596,6 +770,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         firebaseDAO.updateHolidays(activeUser, docData);
     }
 
+    /**
+     * This method will create a customized DateFormatSymbols, to set capital
+     * letter in the days and months
+     *
+     * @return DateFormatSymbols
+     */
     private DateFormatSymbols buildCustomizedSymbols() {
         DateFormatSymbols dateFormatSymbols = new DateFormatSymbols(Locale.forLanguageTag("ca-ES"));
         dateFormatSymbols.setWeekdays(new String[]{

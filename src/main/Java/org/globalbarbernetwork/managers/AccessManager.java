@@ -24,7 +24,6 @@ import com.google.firebase.auth.UserRecord;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -43,8 +42,6 @@ import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.services.SmtpService;
 import org.globalbarbernetwork.firebase.MyFirebaseAuth;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -60,6 +57,14 @@ public class AccessManager extends Manager implements ManagerInterface {
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
 
     @Override
+
+    /**
+     * This method will be executed on load AccesManager
+     *
+     * @param request the request
+     * @param response the response
+     * @param action the action
+     */
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
 
         RequestDispatcher rd = null;
@@ -72,7 +77,7 @@ public class AccessManager extends Manager implements ManagerInterface {
                     String password = request.getParameter("password");
                     try {
                         Map<String, String> errorsInAuth = authUser(request, email, password);
-                        if (!errorsInAuth.isEmpty()) {                                                                                                    
+                        if (!errorsInAuth.isEmpty()) {
                             request.setAttribute("errors", new JSONObject(errorsInAuth));
                             rd = request.getRequestDispatcher("/login.jsp");
                         } else {
@@ -116,11 +121,18 @@ public class AccessManager extends Manager implements ManagerInterface {
         }
     }
 
+    /**
+     * Method to register a client in Firebase DB, that will be write on Users
+     * and Client collections, and will create an object on FirebaseAuthentication
+     *
+     * @param request the request
+     * @return RequestDispatcher
+     */
     private RequestDispatcher registerClient(HttpServletRequest request) {
+
         //Comprobamos primero que el email exista:
         // True - Lo mandamos de vuelta a la pantalla de registro
         // False - Creamos el usuario y vamos a login 
-
         String email = request.getParameter("email");
         String name = request.getParameter("name");
         String surname = request.getParameter("surname");
@@ -158,11 +170,18 @@ public class AccessManager extends Manager implements ManagerInterface {
         }
     }
 
+    /**
+     * Method to register a hairdressing in Firebase DB, that will be write on Users
+     * and Hairdressing collections, and will create an object on FirebaseAuthentication
+     *
+     * @param request the request
+     * @return RequestDispatcher
+     */
     private RequestDispatcher registerHairdressing(HttpServletRequest request) {
+
         //Comprobamos primero que el email exista:
         // True - Lo mandamos de vuelta a la pantalla de registro
         // False - Creamos el usuario y vamos a login
-
         String email = request.getParameter("email");
         String companyName = request.getParameter("name");
         String displayName = companyName;
@@ -209,7 +228,14 @@ public class AccessManager extends Manager implements ManagerInterface {
         }
     }
 
+    /**
+     * This method will generate link to verify the email on register and will send it to the current user registered
+     *
+     * @param email the email
+     * @param displayName the display name
+     */
     private void createEmailVerification(String email, String displayName) {
+
         try {
             String linkVerification = firebaseDAO.generateLink(email);
             SmtpService stmpService = new SmtpService();
@@ -220,13 +246,27 @@ public class AccessManager extends Manager implements ManagerInterface {
         }
     }
 
+    /**
+     * This method will crate an user in Firebase DB
+     *
+     * @param user the user
+     */
     private void insertUser(User user) {
+
         firebaseDAO.insertUser(user);
 
         UserBO userBO = new UserBO();
         userBO.insertUserByType(user);
     }
 
+    /**
+     * This method will authenticate an user via API in Firebase console, and create the user session var, we have to pass the email and password
+     *
+     * @param request the request
+     * @param email the email
+     * @param password the password
+     * @return Map
+     */
     private Map authUser(HttpServletRequest request, String email, String password) {
 
         Map<String, String> errors = new HashMap<String, String>();
