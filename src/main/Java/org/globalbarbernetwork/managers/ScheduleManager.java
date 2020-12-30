@@ -231,7 +231,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
 
         // Excluir horas de reservas del peluquero seleccionado
         if (idHairdresser != null && !idHairdresser.isEmpty()) {
-            ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
+            ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployeeByStatePending(idHairdressing, String.valueOf(date.getYear()),
                     String.valueOf(date.getMonthValue()), formattedDateString, idHairdresser);
 
             for (Iterator it = rangeHoursComplete.iterator(); it.hasNext();) {
@@ -267,7 +267,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             List<Employee> listEmployees = firebaseDAO.getAllEmployees(idHairdressing);
             int num = 0;
             for (Employee employee : listEmployees) {
-                ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
+                ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployeeByStatePending(idHairdressing, String.valueOf(date.getYear()),
                         String.valueOf(date.getMonthValue()), formattedDateString, employee.getIdNumber());
                 num++;
                 for (LocalTime time : rangeHoursComplete) {
@@ -355,7 +355,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         String idEmployeeFree = "";
 
         if (idHairdresser != null && !idHairdresser.isEmpty()) {
-            ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
+            ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployeeByStatePending(idHairdressing, String.valueOf(date.getYear()),
                     String.valueOf(date.getMonthValue()), formattedDateString, idHairdresser);
 
             for (Reserve reserve : listReservesEmployee) {
@@ -379,7 +379,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             List<Employee> listEmployees = firebaseDAO.getAllEmployees(idHairdressing);
 
             for (Employee employee : listEmployees) {
-                ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
+                ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployeeByStatePending(idHairdressing, String.valueOf(date.getYear()),
                         String.valueOf(date.getMonthValue()), formattedDateString, employee.getIdNumber());
 
                 for (Reserve reserve : listReservesEmployee) {
@@ -415,7 +415,15 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             reserve.modifyTimeFinalDate(LocalDateTime.of(date, ltFinalReserveTmp));
 
             String reserveRef = firebaseDAO.insertReserve(reserve, String.valueOf(ldtReserve.getYear()), String.valueOf(ldtReserve.getMonthValue()), formattedDateString);
-            firebaseDAO.insertReserveClient(activeUser.getUID(), reserveRef, reserve.getTimeInit());
+            
+            // Se guardan la referencia de la reserva para eliminarlo facilmente
+            String reserveClientRef = firebaseDAO.insertReserveClient(activeUser.getUID(), reserveRef);
+            
+            // Se guardan la referencia de la reserva y la referencia de la tabla de la reserva cliente para eliminarlo facilmente
+            String reserveEmployeeRef = firebaseDAO.insertReserveEmployee(reserve.getIdHairdressing(), reserve.getIdEmployee(), reserveRef, reserveClientRef);
+            
+            // Se añade la referencia de la reserva empleado creada anteriormente para eliminarlo facilmente
+            firebaseDAO.updateReserveClient(activeUser.getUID(), reserveClientRef, reserveRef, reserveEmployeeRef);          
 
             // Devolver datos para printar "Reserva realitzada per el día X a l'hora Y".
             DateTimeFormatter formatter;

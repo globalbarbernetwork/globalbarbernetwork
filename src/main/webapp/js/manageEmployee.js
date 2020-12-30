@@ -94,10 +94,35 @@ function deleteEmployee(btnDelete) {
     var surname = $(btnDelete).data("surname");
     var idNumber = $(btnDelete).data("idnumber");
 
+    checkIfEmployeeHasReserves(idNumber);
+
     $("#idNumberEmployeeToDelete").val(idNumber);
     $("#modalDeleteEmployee").find("h4").text("Eliminar a " + name + " " + surname);
 }
 
+function checkIfEmployeeHasReserves(idNumber) {
+    $.ajax({
+        url: contextPath + '/ManagementServlet/menuOption/manageHairdressing/checkEmployeeHasReserveAjax',
+        data: {
+            idNumberEmployee: idNumber
+        },
+        success: function (data) {
+            var employeeHasReserves = data["employeeHasReserves"];
+            console.log(employeeHasReserves);
+            if (employeeHasReserves) {
+                $("#infoDelete").text(" Aquest treballador té reserves a càrrec seu! Estàs segur que vols eliminar-lo?\n"
+                        + "En cas afirmatiu, s'eliminarà les reserves associades com tota la seva informació.");
+            } else {
+                $("#infoDelete").text(" Estàs segur que vols eliminar aquest treballador?");
+            }
+            $("#modalDeleteEmployee").modal('show');
+        },
+        error: function () {
+            console.log("No se ha podido obtener la información");
+        }
+    }
+    );
+}
 
 function checkIfDniNieCorrect(fieldIdNumber) {
     //Comprobamos que el dni o nie introducido sea correcto
@@ -327,10 +352,10 @@ function disableHolidaysHairdressingAndGetHolidaysEmployee(idHairdressing, idEmp
             var holidaysHairdressingJSONArray = data.jsonArrayHolidaysHairdressing;
             var nonWorkingDaysOfWeekJSONArray = data.jsonArrayNonWorkingDaysOfWeek;
 
-           $("#datepickerEmployeeHolidays").datepicker('setDatesDisabled', holidaysHairdressingJSONArray);
-           $("#datepickerEmployeeHolidays").datepicker('setDaysOfWeekDisabled', nonWorkingDaysOfWeekJSONArray);
-           
-           getHolidaysEmployee(idHairdressing, idEmployee);
+            $("#datepickerEmployeeHolidays").datepicker('setDatesDisabled', holidaysHairdressingJSONArray);
+            $("#datepickerEmployeeHolidays").datepicker('setDaysOfWeekDisabled', nonWorkingDaysOfWeekJSONArray);
+
+            getHolidaysEmployee(idHairdressing, idEmployee);
         },
         error: function () {
             console.log("No se ha podido obtener la información");

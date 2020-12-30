@@ -35,7 +35,7 @@
                 <td class="w15">${employee.dateToString(employee.contractEndDate)}</td>
                 <td class="w10">${employee.phoneNumber}</td>
                 <td class="centerButton w5">
-                    <button id="btnDelete${contador}" class="btn btn-danger btn-sm" title="Eliminar treballador" data-title="Delete" data-toggle="modal" data-target="#modalDeleteEmployee" data-name="${employee.name}" data-surname="${employee.surname}" data-idnumber="${employee.idNumber}" onclick="deleteEmployee(this)"><span class="fal fa-trash"></span></button>
+                    <button id="btnDelete${contador}" class="btn btn-danger btn-sm" title="Eliminar treballador" data-title="Delete" data-name="${employee.name}" data-surname="${employee.surname}" data-idnumber="${employee.idNumber}" onclick="deleteEmployee(this)"><span class="fal fa-trash"></span></button>
                 </td>
             <c:set var="contador" value="${contador + 1}" />
             </tr>
@@ -107,7 +107,10 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="fas fa-times" aria-hidden="true"></span></button>
             </div>
             <div class="modal-body">
-                <div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Estas segur que vols eliminar aquest treballador?</div>
+                <div  class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="infoDelete"></span>
+                </div>
             </div>
             <div class="modal-footer">
                 <form method="post" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/deleteEmployee">

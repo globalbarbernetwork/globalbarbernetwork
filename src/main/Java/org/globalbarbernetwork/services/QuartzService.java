@@ -72,7 +72,7 @@ public class QuartzService implements ServletContextListener {
 
             CronTrigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity("myCronTrigger", "group1")
-                    .withSchedule(cronSchedule("0 0/1 * * * ?"))
+                    .withSchedule(cronSchedule("0 0/30 * * * ?"))
                     .build();
 
             scheduler.scheduleJob(job, trigger);
