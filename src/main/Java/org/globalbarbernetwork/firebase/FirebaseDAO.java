@@ -471,6 +471,32 @@ public class FirebaseDAO {
 
         return listReserve;
     }
+    
+    public ArrayList<Reserve> getReserves2(String idHairdressing) {
+        ArrayList<Reserve> listReserves = new ArrayList();
+        
+        try {
+            Iterable<CollectionReference> yearsCollections = db.collection("reserves").document(idHairdressing).listCollections();
+            for (CollectionReference yearCollection : yearsCollections) {
+                //ApiFuture<QuerySnapshot> monthsDocuments = db.collection("reserves").document(idHairdressing).collection(yearCollection.getId()).get();
+                for (int i = 1; i <= 12; i++) {
+                    Iterable<CollectionReference> datesDocuments = db.collection("reserves").document(idHairdressing).collection(yearCollection.getId()).document(String.valueOf(i)).listCollections();
+                    for (CollectionReference dateDocument : datesDocuments) {
+                        ApiFuture<QuerySnapshot> reservesDocuments = db.collection("reserves").document(idHairdressing).collection(yearCollection.getId()).document(String.valueOf(i)).collection(dateDocument.getId()).get();
+                        for (QueryDocumentSnapshot reserveDocuments : reservesDocuments.get().getDocuments()) {
+                            listReserves.add(reserveDocuments.toObject(Reserve.class));
+                        }
+                    }
+                }
+            }
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return listReserves;
+    }
 
     public String insertReserve(Reserve reserve, String yearReserve, String monthReserve, String dateReserve) {
         String autoId = db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document().getId();

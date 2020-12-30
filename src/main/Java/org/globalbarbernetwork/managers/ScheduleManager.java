@@ -22,6 +22,9 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import java.io.IOException;
 import java.io.PrintWriter;
+import static java.lang.Integer.parseInt;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -49,6 +52,7 @@ import org.globalbarbernetwork.interfaces.ManagerInterface;
 import org.json.JSONObject;
 import org.globalbarbernetwork.entities.Reserve;
 import org.globalbarbernetwork.entities.Service;
+import org.globalbarbernetwork.entities.Client;
 import org.json.JSONArray;
 import org.json.JSONException;
 import static org.globalbarbernetwork.constants.Constants.*;
@@ -62,6 +66,8 @@ import org.globalbarbernetwork.entities.User;
 public class ScheduleManager extends Manager implements ManagerInterface {
 
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
+    
+    private final String LOAD_MANAGE_RESERVES = "loadManageReserves";
     private final String GET_TIMETABLE_AJAX = "getTimetableAjax";
     private final String GET_AVAILABLE_HOURS_AJAX = "getAvailableHoursAjax";
     private final String ADD_RESERVE_AJAX = "addReserveAjax";
@@ -74,11 +80,24 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             User activeUser = (User) request.getSession().getAttribute("user");
 
             switch (action) {
+                case LOAD_MANAGE_RESERVES:
+                    JSONObject json = getTimetableToJSON2(activeUser.getUID());
+                    // Recoger holidays hairdressing para setearlas como disabled
+                    JSONObject json2 = getAllReservesToJSON(activeUser.getUID());
+                    
+                    request.setAttribute("businessHoursJSON", json.toString());
+                    request.setAttribute("reservesEventsJSON", json2.toString());
+                    
+                    rd = request.getRequestDispatcher("/" + MANAGE_RESERVES_JSP);
+                    break;
                 case GET_TIMETABLE_AJAX:
                     response.setContentType("application/json");
 
                     String idHairdressing = request.getParameter("idHairdressing");
-                    getTimetableToJSON(response, idHairdressing);
+            
+                    try ( PrintWriter out = response.getWriter()) {
+                        out.print(getTimetableToJSON(idHairdressing));
+                    }
                     break;
                 case GET_AVAILABLE_HOURS_AJAX:
                     response.setContentType("application/json");
@@ -129,32 +148,91 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             }
         } catch (IOException ex) {
             Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void getTimetableToJSON(HttpServletResponse response, String idHairdressing) {
-        Map<String, Object> timetable = firebaseDAO.getScheduleHairdressing(idHairdressing);
-
-        JSONObject json = null;
-        try (PrintWriter out = response.getWriter()) {
-            if (timetable != null) {
-                LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
-                for (Map.Entry<String, Object> entry : timetable.entrySet()) {
-                    String dayOfWeek = entry.getKey();
-                    Map<String, Map<String, String>> rangesHours = (Map<String, Map<String, String>>) entry.getValue();
-
-                    LinkedHashMap<String, Object> jsonOrderedMap2 = new LinkedHashMap<>();
-                    jsonOrderedMap2.put("dayOfWeek", getNameOfDayOfWeek(dayOfWeek) + ":");
-                    jsonOrderedMap2.put("rangesHours", formatTimetable(rangesHours));
-
-                    jsonOrderedMap.put(dayOfWeek, new JSONObject(jsonOrderedMap2));
-                }
-                json = new JSONObject(jsonOrderedMap);
-            }
-            out.print(json);
-        } catch (IOException ex) {
+        } catch (JSONException ex) {
             Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    private JSONObject getTimetableToJSON2(String idHairdressing) throws JSONException {
+        Map<String, Object> timetable = firebaseDAO.getScheduleHairdressing(idHairdressing);
+
+        JSONObject json = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        if (timetable != null) {
+            LinkedHashMap<String, Object> jsonOrderedMap;
+            for (Map.Entry<String, Object> entry : timetable.entrySet()) {
+                Integer dayOfWeek = parseInt(entry.getKey());
+                Map<String, Map<String, String>> rangesHours = (Map<String, Map<String, String>>) entry.getValue();
+
+                jsonOrderedMap = new LinkedHashMap<>();
+                String rangeHour1Start = (String) ((Map<String, String>) rangesHours.get("rangeHour1")).get("startHour");
+                String rangeHour1End = (String) ((Map<String, String>) rangesHours.get("rangeHour1")).get("endHour");
+                String rangeHour2Start = (String) ((Map<String, String>) rangesHours.get("rangeHour2")).get("startHour");
+                String rangeHour2End = (String) ((Map<String, String>) rangesHours.get("rangeHour2")).get("endHour");
+
+                if (!rangeHour1Start.isEmpty() && !rangeHour1End.isEmpty() || !rangeHour2Start.isEmpty() && !rangeHour2End.isEmpty()) {
+                    jsonOrderedMap.put("dayOfWeek", dayOfWeek);
+                    jsonOrderedMap.put("rangeHourInit", !rangeHour1Start.isEmpty() ? rangeHour1Start : rangeHour2Start);
+                    jsonOrderedMap.put("rangeHourEnd", !rangeHour2End.isEmpty() ? rangeHour2End : rangeHour1End);
+
+                    JSONObject member = new JSONObject(jsonOrderedMap);
+                    jsonArray.put(member);
+                }
+            }
+            json.put("jsonArray", jsonArray);
+        }
+
+        return json;
+    }
+    
+    private JSONObject getAllReservesToJSON(String idHairdressing) throws JSONException {
+        ArrayList<Reserve> listReserves = firebaseDAO.getReserves2(idHairdressing);
+        
+        JSONObject json = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        if (listReserves != null) {
+            LinkedHashMap<String, Object> jsonOrderedMap;
+            for (Reserve reserve : listReserves) {
+                jsonOrderedMap = new LinkedHashMap<>();
+                
+                Client client = firebaseDAO.getClient(reserve.getIdClient());
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+                jsonOrderedMap.put("title", client.getName() + " " + client.getSurname());
+                jsonOrderedMap.put("startDateTime",  reserve.obtainTimeInitLocalDate().format(formatter));
+                jsonOrderedMap.put("endDateTime", reserve.obtainTimeFinalLocalDate().format(formatter));
+                
+                JSONObject member = new JSONObject(jsonOrderedMap);
+                jsonArray.put(member);
+            }
+            
+            json.put("jsonArray", jsonArray);
+        }
+        
+        return json;
+    }
+
+    private JSONObject getTimetableToJSON(String idHairdressing) {
+        Map<String, Object> timetable = firebaseDAO.getScheduleHairdressing(idHairdressing);
+        
+        JSONObject json = null;
+        if (timetable != null) {
+            LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
+            for (Map.Entry<String, Object> entry : timetable.entrySet()) {
+                String dayOfWeek = entry.getKey();
+                Map<String, Map<String, String>> rangesHours = (Map<String, Map<String, String>>) entry.getValue();
+
+                LinkedHashMap<String, Object> jsonOrderedMap2 = new LinkedHashMap<>();
+                jsonOrderedMap2.put("dayOfWeek", getNameOfDayOfWeek(dayOfWeek) + ":");
+                jsonOrderedMap2.put("rangesHours", formatTimetable(rangesHours));
+
+                jsonOrderedMap.put(dayOfWeek, new JSONObject(jsonOrderedMap2));
+            }
+            json = new JSONObject(jsonOrderedMap);
+        }
+
+        return json;
     }
 
     private String formatTimetable(Map<String, Map<String, String>> timetable) {
