@@ -309,7 +309,7 @@ public class FirebaseDAO {
         } catch (ExecutionException ex) {
             Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return new HashMap();
     }
 
     /**

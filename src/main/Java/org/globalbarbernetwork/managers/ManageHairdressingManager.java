@@ -82,7 +82,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
     @Override
 
-    /**     
+    /**
      * This method will be executed on load ManageHairdressingManager
      *
      * @param request the request
@@ -317,7 +317,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     }
 
     /**
-     * This method check if employee exist in a hairdressing, thats it an API call.
+     * This method check if employee exist in a hairdressing, thats it an API
+     * call.
      *
      * @param request the request
      * @param response the response
@@ -329,7 +330,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         boolean idNumberExistInHaird = employee != null;
 
         JSONObject json = null;
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
             jsonOrderedMap.put("idNumberExistInHairdressing", idNumberExistInHaird);
             json = new JSONObject(jsonOrderedMap);
@@ -339,7 +340,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
-    /**     
+    /**
      * This method check if an employee has reserves, that it an API call.
      *
      * @param request the request
@@ -352,7 +353,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         boolean employeeHasReserves = reserves != null && !reserves.isEmpty();
 
         JSONObject json = null;
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
             jsonOrderedMap.put("employeeHasReserves", employeeHasReserves);
             json = new JSONObject(jsonOrderedMap);
@@ -363,7 +364,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     }
 
     /**
-     * This method will retrieve list of employees in a hairdressing in JSON, this is an AJAX call
+     * This method will retrieve list of employees in a hairdressing in JSON,
+     * this is an AJAX call
      *
      * @param response the response
      * @param idHairdressing the id hairdressing
@@ -374,7 +376,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
 
             LinkedHashMap<String, Object> jsonOrderedMap;
             for (Employee employee : listEmployees) {
@@ -397,8 +399,9 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
-    /**     
-     * This method will insert the holidays for an employee in the hairdressing employee holidays collection
+    /**
+     * This method will insert the holidays for an employee in the hairdressing
+     * employee holidays collection
      *
      * @param idHairdressing the id hairdressing
      * @param idEmployee the id employee
@@ -422,8 +425,9 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         firebaseDAO.insertHolidaysEmployee(idHairdressing, idEmployee, docData);
     }
 
-    /**     
-     * This method will retrieve all the employee holidays in JSON, that's it an API call.
+    /**
+     * This method will retrieve all the employee holidays in JSON, that's it an
+     * API call.
      *
      * @param response the response
      * @param idHairdressing the id hairdressing
@@ -436,7 +440,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             for (Timestamp holiday : listHolidays) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String dateHoliday = sdf.format(holiday.toDate());
@@ -450,7 +454,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     }
 
     /**
-     * This method will return all the disabled days in JSON format, that's it an AJAX call
+     * This method will return all the disabled days in JSON format, that's it
+     * an AJAX call
      *
      * @param response the response
      * @param idHairdressing the id hairdressing
@@ -463,7 +468,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             for (Timestamp holiday : holidaysHairdressing) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String dateHoliday = sdf.format(holiday.toDate());
@@ -491,8 +496,9 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
-    /**    
-     * This method will get all the hairdressing services and will return the data in JSON, that's it a AJAX call
+    /**
+     * This method will get all the hairdressing services and will return the
+     * data in JSON, that's it a AJAX call
      *
      * @param response the response
      * @param idHairdressing the id hairdressing
@@ -504,7 +510,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
 
             LinkedHashMap<String, Object> jsonOrderedMap;
             for (Service service : listServices) {
@@ -522,7 +528,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         }
     }
 
-    /**     
+    /**
      * This method will parse an String to Date with an especific format
      *
      * @param dateInFormatString the date in format string
@@ -562,7 +568,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         return firebaseDAO.getAllServices(idHairdressing);
     }
 
-    /**     
+    /**
      * This method will create a service, this will write in Firebase DB
      *
      * @param request the request
@@ -581,7 +587,8 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     }
 
     /**
-     * This method will edit a service, gets the submited data and save it in Firebase
+     * This method will edit a service, gets the submited data and save it in
+     * Firebase
      *
      * @param request the request
      * @param activeUser the active user
@@ -624,7 +631,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         return Integer.parseInt(tmpDuration[0]) * 60 + Integer.parseInt(tmpDuration[1]);
     }
 
-    /**     
+    /**
      * This method will load the hairdressing schedule
      *
      * @param request the request
