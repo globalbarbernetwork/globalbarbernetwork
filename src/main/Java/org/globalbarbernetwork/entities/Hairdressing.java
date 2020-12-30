@@ -35,10 +35,34 @@ public class Hairdressing extends User {
     private String instagram;
     private String description;
 
-    public Hairdressing() {
+
+/** 
+ * It is a constructor without params.
+ */
+    public Hairdressing() { 
     }
 
-    public Hairdressing(String companyName, String website, String city, String address, String country, String province, String zipCode, GeoPoint coordinates, String instagram, String description, String UID, String email, String phoneNumber, String displayName, String type) {
+
+/** 
+ * It is a constructor with params.
+ *
+ * @param companyName  the company name
+ * @param website  the website
+ * @param city  the city
+ * @param address  the address
+ * @param country  the country
+ * @param province  the province
+ * @param zipCode  the zip code
+ * @param coordinates  the coordinates
+ * @param instagram  the instagram
+ * @param description  the description
+ * @param UID  the  UID
+ * @param email  the email
+ * @param phoneNumber  the phone number
+ * @param displayName  the display name
+ * @param type  the type
+ */
+    public Hairdressing(String companyName, String website, String city, String address, String country, String province, String zipCode, GeoPoint coordinates, String instagram, String description, String UID, String email, String phoneNumber, String displayName, String type) { 
         super(UID, email, phoneNumber, displayName, type);
         this.companyName = companyName;
         this.website = website;
@@ -52,83 +76,205 @@ public class Hairdressing extends User {
         this.description = description;
     }
 
-    public String getCompanyName() {
+
+/** 
+ *
+ * Gets the company name
+ *
+ * @return the company name
+ */
+    public String getCompanyName() { 
+
         return companyName;
     }
 
-    public void setCompanyName(String companyName) {
+
+/**
+ * Sets the company name
+ *
+ * @param companyName  the company name
+ */
+    public void setCompanyName(String companyName) { 
         this.companyName = companyName;
     }
 
-    public String getWebsite() {
+
+/** 
+ * Gets the website
+ *
+ * @return the website
+ */
+    public String getWebsite() { 
         return website;
     }
 
-    public void setWebsite(String website) {
+
+/** 
+ * Sets the website
+ *
+ * @param website  the website
+ */
+    public void setWebsite(String website) { 
         this.website = website;
     }
 
-    public String getCity() {
+
+/** 
+ * Gets the city
+ *
+ * @return the city
+ */
+    public String getCity() { 
         return city;
     }
 
-    public void setCity(String city) {
+
+/** 
+ * Sets the city
+ *
+ * @param city  the city
+ */
+    public void setCity(String city) { 
         this.city = city;
     }
 
-    public String getAddress() {
+
+/** 
+ * Gets the address
+ *
+ * @return the address
+ */
+    public String getAddress() { 
         return address;
     }
 
-    public void setAddress(String address) {
+
+/** 
+ * Sets the address
+ *
+ * @param address  the address
+ */
+    public void setAddress(String address) { 
         this.address = address;
     }
 
-    public String getCountry() {
+
+/** 
+ * Gets the country
+ *
+ * @return the country
+ */
+    public String getCountry() { 
         return country;
     }
 
-    public void setCountry(String country) {
+
+/** 
+ * Sets the country
+ *
+ * @param country  the country
+ */
+    public void setCountry(String country) { 
         this.country = country;
     }
 
-    public String getProvince() {
+
+/** 
+ * Gets the province
+ *
+ * @return the province
+ */
+    public String getProvince() { 
         return province;
     }
 
-    public void setProvince(String province) {
+
+/** 
+ * Sets the province
+ *
+ * @param province  the province
+ */
+    public void setProvince(String province) { 
         this.province = province;
     }
 
-    public String getZipCode() {
+
+/** 
+ * Gets the zip code
+ *
+ * @return the zip code
+ */
+    public String getZipCode() { 
         return zipCode;
     }
 
-    public void setZipCode(String zipCode) {
+
+/** 
+ * Sets the zip code
+ *
+ * @param zipCode  the zip code
+ */
+    public void setZipCode(String zipCode) { 
         this.zipCode = zipCode;
     }
 
-    public GeoPoint getCoordinates() {
+
+/** 
+ * Gets the coordinates
+ *
+ * @return the coordinates
+ */
+    public GeoPoint getCoordinates() { 
         return coordinates;
     }
 
-    public void setCoordinates(GeoPoint coordinates) {
+
+/** 
+ * Sets the coordinates
+ *
+ * @param coordinates  the coordinates
+ */
+    public void setCoordinates(GeoPoint coordinates) { 
         this.coordinates = coordinates;
     }
 
-    public String getInstagram() {
+
+/** 
+ * Gets the instagram
+ *
+ * @return the instagram
+ */
+    public String getInstagram() { 
         return instagram;
     }
 
-    public void setInstagram(String instagram) {
+
+/** 
+ * Sets the instagram
+ *
+ * @param instagram  the instagram
+ */
+    public void setInstagram(String instagram) { 
         this.instagram = instagram;
     }
 
-    public String getDescription() {
+
+/** 
+ * Gets the description
+ *
+ * @return the description
+ */
+    public String getDescription() { 
         return description;
     }
 
-    public void setDescription(String description) {
+
+/** 
+ * Sets the description
+ *
+ * @param description  the description
+ */
+    public void setDescription(String description) { 
         this.description = description;
     }
 }

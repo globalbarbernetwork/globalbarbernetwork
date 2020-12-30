@@ -27,36 +27,84 @@ public class Holiday {
     private Integer idHairdressing;
     private Date time;
 
-    public Holiday() {
+
+/** 
+ * It is a constructor without params. 
+ */
+    public Holiday() { 
     }
 
-    public Holiday(Integer id, Integer idHairdressing, Date time) {
+
+/** 
+ * It is a constructor with params. 
+ *
+ * @param id  the id
+ * @param idHairdressing  the id hairdressing
+ * @param time  the time
+ */
+    public Holiday(Integer id, Integer idHairdressing, Date time) { 
         this.id = id;
         this.idHairdressing = idHairdressing;
         this.time = time;
     }
 
-    public Integer getId() {
+
+/** 
+ * Gets the identifier
+ *
+ * @return the identifier
+ */
+    public Integer getId() { 
         return id;
     }
 
-    public void setId(Integer id) {
+
+/** 
+ * Sets the identifier
+ *
+ * @param id  the id
+ */
+    public void setId(Integer id) { 
         this.id = id;
     }
 
-    public Integer getIdHairdressing() {
+
+/** 
+ * Gets the identifier hairdressing
+ *
+ * @return the identifier hairdressing
+ */
+    public Integer getIdHairdressing() { 
         return idHairdressing;
     }
 
-    public void setIdHairdressing(Integer idHairdressing) {
+
+/** 
+ * Sets the identifier hairdressing
+ *
+ * @param idHairdressing  the id hairdressing
+ */
+    public void setIdHairdressing(Integer idHairdressing) { 
         this.idHairdressing = idHairdressing;
     }
 
-    public Date getTime() {
+
+/** 
+ * Gets the time
+ *
+ * @return the time
+ */
+    public Date getTime() { 
         return time;
     }
 
-    public void setTime(Date time) {
+
+/** 
+ * Sets the time
+ *
+ * @param time  the time
+ */
+    public void setTime(Date time) { 
         this.time = time;
     }
         

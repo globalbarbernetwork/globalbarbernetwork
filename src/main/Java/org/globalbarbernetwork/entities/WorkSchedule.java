@@ -30,10 +30,24 @@ public class WorkSchedule {
     private Map<String, Date> rangeHour1;
     private Map<String, Date> rangeHour2;
     
-    public WorkSchedule() {
+
+/** 
+ * It is a constructor without params. 
+ */
+    public WorkSchedule() { 
     }
 
-    public WorkSchedule(String id, String idHairdressing, String uidEmployee, Map<String, Date> rangeHour1, Map<String, Date> rangeHour2) {
+
+/** 
+ * It is a constructor with params. 
+ *
+ * @param id  the id
+ * @param idHairdressing  the id hairdressing
+ * @param uidEmployee  the uid employee
+ * @param rangeHour1  the range hour1
+ * @param rangeHour2  the range hour2
+ */
+    public WorkSchedule(String id, String idHairdressing, String uidEmployee, Map<String, Date> rangeHour1, Map<String, Date> rangeHour2) { 
         this.id = id;
         this.idHairdressing = idHairdressing;
         this.uidEmployee = uidEmployee;
@@ -41,43 +55,103 @@ public class WorkSchedule {
         this.rangeHour2 = rangeHour2;
     }
 
-    public String getId() {
+
+/** 
+ * Gets the identifier
+ *
+ * @return the identifier
+ */
+    public String getId() { 
         return id;
     }
 
-    public void setId(String id) {
+
+/** 
+ * Sets the identifier
+ *
+ * @param id  the id
+ */
+    public void setId(String id) { 
         this.id = id;
     }
 
-    public String getIdHairdressing() {
+
+/** 
+ * Gets the identifier hairdressing
+ *
+ * @return the identifier hairdressing
+ */
+    public String getIdHairdressing() { 
         return idHairdressing;
     }
 
-    public void setIdHairdressing(String idHairdressing) {
+
+/** 
+ * Sets the identifier hairdressing
+ *
+ * @param idHairdressing  the id hairdressing
+ */
+    public void setIdHairdressing(String idHairdressing) { 
         this.idHairdressing = idHairdressing;
     }
 
-    public String getUidEmployee() {
+
+/** 
+ * Gets the uid employee
+ *
+ * @return the uid employee
+ */
+    public String getUidEmployee() { 
         return uidEmployee;
     }
 
-    public void setUidEmployee(String uidEmployee) {
+
+/** 
+ * Sets the uid employee
+ *
+ * @param uidEmployee  the uid employee
+ */
+    public void setUidEmployee(String uidEmployee) { 
         this.uidEmployee = uidEmployee;
     }
 
-    public Map<String, Date> getRangeHour1() {
+
+/** 
+ * Gets the range hour1
+ *
+ * @return the range hour1
+ */
+    public Map<String, Date> getRangeHour1() { 
         return rangeHour1;
     }
 
-    public void setRangeHour1(Map<String, Date> rangeHour1) {
+
+/** 
+ * Sets the range hour1
+ *
+ * @param rangeHour1  the range hour1
+ */
+    public void setRangeHour1(Map<String, Date> rangeHour1) { 
         this.rangeHour1 = rangeHour1;
     }
 
-    public Map<String, Date> getRangeHour2() {
+
+/** 
+ * Gets the range hour2
+ *
+ * @return the range hour2
+ */
+    public Map<String, Date> getRangeHour2() { 
         return rangeHour2;
     }
 
-    public void setRangeHour2(Map<String, Date> rangeHour2) {
+
+/** 
+ * Sets the range hour2
+ *
+ * @param rangeHour2  the range hour2
+ */
+    public void setRangeHour2(Map<String, Date> rangeHour2) { 
         this.rangeHour2 = rangeHour2;
     }
 }

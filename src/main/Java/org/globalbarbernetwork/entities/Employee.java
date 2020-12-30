@@ -33,9 +33,24 @@ public class Employee {
     private String phoneNumber;
     private String idHairdressing;
 
+    /**    
+     * It is a constructor without params.
+     */
     public Employee() {
+
     }
 
+    /**     
+     * It is a constructor with params.
+     *
+     * @param name the name
+     * @param surname the surname
+     * @param idNumber the id number
+     * @param contractIniDate the contract ini date
+     * @param contractEndDate the contract end date
+     * @param phoneNumber the phone number
+     * @param idHairdressing the id hairdressing
+     */
     public Employee(String name, String surname, String idNumber, Date contractIniDate, Date contractEndDate, String phoneNumber, String idHairdressing) {
         this.name = name;
         this.surname = surname;
@@ -46,62 +61,138 @@ public class Employee {
         this.idHairdressing = idHairdressing;
     }
 
+    /**
+     * Gets the name
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Gets the surname
+     *
+     * @return the surname
+     */
     public String getSurname() {
         return surname;
     }
 
+    /**
+     * Sets the surname
+     *
+     * @param surname the surname
+     */
     public void setSurname(String surname) {
         this.surname = surname;
     }
 
+    /**
+     * Gets the identifier number
+     *
+     * @return the identifier number
+     */
     public String getIdNumber() {
         return idNumber;
     }
 
+    /**
+     * Sets the identifier number
+     *
+     * @param idNumber the id number
+     */
     public void setIdNumber(String idNumber) {
         this.idNumber = idNumber;
     }
 
+    /**
+     * Gets the contract ini date
+     *
+     * @return the contract ini date
+     */
     public Date getContractIniDate() {
         return contractIniDate;
     }
 
+    /**
+     * Sets the contract ini date
+     *
+     * @param contractIniDate the contract ini date
+     */
     public void setContractIniDate(Date contractIniDate) {
         this.contractIniDate = contractIniDate;
     }
 
+    /**
+     * Gets the contract end date
+     *
+     * @return the contract end date
+     */
     public Date getContractEndDate() {
         return contractEndDate;
     }
 
+    /**
+     * Sets the contract end date
+     *
+     * @param contractEndDate the contract end date
+     */
     public void setContractEndDate(Date contractEndDate) {
         this.contractEndDate = contractEndDate;
     }
 
+    /**
+     * Gets the phone number
+     *
+     * @return the phone number
+     */
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
+    /**
+     * Sets the phone number
+     *
+     * @param phoneNumber the phone number
+     */
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
+    /**
+     * Gets the identifier hairdressing
+     *
+     * @return the identifier hairdressing
+     */
     public String getIdHairdressing() {
         return idHairdressing;
     }
 
+    /**
+     * Sets the identifier hairdressing
+     *
+     * @param idHairdressing the id hairdressing
+     */
     public void setIdHairdressing(String idHairdressing) {
         this.idHairdressing = idHairdressing;
     }
 
+    /**
+     * Date to string
+     *
+     * @param date the date
+     * @return String
+     */
     public String dateToString(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(date);

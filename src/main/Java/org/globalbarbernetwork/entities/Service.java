@@ -30,59 +30,140 @@ public class Service {
     private Integer duration;
     private Double price;
 
-    public Service() {
+
+/** 
+ * It is a constructor without params. 
+ */
+    public Service() { 
     }
 
-    public Service(String id, String name, Integer duration, Double price) {
+
+/** 
+ * It is a constructor with 3 params. 
+ *
+ * @param id  the id
+ * @param name  the name
+ * @param duration  the duration
+ * @param price  the price
+ */
+    public Service(String id, String name, Integer duration, Double price) { 
         this.id = id;
         this.name = name;
         this.duration = duration;
         this.price = price;
     }
     
-    public Service(String name, Integer duration, Double price) {
+
+/** 
+ * It is a constructor with 4 params. 
+ *
+ * @param name  the name
+ * @param duration  the duration
+ * @param price  the price
+ */
+    public Service(String name, Integer duration, Double price) { 
         this.name = name;
         this.duration = duration;
         this.price = price;
     }
 
-    public String getId() {
+
+/** 
+ * Gets the identifier
+ *
+ * @return the identifier
+ */
+    public String getId() { 
         return id;
     }
 
-    public void setId(String id) {
+
+/** 
+ * Sets the identifier
+ *
+ * @param id  the id
+ */
+    public void setId(String id) { 
         this.id = id;
     }
 
-    public String getName() {
+
+/** 
+ * Gets the name
+ *
+ * @return the name
+ */
+    public String getName() { 
         return name;
     }
 
-    public void setName(String name) {
+
+/** 
+ * Sets the name
+ *
+ * @param name  the name
+ */
+    public void setName(String name) { 
         this.name = name;
     }
 
-    public Integer getDuration() {
+
+/** 
+ * Gets the duration
+ *
+ * @return the duration
+ */
+    public Integer getDuration() { 
         return duration;
     }
 
-    public void setDuration(Integer duration) {
+
+/** 
+ * Sets the duration
+ *
+ * @param duration  the duration
+ */
+    public void setDuration(Integer duration) { 
         this.duration = duration;
     }
 
-    public Double getPrice() {
+
+/** 
+ * Gets the price
+ *
+ * @return the price
+ */
+    public Double getPrice() { 
         return price;
     }
 
-    public void setPrice(Double price) {
+
+/** 
+ * Sets the price
+ *
+ * @param price  the price
+ */
+    public void setPrice(Double price) { 
         this.price = price;
     }
 
-    public String obtainDurationFormatted() {
+
+/** 
+ * Obtain duration formatted
+ *
+ * @return String
+ */
+    public String obtainDurationFormatted() { 
         return LocalTime.MIN.plus(Duration.ofMinutes(new Long(this.duration))).toString();
     }
     
-    public String obtainPriceFormatted() {
+
+/** 
+ * Obtain price formatted
+ *
+ * @return String
+ */
+    public String obtainPriceFormatted() { 
         return String.format("%.2f", this.price).replace(".", ",");
     }
 }

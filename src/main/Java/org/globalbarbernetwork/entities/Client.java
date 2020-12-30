@@ -21,31 +21,68 @@ package org.globalbarbernetwork.entities;
  * @author Grup 3
  */
 public class Client extends User {
-
+   
     private String name;
     private String surname;
 
-    public Client() {
-    }
+    /**
+     * It is a constructor without params.
+     */
+    public Client() {}
 
+    /**
+     * It is a constructor with params.
+     *
+     * @param name the name
+     * @param surname the surname
+     * @param UID the UID
+     * @param email the email
+     * @param phoneNumber the phone number
+     * @param displayName the display name
+     * @param type the type     
+     */
     public Client(String name, String surname, String UID, String email, String phoneNumber, String displayName, String type) {
         super(UID, email, phoneNumber, displayName, type);
         this.name = name;
         this.surname = surname;
     }
 
+    /**
+     *
+     * Gets the name
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     *
+     * Sets the name
+     *
+     * @param name the name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     *
+     * Gets the surname
+     *
+     * @return the surname
+     */
     public String getSurname() {
         return surname;
     }
 
+    /**
+     *
+     * Sets the surname
+     *
+     * @param surname the surname
+     */
     public void setSurname(String surname) {
         this.surname = surname;
     }

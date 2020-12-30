@@ -28,10 +28,24 @@ public class User {
     private String displayName;
     private String type;
 
-    public User() {
+
+/** 
+ * It is a constructor without params. 
+ */
+    public User() { 
     }
 
-    public User(String UID, String email, String phoneNumber, String displayName, String type) {
+
+/** 
+ * It is a constructor with params. 
+ *
+ * @param UID  the  UID
+ * @param email  the email
+ * @param phoneNumber  the phone number
+ * @param displayName  the display name
+ * @param type  the type
+ */
+    public User(String UID, String email, String phoneNumber, String displayName, String type) { 
         this.UID = UID;
         this.email = email;
         this.phoneNumber = phoneNumber;
@@ -39,43 +53,103 @@ public class User {
         this.type = type;
     }
 
-    public String getUID() {
+
+/** 
+ * Gets the UID
+ *
+ * @return the  UID
+ */
+    public String getUID() { 
         return UID;
     }
 
-    public void setUID(String UID) {
+
+/** 
+ * Sets the UID
+ *
+ * @param UID  the  UID
+ */
+    public void setUID(String UID) { 
         this.UID = UID;
     }
 
-    public String getEmail() {
+
+/** 
+ * Gets the email
+ *
+ * @return the email
+ */
+    public String getEmail() { 
         return email;
     }
 
-    public void setEmail(String email) {
+
+/** 
+ * Sets the email
+ *
+ * @param email  the email
+ */
+    public void setEmail(String email) { 
         this.email = email;
     }
 
-    public String getPhoneNumber() {
+
+/** 
+ * Gets the phone number
+ *
+ * @return the phone number
+ */
+    public String getPhoneNumber() { 
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+
+/** 
+ * Sets the phone number
+ *
+ * @param phoneNumber  the phone number
+ */
+    public void setPhoneNumber(String phoneNumber) { 
         this.phoneNumber = phoneNumber;
     }
 
-    public String getDisplayName() {
+
+/** 
+ * Gets the display name
+ *
+ * @return the display name
+ */
+    public String getDisplayName() { 
         return displayName;
     }
 
-    public void setDisplayName(String displayName) {
+
+/** 
+ * Sets the display name
+ *
+ * @param displayName  the display name
+ */
+    public void setDisplayName(String displayName) { 
         this.displayName = displayName;
     }
 
-    public String getType() {
+
+/** 
+ * Gets the type
+ *
+ * @return the type
+ */
+    public String getType() { 
         return type;
     }
 
-    public void setType(String type) {
+
+/** 
+ * Sets the type
+ *
+ * @param type  the type
+ */
+    public void setType(String type) { 
         this.type = type;
     }
 }

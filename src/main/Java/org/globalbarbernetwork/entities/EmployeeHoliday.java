@@ -23,34 +23,60 @@ import java.util.Date;
  * @author Grup 3
  */
 public class EmployeeHoliday {
-    
+
     private String idEmployee;
     private Date timeDate;
 
-    public EmployeeHoliday() {
-    }
+    /**
+     * It is a constructor without params.
+     */
+    public EmployeeHoliday() {}
 
+    /**
+     * It is a constructor with params.
+     *
+     * @param idEmployee the id employee
+     * @param timeDate the time date
+     */
     public EmployeeHoliday(String idEmployee, Date timeDate) {
         this.idEmployee = idEmployee;
         this.timeDate = timeDate;
     }
 
+    /**
+     * Gets the identifier employee
+     *
+     * @return the identifier employee
+     */
     public String getIdEmployee() {
         return idEmployee;
     }
 
+    /**
+     * Sets the identifier employee
+     *
+     * @param idEmployee the id employee
+     */
     public void setIdEmployee(String idEmployee) {
         this.idEmployee = idEmployee;
     }
 
+    /**
+     * Gets the time date
+     *
+     * @return the time date
+     */
     public Date getTimeDate() {
         return timeDate;
     }
 
+    /**
+     * Sets the time date
+     *
+     * @param timeDate the time date
+     */
     public void setTimeDate(Date timeDate) {
         this.timeDate = timeDate;
     }
-    
-    
-    
+
 }
