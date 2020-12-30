@@ -19,6 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Author     : Adrian
 */
 
+.avatar-hover:hover{
+    background-color: grey !important;
+    opacity: .6;
+    cursor: pointer;
+}
+
 #file {  
   padding: 0.5rem;
   font-family: sans-serif;

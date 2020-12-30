@@ -23,9 +23,9 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     type: "POST",
-                    url:  contextPath + "/ManagementServlet/menuOptions/editProfile/changePassword",
+                    url: contextPath + "/ManagementServlet/menuOptions/editProfile/changePassword",
                     data: {
-                        newPassword: newPassword,                        
+                        newPassword: newPassword,
                     },
                     success: function () {
                         window.location.replace(contextPath + "/ManagementServlet/");
@@ -35,8 +35,9 @@ $(document).ready(function () {
                     }
                 });
             }
-        })
+        });
     });
+
     $(document).on('change', "#actualPassword", function () {
         $.ajax({
             type: "POST",
@@ -70,4 +71,9 @@ $(document).ready(function () {
         }
     }
     );
+
+    $('.avatar-hover').click(function () {
+        $('#actual-btn').click();
+    });
+
 });

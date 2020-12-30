@@ -453,18 +453,20 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         for (Reserve reserve : reserves) {
             pendingReserve = new HashMap<>();
             completedReserve = new HashMap<>();
-            
+
             isOnRange = dateIsOnRange(reserve.getTimeInit());
-            if (!isOnRange.isEmpty()) {                
+            if (!isOnRange.isEmpty()) {
                 if (isOnRange.get("before") != null && isOnRange.get("before").equals(Boolean.TRUE)) {
                     completedReserve.put("hairdressing", reserveBO.getHairdressing(reserve.getIdHairdressing()));
                     completedReserve.put("reserve", reserve);
                     completedReserve.put("service", reserveBO.getService(reserve.getIdHairdressing(), reserve.getIdService()));
+                    completedReserve.put("employee", reserveBO.getEmployee(reserve.getIdHairdressing(), reserve.getIdEmployee()));
                     completedReserves.add(completedReserve);
                 } else if (isOnRange.get("after") != null && isOnRange.get("after").equals(Boolean.TRUE)) {
                     pendingReserve.put("hairdressing", reserveBO.getHairdressing(reserve.getIdHairdressing()));
                     pendingReserve.put("reserve", reserve);
                     pendingReserve.put("service", reserveBO.getService(reserve.getIdHairdressing(), reserve.getIdService()));
+                    pendingReserve.put("employee", reserveBO.getEmployee(reserve.getIdHairdressing(), reserve.getIdEmployee()));
                     pendingReserves.add(pendingReserve);
                 }
             }

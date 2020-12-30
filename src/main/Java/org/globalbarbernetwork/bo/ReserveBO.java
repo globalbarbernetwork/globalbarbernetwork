@@ -18,6 +18,7 @@ package org.globalbarbernetwork.bo;
 
 import javax.servlet.http.HttpServletRequest;
 import org.globalbarbernetwork.entities.Client;
+import org.globalbarbernetwork.entities.Employee;
 import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.entities.Service;
 import org.globalbarbernetwork.entities.User;
@@ -41,4 +42,9 @@ public class ReserveBO {
     public Service getService(String uidHairdressing, String uidService) {
         return firebaseDAO.getServiceById(uidHairdressing, uidService);
     }
+    
+    public Employee getEmployee(String hairdressing, String dni){
+        return firebaseDAO.getEmployeeByIDNumber(hairdressing, dni);
+    }
+    
 }

@@ -517,28 +517,4 @@ public class FirebaseDAO {
 
     }
 
-    public Reserve getReserveFromRelatedRef(String ref, User activeUser) {
-
-        //reserves/WbQRmWrhMlYs4Z95WalXaqwq9OY2/2021/1/04-01-2021/0n6BRemvs1kwTi10JIkM        
-        String[] refData = ref.split("/");
-        DocumentReference future2 = db.collection("reserves").document(refData[1]);
-
-        String year = refData[2];
-        String month = refData[3];
-        String fullDate = refData[4];
-        String uid = refData[5];
-
-        ApiFuture<DocumentSnapshot> reserves = future2.collection(year).document(month).collection(fullDate).document(uid).get();
-
-        try {
-            return reserves.get().toObject(Reserve.class);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ExecutionException ex) {
-            Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return null;
-    }
-
 }

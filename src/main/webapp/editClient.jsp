@@ -23,9 +23,9 @@
                 <div class="col-md-1"></div>
                 <div class="col-md-3 mb-3">
                     <div class="container card bg-dark">
-                        <h3 class="mb-5 mt-3 text-center"><%=client.getDisplayName()%></h3>
+                        <h3 class="mb-5 mt-3 text-center"><%=client.getDisplayName() != null ? client.getDisplayName() : "Display Name"%></h3>
                         <div class="text-center">
-                            <img src="${contextPath}/img/avatar.png" alt="Avatar" class="avatar">
+                            <img src="${contextPath}/img/avatar.png" alt="Avatar" class="avatar avatar-hover">
                         </div>                        
                         <input type="file" hidden id="actual-btn" class="mt-5 mb-3 w-100"/>
                         <label id="file" for="actual-btn" class="text-center btn btn-success">Canviar imatge</label>                                                                   
@@ -46,7 +46,7 @@
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text"><i class="fas fa-envelope"></i></div>
                                             </div>
-                                            <input id="email" type="text" class="form-control" name="email" placeholder="Correu electronic" value="<%=client.getEmail()%>" readonly>
+                                            <input id="email" type="text" class="form-control" name="email" placeholder="Correu electronic" value='<%=client.getEmail() != null ? client.getEmail() : ""%>' readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -55,7 +55,7 @@
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text"><i class="fas fa-text"></i></div>
                                             </div>                                        
-                                            <input name="displayName" type="text" placeholder="Display name" class="form-control" value="<%=client.getDisplayName()%>">                
+                                            <input name="displayName" type="text" placeholder="Display name" class="form-control" value='<%=client.getDisplayName() != null ? client.getDisplayName() : ""%>'>                
                                         </div>                    
                                     </div>
                                 </div>
@@ -66,7 +66,7 @@
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text"><i class="fas fa-text"></i></div>
                                             </div>                                                                                
-                                            <input name="name" type="text" placeholder="Nom" class="form-control" value="<%=client.getName()%>">                        
+                                            <input name="name" type="text" placeholder="Nom" class="form-control" value='<%=client.getName() != null ? client.getName() : ""%>'>                        
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -75,7 +75,7 @@
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text"><i class="fas fa-text"></i></div>
                                             </div>                                                                                                                        
-                                            <input name="surname" type="text" placeholder="Cognom" class="form-control" value="<%=client.getSurname()%>">                                    
+                                            <input name="surname" type="text" placeholder="Cognom" class="form-control" value='<%=client.getSurname() != null ? client.getSurname() : ""%>'>                                    
                                         </div>
                                     </div>
                                 </div>                    
@@ -86,7 +86,7 @@
                                             <div class="input-group-prepend">
                                                 <div class="input-group-text"><i class="fas fa-phone-alt"><span class="ml-2">+34</span></i></div>                                                
                                             </div>                                                                                                                                                                                                            
-                                            <input id="phone" name="phoneNumber" type="tel" placeholder="Numero de telefon" class="form-control" value="<%=client.getPhoneNumber()%>">
+                                            <input id="phone" name="phoneNumber" type="tel" placeholder="Numero de telefon" class="form-control" value="<%=client.getPhoneNumber() != null ? client.getPhoneNumber() : ""%>">
                                         </div>
                                     </div>       
                                 </div>                    
