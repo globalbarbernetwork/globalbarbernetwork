@@ -35,35 +35,43 @@ import org.globalbarbernetwork.entities.Hairdressing;
  * @author Grup 3
  */
 public class UserManager extends Manager implements ManagerInterface {
-    
+
     private final String CLIENT = "client";
     private final String HAIRDRESSING = "hairdressing";
 
     @Override
+
+    /**
+     * This method will be executed on load UserManager     
+     *
+     * @param request the request
+     * @param response the response
+     * @param action the action
+     */
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
 
         RequestDispatcher rd = null;
         UserBO userBo;
-        User user;        
+        User user;
         switch (action) {
             case CLIENT:
                 Client client = null;
                 client = (Client) this.getCurrentUser(request);
 
-                if (request.getMethod().equals(POST)) {                    
+                if (request.getMethod().equals(POST)) {
                     rd = this.updateClient(client, request, response);
                     request.setAttribute("edited", true);
-                }else{
+                } else {
                     rd = request.getRequestDispatcher("/" + EDIT_CLIENT_JSP);
                 }
-                                
+
                 request.setAttribute("client", client);
                 break;
             case HAIRDRESSING:
                 Hairdressing hairdressing = null;
                 hairdressing = (Hairdressing) this.getCurrentUser(request);
 
-                if (request.getMethod().equals(POST)) {                    
+                if (request.getMethod().equals(POST)) {
                     rd = this.updateHairdressing(hairdressing, request, response);
                     request.setAttribute("edited", true);
                 } else {
@@ -71,7 +79,7 @@ public class UserManager extends Manager implements ManagerInterface {
                 }
 
                 request.setAttribute("hairdressing", hairdressing);
-                break;                
+                break;
             case "changePassword":
 
                 userBo = new UserBO();
@@ -96,6 +104,14 @@ public class UserManager extends Manager implements ManagerInterface {
 
     }
 
+    /**
+     * This method will update the hairdressing data in Firebase DB
+     *
+     * @param hairdressing the hairdressing
+     * @param request the request
+     * @param response the response
+     * @return RequestDispatcher
+     */
     private RequestDispatcher updateHairdressing(Hairdressing hairdressing, HttpServletRequest request, HttpServletResponse response) {
 
         UserBO userBo = new UserBO();
@@ -108,13 +124,18 @@ public class UserManager extends Manager implements ManagerInterface {
 
     }
 
+    /**
+     * This method update the client data in Firebase DB
+     *
+     * @param client the client
+     * @param request the request
+     * @param response the response
+     * @return RequestDispatcher
+     */
     private RequestDispatcher updateClient(Client client, HttpServletRequest request, HttpServletResponse response) {
-
         UserBO userBo = new UserBO();
         RequestDispatcher rd;
-
         userBo.updateClient(client, request);
-
         rd = request.getRequestDispatcher("/" + EDIT_CLIENT_JSP);
         return rd;
 

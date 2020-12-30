@@ -82,8 +82,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
 
     @Override
 
-    /**
-     *
+    /**     
      * This method will be executed on load ManageHairdressingManager
      *
      * @param request the request

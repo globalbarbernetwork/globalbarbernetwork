@@ -36,7 +36,12 @@ import java.util.logging.Logger;
 public class ConnectFirebase {
     private Properties props;
     
-    public ConnectFirebase() {
+
+/** 
+ * It is a constructor, do the connection with firebase with properties. 
+ *
+ */
+    public ConnectFirebase() { 
         props = new Properties();
         try {
             InputStream is = new FileInputStream("D:/tmp/config.properties");
@@ -46,7 +51,13 @@ public class ConnectFirebase {
         }
     }
     
-    public Firestore initFirebase() {
+
+/** 
+ * This method initialize firebase, setting all the necesary config options
+ *
+ * @return Firestore
+ */
+    public Firestore initFirebase() { 
         FileInputStream serviceAccount = null;
         try {
             serviceAccount = new FileInputStream(props.getProperty("pathServiceAccount"));

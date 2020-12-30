@@ -16,32 +16,23 @@
  */
 package org.globalbarbernetwork.managers;
 
-import com.google.cloud.Timestamp;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import java.io.IOException;
 import java.io.PrintWriter;
 import static java.lang.Integer.parseInt;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -68,7 +59,7 @@ import org.globalbarbernetwork.entities.User;
 public class ScheduleManager extends Manager implements ManagerInterface {
 
     private final FirebaseDAO firebaseDAO = new FirebaseDAO();
-    
+
     private final String LOAD_MANAGE_RESERVES = "loadManageReserves";
     private final String GET_TIMETABLE_AJAX = "getTimetableAjax";
     private final String GET_AVAILABLE_HOURS_AJAX = "getAvailableHoursAjax";
@@ -76,7 +67,16 @@ public class ScheduleManager extends Manager implements ManagerInterface {
     private final String RESERVE_HISTORICAL = "loadClientHistorical";
 
     @Override
+
+    /**
+     * This method will be executed on load ScheduleManager     
+     *
+     * @param request the request
+     * @param response the response
+     * @param action the action
+     */
     public void execute(HttpServletRequest request, HttpServletResponse response, String action) {
+
         try {
             RequestDispatcher rd = null;
             User activeUser = (User) request.getSession().getAttribute("user");
@@ -86,18 +86,18 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                     JSONObject json = getTimetableToJSON2(activeUser.getUID());
                     // Recoger holidays hairdressing para setearlas como disabled
                     JSONObject json2 = getAllReservesToJSON(activeUser.getUID());
-                    
+
                     request.setAttribute("businessHoursJSON", json.toString());
                     request.setAttribute("reservesEventsJSON", json2.toString());
-                    
+
                     rd = request.getRequestDispatcher("/" + MANAGE_RESERVES_JSP);
                     break;
                 case GET_TIMETABLE_AJAX:
                     response.setContentType("application/json");
 
                     String idHairdressing = request.getParameter("idHairdressing");
-            
-                    try ( PrintWriter out = response.getWriter()) {
+
+                    try (PrintWriter out = response.getWriter()) {
                         out.print(getTimetableToJSON(idHairdressing));
                     }
                     break;
@@ -154,7 +154,14 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
+    /**
+     * This method will return all the reserves for a hairdressing in JSON format
+     *
+     * @param idHairdressing the id hairdressing
+     * @return the timetable to JSO n2
+     * @throws JSONException
+     */
     private JSONObject getTimetableToJSON2(String idHairdressing) throws JSONException {
         Map<String, Object> timetable = firebaseDAO.getScheduleHairdressing(idHairdressing);
 
@@ -186,38 +193,51 @@ public class ScheduleManager extends Manager implements ManagerInterface {
 
         return json;
     }
-    
+
+    /**
+     * This method will return all the reserves for a hairdressing in JSON format
+     *
+     * @param idHairdressing the id hairdressing
+     * @return the all reserves to JSON
+     * @throws JSONException
+     */
     private JSONObject getAllReservesToJSON(String idHairdressing) throws JSONException {
         ArrayList<Reserve> listReserves = firebaseDAO.getReserves2(idHairdressing);
-        
+
         JSONObject json = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         if (listReserves != null) {
             LinkedHashMap<String, Object> jsonOrderedMap;
             for (Reserve reserve : listReserves) {
                 jsonOrderedMap = new LinkedHashMap<>();
-                
+
                 Client client = firebaseDAO.getClient(reserve.getIdClient());
 
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
                 jsonOrderedMap.put("title", client.getName() + " " + client.getSurname());
-                jsonOrderedMap.put("startDateTime",  reserve.obtainTimeInitLocalDate().format(formatter));
+                jsonOrderedMap.put("startDateTime", reserve.obtainTimeInitLocalDate().format(formatter));
                 jsonOrderedMap.put("endDateTime", reserve.obtainTimeFinalLocalDate().format(formatter));
-                
+
                 JSONObject member = new JSONObject(jsonOrderedMap);
                 jsonArray.put(member);
             }
-            
+
             json.put("jsonArray", jsonArray);
         }
-        
+
         return json;
     }
 
+    /**
+     * This method will return the hairdressing timetable in JSON format
+     *
+     * @param idHairdressing the id hairdressing
+     * @return the timetable to JSON
+     */
     private JSONObject getTimetableToJSON(String idHairdressing) {
         Map<String, Object> timetable = firebaseDAO.getScheduleHairdressing(idHairdressing);
-        
+
         JSONObject json = null;
         if (timetable != null) {
             LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
@@ -237,6 +257,13 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         return json;
     }
 
+    /**
+     * This method will return the timetable formatted
+     *
+     * @param the
+     * @param timetable the timetable
+     * @return String
+     */
     private String formatTimetable(Map<String, Map<String, String>> timetable) {
         String range1Start = timetable.get("rangeHour1").get("startHour");
         String range1End = timetable.get("rangeHour1").get("endHour");
@@ -257,17 +284,36 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         return range;
     }
 
+    /**
+     * This method will return the name of the week
+     *
+     * @param dayOfWeek the day of week
+     * @return the name of day of week
+     */
     private String getNameOfDayOfWeek(String dayOfWeek) {
         String[] namesOfDays = new String[]{"Dilluns", "Dimarts", "Dimecres", "Dijous", "Divendres", "Dissabte", "Diumenge"};
 
         return namesOfDays[Integer.parseInt(dayOfWeek) - 1];
     }
 
+    /**
+     * This method will convert the duration to min
+     *
+     * @param duration the duration
+     * @return int
+     */
     private int convertDurationToMin(String duration) {
         String[] tmpDuration = duration.split(":");
         return Integer.parseInt(tmpDuration[0]) * 60 + Integer.parseInt(tmpDuration[1]);
     }
 
+    /**
+     * This method will return a range of hours splitted in a range of minuts
+     *
+     * @param the
+     * @param rangeHour the range hour
+     * @return the list split hours
+     */
     private ArrayList<LocalTime> getListSplitHours(Map<String, Object> rangeHour) {
         boolean continueWhile = true;
         ArrayList<LocalTime> rangeHourSplit = new ArrayList();
@@ -286,7 +332,18 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         return rangeHourSplit;
     }
 
+    /**
+     * This method return a list of available hours for a hairdressing, service
+     * and date
+     *
+     * @param idHairdressing the id hairdressing
+     * @param idHairdresser the id hairdresser
+     * @param idService the id service
+     * @param date the date
+     * @return the list available hours
+     */
     private ArrayList<LocalTime> getListAvailableHours(String idHairdressing, String idHairdresser, String idService, LocalDate date) {
+
         Map<String, Object> timetableHairdressing = firebaseDAO.getScheduleHairdressing(idHairdressing);
         String dayOfWeek = String.valueOf(date.getDayOfWeek().getValue());
 
@@ -399,6 +456,14 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         return rangeHoursComplete;
     }
 
+    /**
+     * This method return the available hours in JSON format, this is an API
+     * call
+     *
+     * @param response the response
+     * @param rangeHourComplete the range hour complete
+     * @throws IOException
+     */
     private void getListAvailableHoursToJSON(HttpServletResponse response, ArrayList<LocalTime> rangeHourComplete) throws IOException {
         JSONObject json = new JSONObject();
         JSONArray array = new JSONArray();
@@ -425,6 +490,18 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         }
     }
 
+    /**
+     * This method add a new reserve for a hairdressingin Firebase DB
+     *
+     * @param response the response
+     * @param activeUser the active user
+     * @param idHairdressing the id hairdressing
+     * @param idHairdresser the id hairdresser
+     * @param idService the id service
+     * @param date the date
+     * @param time the time
+     * @throws IOException
+     */
     public void addReserve(HttpServletResponse response, User activeUser, String idHairdressing, String idHairdresser, String idService, LocalDate date, Integer time) throws IOException {
         Service selectedService = firebaseDAO.getServiceById(idHairdressing, idService);
         DateTimeFormatter formatterWithDash = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -528,6 +605,12 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         }
     }
 
+    /**
+     * This method return the reserve historical of client
+     *
+     * @param activeUser the active user
+     * @return the client historical
+     */
     private Map getClientHistorical(User activeUser) {
         Map<String, ArrayList> historical = new HashMap<>();
         Map<String, Boolean> isOnRange = new HashMap<>();
@@ -563,22 +646,41 @@ public class ScheduleManager extends Manager implements ManagerInterface {
 
         Collections.sort(pendingReserves, new Comparator<Map<String, Object>>() {
             @Override
+
+            /**
+             * This method is for compare dates and sort it
+             *
+             * @param the
+             * @param o1 the o1
+             * @param o2 the o2
+             * @return int
+             */
             public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+
                 Reserve reserve1 = (Reserve) o1.get("reserve");
                 Reserve reserve2 = (Reserve) o2.get("reserve");
                 return reserve1.obtainTimeInitLocalDate().compareTo(reserve2.obtainTimeInitLocalDate());
             }
         });
-        
+
         Collections.sort(completedReserves, new Comparator<Map<String, Object>>() {
             @Override
+
+            /**
+             * This method is for compare dates and sort it
+             *
+             * @param the
+             * @param o1 the o1
+             * @param o2 the o2
+             * @return int
+             */
             public int compare(Map<String, Object> o1, Map<String, Object> o2) {
                 Reserve reserve1 = (Reserve) o1.get("reserve");
                 Reserve reserve2 = (Reserve) o2.get("reserve");
                 return reserve1.obtainTimeInitLocalDate().compareTo(reserve2.obtainTimeInitLocalDate());
             }
         });
-        
+
         historical.put(
                 "pendingReserves", pendingReserves);
         historical.put(
@@ -587,6 +689,13 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         return historical;
     }
 
+    /**
+     * This method check if a date is on range to show it in the client
+     * historical
+     *
+     * @param reserveDate the reserve date
+     * @return Boolean>
+     */
     private Map<String, Boolean> dateIsOnRange(LocalDateTime reserveDate) {
         Map<String, Boolean> isOnRange = new HashMap<>();
         LocalDateTime currentDate = LocalDateTime.now();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Adrian
+ * Copyright (C) 2020 IOC DAW
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +35,22 @@ import org.globalbarbernetwork.entities.User;
  */
 public class Manager {
 
+    /**
+     * This method return the current user logged in the app
+     *
+     * @param request the request
+     * @return the current user
+     */
     public User getCurrentUser(HttpServletRequest request) {
         return (User) request.getSession().getAttribute("user");
     }
 
+    /**
+     * This method close the session for the current user
+     *
+     * @param request the request
+     * @param response the response
+     */
     public void closeSession(HttpServletRequest request, HttpServletResponse response) {
         request.getSession().removeAttribute("user");
 
@@ -49,6 +61,12 @@ public class Manager {
         }
     }
 
+    /**
+     * This method build the menu options and adds him to the request
+     *
+     * @param request the request
+     * @param response the response
+     */
     public void buildMenuOptions(HttpServletRequest request, HttpServletResponse response) {
 
         User user = this.getCurrentUser(request);
@@ -57,8 +75,13 @@ public class Manager {
         request.setAttribute("options", options);
     }
 
+    /**
+     * This method will build the menu options by user
+     *
+     * @param user the user
+     * @return List
+     */
     private List buildMenuOptionsByUser(User user) {
-
         List<Map> options = new ArrayList<Map>();
 
         if (user instanceof Hairdressing) {
@@ -75,6 +98,14 @@ public class Manager {
         return options;
     }
 
+    /**
+     * Add menu options
+     *
+     * @param label the label
+     * @param url the url
+     * @param params the params
+     * @return Map
+     */
     private Map addMenuOption(String label, String url, String params) {
         Map<String, String> option = new HashMap<>();
         option.put("label", label);

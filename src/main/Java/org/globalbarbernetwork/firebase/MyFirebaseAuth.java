@@ -41,17 +41,33 @@ public class MyFirebaseAuth {
 
     private static MyFirebaseAuth instance = null;
 
+    /**
+     It is a constructor without params
+     */
     protected MyFirebaseAuth() {        
     }
 
-    public static MyFirebaseAuth getInstance() {
+/** 
+ * It is a constructor, retrieve the instance of myFireBaseAuth. 
+ *
+ */
+    public static MyFirebaseAuth getInstance() { 
         if (instance == null) {
             instance = new MyFirebaseAuth();
         }
         return instance;
     }
 
-    public JsonObject auth(String username, String password) throws Exception {
+
+/** 
+ * This method authenticate the user via API
+ *
+ * @param username  the username
+ * @param password  the password
+ * @return JsonObject
+ * @throws   Exception 
+ */
+    public JsonObject auth(String username, String password) throws Exception { 
 
         HttpURLConnection urlRequest = null;
         JsonObject token = null;
@@ -84,7 +100,16 @@ public class MyFirebaseAuth {
         return token;
     }
 
-    public String getAccountInfo(String token) throws Exception {
+
+/** 
+ * This method retrieve account info via API (unnused)
+ *
+ * @param token  the token
+ * @return the account info
+ * @throws   Exception 
+ */
+    public String getAccountInfo(String token) throws Exception { 
+
 
         HttpURLConnection urlRequest = null;
         String email = null;
