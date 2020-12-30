@@ -108,7 +108,7 @@ function checkIfEmployeeHasReserves(idNumber) {
         },
         success: function (data) {
             var employeeHasReserves = data["employeeHasReserves"];
-            console.log(employeeHasReserves);
+            
             if (employeeHasReserves) {
                 $("#infoDelete").text(" Aquest treballador té reserves a càrrec seu! Estàs segur que vols eliminar-lo?\n"
                         + "En cas afirmatiu, s'eliminarà les reserves associades com tota la seva informació.");

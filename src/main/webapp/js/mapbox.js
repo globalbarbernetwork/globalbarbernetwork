@@ -137,7 +137,7 @@ function loadHairdressings() {
                     var dayOfWeek = date.getDay() !== 0 ? date.getDay() : 7;
                     if (data !== null) {
                         var timetableJSON = data;
-                        console.log(timetableJSON);
+
                         var restartCount = true;
                         var totalDays = 7;
                         for (var i = dayOfWeek; i <= totalDays; i++) {

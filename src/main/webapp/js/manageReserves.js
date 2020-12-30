@@ -81,8 +81,6 @@ function getReservesEvents() {
     var reservesEventsJSON = JSON.parse($("#reservesEventsJSON").val());
     var reservesEventsJSONArray = reservesEventsJSON.jsonArray;
 
-    console.log(reservesEventsJSONArray);
-
     var jsonArrayReservesEvents = [];
     if (reservesEventsJSONArray != undefined) {
         for (var i in reservesEventsJSONArray) {

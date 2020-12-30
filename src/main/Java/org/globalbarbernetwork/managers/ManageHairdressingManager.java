@@ -294,9 +294,6 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
      * @param activeUser the active user
      */
     public void deleteEmployee(HttpServletRequest request, User activeUser) {
-        //-------------------------------------------------
-        // TODO : En el momento que se elimine la identidad nacional de un empleado, habrá que eliminar todos los registros de todas las tablas dodne se encuentre dicho empleado
-        //-------------------------------------------------
         String idHairdressing = activeUser.getUID();
         String idNumber = (String) request.getParameter("idNumberEmployeeToDelete") != null ? request.getParameter("idNumberEmployeeToDelete") : "";
 
