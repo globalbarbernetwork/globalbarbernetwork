@@ -609,7 +609,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         String id = (String) request.getParameter("idServiceToDelete") != null ? request.getParameter("idServiceToDelete") : "";
 
         if (activeUser != null) {
-            firebaseDAO.deleteService(activeUser, Integer.valueOf(id));
+            firebaseDAO.deleteService(activeUser, id);
         }
     }
 

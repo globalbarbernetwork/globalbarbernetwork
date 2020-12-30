@@ -597,7 +597,7 @@ public class FirebaseDAO {
      * @param activeUser the active user (hairdressing)
      * @param idService the id service
      */
-    public void deleteService(User activeUser, Integer idService) {
+    public void deleteService(User activeUser, String idService) {
 
         ApiFuture<QuerySnapshot> future = db.collection("services").document(activeUser.getUID()).collection("services").whereEqualTo("id", idService).get();
         try {
