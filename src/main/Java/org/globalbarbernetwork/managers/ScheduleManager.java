@@ -205,7 +205,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             Client client = firebaseDAO.getClient(reserve.getIdClient());
 
             jsonOrderedMap.put("title", client.getName() + " " + client.getSurname());
-            jsonOrderedMap.put("description", "Client&#58; " + client.getName() + " " + client.getSurname() + "\n" + "Estat&#58; " + reserve.obtainLargeState());
+            jsonOrderedMap.put("description", "Descripció llarga");
             jsonOrderedMap.put("startDateTime", reserve.obtainTimeInitLocalDate().format(formatter));
             jsonOrderedMap.put("endDateTime", reserve.obtainTimeFinalLocalDate().format(formatter));
             jsonOrderedMap.put("classNames", "reservePending");

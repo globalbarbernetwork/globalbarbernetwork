@@ -43,8 +43,6 @@
         <%@include file="/WEB-INF/jspf/base_body.jspf"%>
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.5.0/main.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.5.0/locales-all.js"></script>
-        <script src="https://unpkg.com/popper.js/dist/umd/popper.js"/>
-        <script src="https://unpkg.com/tooltip.js/dist/umd/tooltip.js"/>
         <script src="${contextPath}/js/manageReserves.js"></script>
     </body>
 </html>

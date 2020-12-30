@@ -87,7 +87,7 @@ function getReservesEvents() {
     if (reservesEventsJSONArray != undefined) {
         for (var i in reservesEventsJSONArray) {
             var json = '{"title":"' + reservesEventsJSONArray[i].title + '",';
-            json += reservesEventsJSONArray[i].description != undefined ? '"description":"Descripció llarga",' : '';
+            json += reservesEventsJSONArray[i].description != undefined ? '"description":"' + reservesEventsJSONArray[i].description + '",' : '';
             json += reservesEventsJSONArray[i].display != undefined ? '"display":"' + reservesEventsJSONArray[i].display + '",' : '';
             json += reservesEventsJSONArray[i].classNames != undefined ? '"classNames":"' + reservesEventsJSONArray[i].classNames + '",' : '';
             json += reservesEventsJSONArray[i].allDay != undefined ? '"allDay":"' + reservesEventsJSONArray[i].allDay + '",' : '';
