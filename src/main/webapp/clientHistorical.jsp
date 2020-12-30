@@ -58,7 +58,7 @@
                                                     <img class="card-img-top" src="${contextPath}/img/test_sm.svg" alt="Card image cap">
                                                     <div class="card-body">
                                                         <h5 class="card-title">${hairdressing}</h5>
-                                                        <p class="card-text"><span class='font-weight-bold' style="font-size: 1.2rem;">${servicePrice}&euro;</span> - ${service}</p>
+                                                        <p class="card-text">${service} - <span class='font-weight-bold'>${servicePrice}&euro;</span> </p>
                                                         <span class="card-text float-right">${timeInit.dayOfMonth}&sol;${timeInit.monthValue}&sol;${timeInit.year}</span>
                                                         <span class="card-text">${iniParseDate} - ${finalParseDate}</span>                                                        
                                                     </div>
@@ -94,7 +94,7 @@
                                                     <img class="card-img-top" src="${contextPath}/img/test_sm.svg" alt="Card image cap">
                                                     <div class="card-body">
                                                         <h5 class="card-title">${hairdressing}</h5>
-                                                        <p class="card-text"><span class='font-weight-bold' style="font-size: 1.2rem;">${servicePrice}&euro;</span> - ${service}</p>
+                                                        <p class="card-text">${service} - <span class='font-weight-bold'>${servicePrice}&euro;</span></p>
                                                         <span class="card-text float-right">${timeInit.dayOfMonth}&sol;${timeInit.monthValue}&sol;${timeInit.year}</span>
                                                         <span class="card-text">${iniParseDate2} - ${finalParseDate2}</span>                                                                            
                                                     </div>

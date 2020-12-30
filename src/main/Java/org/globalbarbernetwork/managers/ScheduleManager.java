@@ -17,6 +17,7 @@
 package org.globalbarbernetwork.managers;
 
 import com.google.cloud.Timestamp;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import java.io.IOException;
@@ -28,12 +29,14 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -225,7 +228,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         LocalTime rangeHour2Final = !((String) ((Map<String, Object>) timetableDay.get("rangeHour2")).get("endHour")).isEmpty()
                 ? LocalTime.parse((CharSequence) ((Map<String, Object>) timetableDay.get("rangeHour2")).get("endHour")) : null;
         LocalDateTime ldtNow = LocalDateTime.now();
-        
+
         // Excluir horas de reservas del peluquero seleccionado
         if (idHairdresser != null && !idHairdresser.isEmpty()) {
             ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployee(idHairdressing, String.valueOf(date.getYear()),
@@ -296,7 +299,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                             timeToDrop.put(time, 1);
                         }
                     }
-                    
+
                     if (ldtNow.toLocalDate().equals(date) && time.isBefore(ldtNow.toLocalTime())) {
                         timeToDrop.put(time, listEmployees.size());
                     }
@@ -446,15 +449,13 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         Map<String, Object> completedReserve = new HashMap<>();
         ReserveBO reserveBO = new ReserveBO();
 
-        List<QueryDocumentSnapshot> documents = firebaseDAO.getClientHistorical(activeUser);
-        for (DocumentSnapshot document : documents) {
+        List<Reserve> reserves = firebaseDAO.getClientHistorical(activeUser);
+        for (Reserve reserve : reserves) {
             pendingReserve = new HashMap<>();
             completedReserve = new HashMap<>();
-            String ref = (String) document.get("reserveRef");
-            isOnRange = dateIsOnRange((Timestamp) document.get("date"));
-
-            if (!isOnRange.isEmpty()) {
-                Reserve reserve = firebaseDAO.getReserveFromRelatedRef(ref, activeUser);
+            
+            isOnRange = dateIsOnRange(reserve.getTimeInit());
+            if (!isOnRange.isEmpty()) {                
                 if (isOnRange.get("before") != null && isOnRange.get("before").equals(Boolean.TRUE)) {
                     completedReserve.put("hairdressing", reserveBO.getHairdressing(reserve.getIdHairdressing()));
                     completedReserve.put("reserve", reserve);
@@ -476,11 +477,11 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         return historical;
     }
 
-    private Map<String, Boolean> dateIsOnRange(Timestamp reserveDate) {
+    private Map<String, Boolean> dateIsOnRange(Date reserveDate) {
         Map<String, Boolean> isOnRange = new HashMap<>();
         LocalDateTime currentDate = LocalDateTime.now();
 
-        LocalDateTime date = reserveDate.toDate().toInstant()
+        LocalDateTime date = reserveDate.toInstant()
                 .atZone(ZoneId.of("Europe/Madrid"))
                 .toLocalDateTime();
 

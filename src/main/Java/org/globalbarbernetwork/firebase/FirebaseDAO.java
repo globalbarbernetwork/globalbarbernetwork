@@ -434,7 +434,7 @@ public class FirebaseDAO {
 
         return listReserve;
     }
-    
+
     public ArrayList<Reserve> getReserves(String idHairdressing, String yearReserve, String monthReserve, String dateReserve) {
         ArrayList<Reserve> listReserve = new ArrayList();
         ApiFuture<QuerySnapshot> reserves = db.collection("reserves").document(idHairdressing).collection(yearReserve).document(monthReserve).collection(dateReserve)
@@ -470,8 +470,8 @@ public class FirebaseDAO {
 
         db.collection("reservesClient").document(idClient).collection("reserves").document().set(data);
     }
-    
-    public void updateStateReserve(Reserve reserve, String yearReserve, String monthReserve, String dateReserve){
+
+    public void updateStateReserve(Reserve reserve, String yearReserve, String monthReserve, String dateReserve) {
         db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document(reserve.getId()).set(reserve);
     }
 
@@ -496,19 +496,24 @@ public class FirebaseDAO {
         return listHolidays;
     }
 
-    public List<QueryDocumentSnapshot> getClientHistorical(User activeUser) {
-        ApiFuture<QuerySnapshot> future = db.collection("reservesClient").document(activeUser.getUID()).collection("reserves").get();
-        List<QueryDocumentSnapshot> documents = null;
-        
+    public List<Reserve> getClientHistorical(User activeUser) {
+        ApiFuture<QuerySnapshot> future = db.collection("reservesClient").document(activeUser.getUID()).collection("reserves").get();        
+        ArrayList<Reserve> reserves = new ArrayList<>();
+
         try {
-            documents = future.get().getDocuments();
+
+            for (QueryDocumentSnapshot document : future.get().getDocuments()) {
+                DocumentSnapshot reserveRef = ((DocumentReference) document.get("reserveRef")).get().get();
+                reserves.add(reserveRef.toObject(Reserve.class));
+            }
+
         } catch (InterruptedException ex) {
             Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
             Logger.getLogger(FirebaseDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        return documents;
+
+        return reserves;
 
     }
 
