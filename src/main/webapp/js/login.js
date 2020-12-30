@@ -16,9 +16,10 @@
  */
 
 $(document).ready(function () {
-    var errors = $('#errors_field').val();
-    if (errors) {
-        JSON.parse(errors);
+    var errors = $('#errors_field').val(); 
+    
+    if(errors != null && errors != ""){
+       errors = JSON.parse(errors);
     }
 
     if (errors[401]) {
