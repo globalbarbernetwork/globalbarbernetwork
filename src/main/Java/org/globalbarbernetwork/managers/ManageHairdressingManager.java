@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.globalbarbernetwork.entities.Employee;
 import org.globalbarbernetwork.entities.Hairdressing;
+import org.globalbarbernetwork.entities.Reserve;
 import org.globalbarbernetwork.entities.Service;
 import org.globalbarbernetwork.entities.User;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
@@ -66,6 +67,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
     final static String EDIT_EMPLOYEE = "editEmployee";
     final static String DELETE_EMPLOYEE = "deleteEmployee";
     final static String CHECK_EMPLOYEE_AJAX = "checkEmployeeAjax";
+    final static String CHECK_EMPLOYEE_RESERVE_AJAX = "checkEmployeeHasReserveAjax";
 
     final static String GET_EMPLOYEES_AJAX = "getEmployeesAjax";
     final static String GET_HOLIDAYS_EMPLOYEE_AJAX = "getHolidaysEmployeeAjax";
@@ -116,6 +118,10 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
                 case CHECK_EMPLOYEE_AJAX:
                     response.setContentType("application/json");
                     checkIfEmployeeExistsInHairdressing(request, response, activeUser);
+                    break;
+                case CHECK_EMPLOYEE_RESERVE_AJAX:
+                    response.setContentType("application/json");
+                    checkIfEmployeeHasReserves(request, response, activeUser);
                     break;
                 case GET_EMPLOYEES_AJAX:
                     response.setContentType("text/html;charset=UTF-8");
@@ -265,6 +271,7 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         if (activeUser != null) {
             firebaseDAO.deleteEmployee(idNumber, idHairdressing);
             firebaseDAO.deleteHolidaysEmployee(idHairdressing, idNumber);
+            firebaseDAO.deleteReservesEmployee(idHairdressing, idNumber);
         }
     }
 
@@ -278,11 +285,27 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
         String idNumberEmployee = request.getParameter("idNumberEmployee");
         Employee employee = firebaseDAO.getEmployeeByIDNumber(activeUser.getUID(), idNumberEmployee);
         boolean idNumberExistInHaird = employee != null;
-
+        
         JSONObject json = null;
         try (PrintWriter out = response.getWriter()) {
             LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
             jsonOrderedMap.put("idNumberExistInHairdressing", idNumberExistInHaird);
+            json = new JSONObject(jsonOrderedMap);
+            out.print(json);
+        } catch (IOException ex) {
+            Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void checkIfEmployeeHasReserves(HttpServletRequest request, HttpServletResponse response, User activeUser) {
+        String idNumberEmployee = request.getParameter("idNumberEmployee");
+        List<Reserve> reserves = firebaseDAO.getAllReservesEmployee(activeUser.getUID(), idNumberEmployee);;
+        boolean employeeHasReserves = reserves != null && !reserves.isEmpty();
+
+        JSONObject json = null;
+        try (PrintWriter out = response.getWriter()) {
+            LinkedHashMap<String, Object> jsonOrderedMap = new LinkedHashMap<>();
+            jsonOrderedMap.put("employeeHasReserves", employeeHasReserves);
             json = new JSONObject(jsonOrderedMap);
             out.print(json);
         } catch (IOException ex) {

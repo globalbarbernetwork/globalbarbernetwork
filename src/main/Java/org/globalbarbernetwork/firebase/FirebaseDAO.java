@@ -418,7 +418,7 @@ public class FirebaseDAO {
         db.collection("schedule").document(user.getUID()).set(schedule);
     }
 
-    public ArrayList<Reserve> getReservesEmployee(String idHairdressing, String yearReserve, String monthReserve, String dateReserve, String idEmployee) {
+    public ArrayList<Reserve> getReservesEmployeeByStatePending(String idHairdressing, String yearReserve, String monthReserve, String dateReserve, String idEmployee) {
         ArrayList<Reserve> listReserve = new ArrayList();
         ApiFuture<QuerySnapshot> reserves = db.collection("reserves").document(idHairdressing).collection(yearReserve).document(monthReserve).collection(dateReserve)
                 .whereEqualTo("idEmployee", idEmployee).whereEqualTo("state", STATE_PENDING).get();
@@ -435,7 +435,26 @@ public class FirebaseDAO {
         return listReserve;
     }
 
-    public ArrayList<Reserve> getReserves(String idHairdressing, String yearReserve, String monthReserve, String dateReserve) {
+    public ArrayList<Reserve> getAllReservesEmployee(String idHairdressing, String idEmployee) {
+        ArrayList<Reserve> listReserve = new ArrayList();
+        ApiFuture<QuerySnapshot> reserves = db.collection("reservesEmployee").document(idHairdressing).collection(idEmployee).get();
+        try {
+
+            for (QueryDocumentSnapshot document : reserves.get().getDocuments()) {
+                DocumentSnapshot reserveRef = ((DocumentReference) document.get("reserveRef")).get().get();
+                listReserve.add(reserveRef.toObject(Reserve.class));
+            }
+
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
+
+        return listReserve;
+    }
+
+    public ArrayList<Reserve> getReservesByStatePending(String idHairdressing, String yearReserve, String monthReserve, String dateReserve) {
         ArrayList<Reserve> listReserve = new ArrayList();
         ApiFuture<QuerySnapshot> reserves = db.collection("reserves").document(idHairdressing).collection(yearReserve).document(monthReserve).collection(dateReserve)
                 .whereEqualTo("state", STATE_PENDING).get();
@@ -462,17 +481,59 @@ public class FirebaseDAO {
         return db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document(autoId).getPath();
     }
 
-    public void insertReserveClient(String idClient, String reference, Date date) {
-        Map<String, Object> data = new HashMap();
-        data.put("reserveRef", reference);
-        data.put("date", date);
-        data.put("uidClient", idClient);
+    public String insertReserveClient(String idClient, String reference) {
 
-        db.collection("reservesClient").document(idClient).collection("reserves").document().set(data);
+        Map<String, Object> data = new HashMap();
+        data.put("reserveRef", db.document(reference));
+        
+        // Se guarda el id creado por firebase para este nuevo registro
+        String autoId = db.collection("reservesClient").document(idClient).collection("reserves").document().getId();
+        db.collection("reservesClient").document(idClient).collection("reserves").document(autoId).set(data);
+        
+        return db.collection("reservesClient").document(idClient).collection("reserves").document(autoId).getPath();
+    }
+    
+    public void updateReserveClient(String idClient, String idDocument, String reference, String referenceEmployee){
+        Map<String, Object> data = new HashMap();
+        data.put("reserveEmployeeRef", db.document(referenceEmployee));
+        
+        db.document(idDocument).update(data);
+    }
+
+    public String insertReserveEmployee(String idHairdressing, String idEmployee, String reference, String reserveClientRef) {
+        Map<String, Object> data = new HashMap();
+        data.put("reserveRef", db.document(reference));
+        data.put("reserveClientRef", db.document(reserveClientRef));
+        
+        // Se guarda el id creado por firebase para este nuevo registro
+        String autoId = db.collection("reservesEmployee").document(idHairdressing).collection(idEmployee).document().getId();
+        
+        db.collection("reservesEmployee").document(idHairdressing).collection(idEmployee).document(autoId).set(data);
+
+        return db.collection("reservesEmployee").document(idHairdressing).collection(idEmployee).document(autoId).getPath();
     }
 
     public void updateStateReserve(Reserve reserve, String yearReserve, String monthReserve, String dateReserve) {
         db.collection("reserves").document(reserve.getIdHairdressing()).collection(yearReserve).document(monthReserve).collection(dateReserve).document(reserve.getId()).set(reserve);
+    }
+    
+    public void deleteReservesEmployee(String idHairdressing, String idEmployee) {
+        ApiFuture<QuerySnapshot> reserves = db.collection("reservesEmployee").document(idHairdressing).collection(idEmployee).get();
+        try {
+
+            for (QueryDocumentSnapshot document : reserves.get().getDocuments()) {
+                // Eliminar registro en reserves
+                ((DocumentReference) document.get("reserveRef")).delete();
+                // Eliminar registro en reservesClient
+                ((DocumentReference) document.get("reserveClientRef")).delete();
+                // Eliminar registro en reservesEmployee
+                document.getReference().delete();
+            }
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        } catch (ExecutionException ex) {
+            ex.printStackTrace();
+        }
     }
 
     public void updateHolidays(User hairdressing, Map<String, Object> holidays) {

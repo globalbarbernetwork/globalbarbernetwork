@@ -44,7 +44,7 @@ public class StateReserveJob implements Job {
         String formattedDateString = now.format(formatterWithDash);
 
         for (Hairdressing hairdressing : hairdressings) {
-            List<Reserve> reserves = firebaseDAO.getReserves(hairdressing.getUID(), String.valueOf(now.getYear()), String.valueOf(now.getMonthValue()), formattedDateString);
+            List<Reserve> reserves = firebaseDAO.getReservesByStatePending(hairdressing.getUID(), String.valueOf(now.getYear()), String.valueOf(now.getMonthValue()), formattedDateString);
 
             for (Reserve reserve : reserves) {
                 if (reserve.obtainTimeFinalLocalDate().isBefore(now)) {
