@@ -22,7 +22,7 @@
         <%@include file="/WEB-INF/jspf/header.jspf"%>
 
         <!-- Manage reserves -->
-        <div class="container-fluid pt-5 pb-5">
+        <div class="container-fluid pt-5">
             <div class="card">
                 <div class="card-header">
                     <h4 style="display: inline-block">Gestió reserves</h4>
@@ -43,7 +43,8 @@
         <%@include file="/WEB-INF/jspf/base_body.jspf"%>
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.5.0/main.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.5.0/locales-all.js"></script>
+        <script src="https://unpkg.com/popper.js/dist/umd/popper.js"/>
+        <script src="https://unpkg.com/tooltip.js/dist/umd/tooltip.js"/>
         <script src="${contextPath}/js/manageReserves.js"></script>
     </body>
 </html>
-

@@ -472,7 +472,7 @@ public class FirebaseDAO {
         return listReserve;
     }
     
-    public ArrayList<Reserve> getReserves2(String idHairdressing) {
+    public ArrayList<Reserve> getReserves(String idHairdressing) {
         ArrayList<Reserve> listReserves = new ArrayList();
         
         try {

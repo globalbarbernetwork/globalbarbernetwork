@@ -19,6 +19,7 @@ package org.globalbarbernetwork.entities;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import static org.globalbarbernetwork.constants.Constants.*;
 
 /**
  *
@@ -264,5 +265,18 @@ public class Reserve {
      */
     public void modifyTimeFinalDate(LocalDateTime timeFinal) {
         this.timeFinal = Date.from(timeFinal.atZone(ZoneId.of("Europe/Madrid")).toInstant());
+    }
+    
+    public String obtainLargeState() {
+        switch (this.state) {
+            case STATE_PENDING:
+                return "Pendent";
+            case STATE_COMPLETED:
+                return "Completada";
+            case STATE_ANNULLED:
+                return "Anul·lada";
+            default:
+                return "";
+        }
     }
 }

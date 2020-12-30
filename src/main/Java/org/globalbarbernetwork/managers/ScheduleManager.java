@@ -85,7 +85,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                 case LOAD_MANAGE_RESERVES:
                     JSONObject json = getTimetableToJSON2(activeUser.getUID());
                     // Recoger holidays hairdressing para setearlas como disabled
-                    JSONObject json2 = getAllReservesToJSON(activeUser.getUID());
+                    JSONObject json2 = getAllReservesAndHolidaysToJSON(activeUser.getUID());
                     
                     request.setAttribute("businessHoursJSON", json.toString());
                     request.setAttribute("reservesEventsJSON", json2.toString());
@@ -187,33 +187,81 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         return json;
     }
     
-    private JSONObject getAllReservesToJSON(String idHairdressing) throws JSONException {
-        ArrayList<Reserve> listReserves = firebaseDAO.getReserves2(idHairdressing);
+    private JSONObject getAllReservesAndHolidaysToJSON(String idHairdressing) throws JSONException {
+        ArrayList<Reserve> listReserves = firebaseDAO.getReserves(idHairdressing);
+        ArrayList<Timestamp> listHolidays = firebaseDAO.getHolidays(idHairdressing);
+        List<Employee> listEmployees = firebaseDAO.getAllEmployees(idHairdressing);
         
         JSONObject json = new JSONObject();
         JSONArray jsonArray = new JSONArray();
-        if (listReserves != null) {
-            LinkedHashMap<String, Object> jsonOrderedMap;
-            for (Reserve reserve : listReserves) {
+
+        LinkedHashMap<String, Object> jsonOrderedMap;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        LocalDateTime ldtNow = LocalDateTime.now();
+
+        for (Reserve reserve : listReserves) {
+            jsonOrderedMap = new LinkedHashMap<>();
+
+            Client client = firebaseDAO.getClient(reserve.getIdClient());
+
+            jsonOrderedMap.put("title", client.getName() + " " + client.getSurname());
+            jsonOrderedMap.put("description", "Client&#58; " + client.getName() + " " + client.getSurname() + "\n" + "Estat&#58; " + reserve.obtainLargeState());
+            jsonOrderedMap.put("startDateTime", reserve.obtainTimeInitLocalDate().format(formatter));
+            jsonOrderedMap.put("endDateTime", reserve.obtainTimeFinalLocalDate().format(formatter));
+            jsonOrderedMap.put("classNames", "reservePending");
+            if (reserve.getState().equals(STATE_COMPLETED) || reserve.obtainTimeFinalLocalDate().isBefore(ldtNow) && !reserve.getState().equals(STATE_ANNULLED)) {
+                jsonOrderedMap.put("classNames", "reserveCompleted");
+            } else if (reserve.getState().equals(STATE_ANNULLED)) {
+                jsonOrderedMap.put("classNames", "reserveAnnulled");
+            }
+
+            JSONObject member = new JSONObject(jsonOrderedMap);
+            jsonArray.put(member);
+        }
+
+        for (Timestamp holiday : listHolidays) {
+            jsonOrderedMap = new LinkedHashMap<>();
+
+            LocalDateTime ldtHoliday = holiday.toDate().toInstant()
+                    .atZone(ZoneId.of("Europe/Madrid"))
+                    .toLocalDateTime();
+
+            jsonOrderedMap.put("title", "Festiu");
+            jsonOrderedMap.put("allDay", true);
+            jsonOrderedMap.put("startDateTime", ldtHoliday.format(formatter));
+            jsonOrderedMap.put("endDateTime", ldtHoliday.format(formatter));
+            jsonOrderedMap.put("display", "background");
+            jsonOrderedMap.put("classNames", "festiu");
+
+            JSONObject member = new JSONObject(jsonOrderedMap);
+            jsonArray.put(member);
+        }
+
+        for (Employee employee : listEmployees) {
+            ArrayList<Timestamp> holidays = firebaseDAO.getHolidaysEmployee(idHairdressing, employee.getIdNumber());
+            
+            for (Timestamp holiday : holidays) {
                 jsonOrderedMap = new LinkedHashMap<>();
                 
-                Client client = firebaseDAO.getClient(reserve.getIdClient());
-
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
-
-                jsonOrderedMap.put("title", client.getName() + " " + client.getSurname());
-                jsonOrderedMap.put("startDateTime",  reserve.obtainTimeInitLocalDate().format(formatter));
-                jsonOrderedMap.put("endDateTime", reserve.obtainTimeFinalLocalDate().format(formatter));
+                LocalDateTime ldtHoliday = holiday.toDate().toInstant()
+                    .atZone(ZoneId.of("Europe/Madrid"))
+                    .toLocalDateTime();
+                
+                jsonOrderedMap.put("title", "Festiu treballador");
+                jsonOrderedMap.put("allDay", true);
+                jsonOrderedMap.put("startDateTime", ldtHoliday.format(formatter));
+                jsonOrderedMap.put("endDateTime", ldtHoliday.format(formatter));
+                jsonOrderedMap.put("classNames", "festiuTreballador");
                 
                 JSONObject member = new JSONObject(jsonOrderedMap);
                 jsonArray.put(member);
             }
-            
-            json.put("jsonArray", jsonArray);
         }
-        
+
+        json.put("jsonArray", jsonArray);
+
         return json;
-    }
+    }    
 
     private JSONObject getTimetableToJSON(String idHairdressing) {
         Map<String, Object> timetable = firebaseDAO.getScheduleHairdressing(idHairdressing);
@@ -303,6 +351,8 @@ public class ScheduleManager extends Manager implements ManagerInterface {
         DateTimeFormatter formatterWithDash = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String formattedDateString = date.format(formatterWithDash);
         Map<LocalTime, Integer> timeToDrop = new HashMap<>();
+        LocalTime rangeHour1Init = !((String) ((Map<String, Object>) timetableDay.get("rangeHour1")).get("startHour")).isEmpty()
+                ? LocalTime.parse((CharSequence) ((Map<String, Object>) timetableDay.get("rangeHour1")).get("endHour")) : null;
         LocalTime rangeHour1Final = !((String) ((Map<String, Object>) timetableDay.get("rangeHour1")).get("endHour")).isEmpty()
                 ? LocalTime.parse((CharSequence) ((Map<String, Object>) timetableDay.get("rangeHour1")).get("endHour")) : null;
         LocalTime rangeHour2Final = !((String) ((Map<String, Object>) timetableDay.get("rangeHour2")).get("endHour")).isEmpty()
@@ -334,7 +384,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                 }
 
                 // Eliminamos las horas que coincidan con posible reserva en base al servicio seleccionado.
-                if ((rangeHour1Final != null && ltFinalTmpAfter.isAfter(rangeHour1Final)
+                if ((rangeHour1Final != null && ltFinalTmpAfter.isAfter(rangeHour1Final) && !time.equals(rangeHour1Init) && !time.isAfter(rangeHour1Init)
                         || rangeHour2Final != null && ltFinalTmpAfter.isAfter(rangeHour2Final))) {
                     existOverlap = true;
                 }
@@ -371,7 +421,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                     }
 
                     // Eliminamos las horas que coincidan con posible reserva en base al servicio seleccionado.
-                    if ((rangeHour1Final != null && ltFinalTmpAfter.isAfter(rangeHour1Final)
+                    if ((rangeHour1Final != null && ltFinalTmpAfter.isAfter(rangeHour1Final) && !time.equals(rangeHour1Init) && !time.isAfter(rangeHour1Init)
                             || rangeHour2Final != null && ltFinalTmpAfter.isAfter(rangeHour2Final))) {
                         if (timeToDrop.get(time) != null && timeToDrop.get(time) != num) {
                             timeToDrop.put(time, timeToDrop.get(time) + 1);
@@ -461,6 +511,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             for (Employee employee : listEmployees) {
                 ArrayList<Reserve> listReservesEmployee = firebaseDAO.getReservesEmployeeByStatePending(idHairdressing, String.valueOf(date.getYear()),
                         String.valueOf(date.getMonthValue()), formattedDateString, employee.getIdNumber());
+                existOverlap = false;
 
                 for (Reserve reserve : listReservesEmployee) {
                     LocalTime ltInit = reserve.obtainTimeInitLocalDate().toLocalTime();
@@ -476,6 +527,10 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                         idEmployeeFree = employee.getIdNumber();
                         break;
                     }
+                }
+                
+                if (listReservesEmployee.isEmpty()) {
+                    idEmployeeFree = employee.getIdNumber();
                 }
 
                 if (!existOverlap && !idEmployeeFree.isEmpty()) {

@@ -18,3 +18,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     Created on : 29 Dec 2020, 22:50:14
     Author     : DAW IOC
 */
+
+.reservePending {
+    
+}
+
+.reserveCompleted {
+    background-color: #21E758 !important;
+}
+
+.reserveAnnulled {
+    background-color: #AE0804 !important;
+}
+
+.festiu {
+    background-color: #F70000 !important;
+    color: #FFF;
+    font-weight: 600;
+}
+
+.festiuTreballador {
+    background-color: #F5B64F !important;
+}

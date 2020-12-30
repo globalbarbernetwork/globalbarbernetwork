@@ -18,7 +18,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     var optionsBusinessHours = getOptionsBusinessHours();
     var reservesEvents = getReservesEvents();
-    
+
     initializeFullCalendar(optionsBusinessHours, reservesEvents);
 });
 
@@ -26,8 +26,8 @@ function initializeFullCalendar(optionsBusinessHours, reservesEvents) {
     var fullCalendarReserves = document.getElementById('fullcalendarReserves');
     var calendar = new FullCalendar.Calendar(fullCalendarReserves, {
         //fixedWeekCount: false //Dependiendo del mes salen mas rows de semanas o no
-        //showNonCurrentDates: false //Se ocultan los dias de otros meses en la vista month
-        height: 600,
+        showNonCurrentDates: false, //Se ocultan los dias de otros meses en la vista month
+        height: 650,
         locale: 'ca',
         initialView: 'dayGridMonth', // dayGridWeek
         headerToolbar: {start: 'dayGridMonth,timeGridWeek', center: 'title'},
@@ -37,6 +37,9 @@ function initializeFullCalendar(optionsBusinessHours, reservesEvents) {
                 dayHeaderFormat: {weekday: 'long', day: 'numeric'},
                 weekNumberFormat: {week: 'short'},
                 nowIndicator: true
+            },
+            dayGridMonth: {
+                dayMaxEventRows: 4
             }
         },
         dayHeaderFormat: {weekday: 'long'},
@@ -48,6 +51,9 @@ function initializeFullCalendar(optionsBusinessHours, reservesEvents) {
             hour: 'numeric',
             minute: '2-digit'
         }
+        /*eventClick: function (info) {
+         
+         },*/
     });
 
     calendar.render();
@@ -56,7 +62,7 @@ function initializeFullCalendar(optionsBusinessHours, reservesEvents) {
 function getOptionsBusinessHours() {
     var businessHoursJSON = JSON.parse($("#businessHoursJSON").val());
     var businessHoursJSONArray = businessHoursJSON.jsonArray;
-    
+
     var jsonArrayBusinessHours = [];
     if (businessHoursJSONArray != undefined) {
         for (var i in businessHoursJSONArray) {
@@ -67,26 +73,30 @@ function getOptionsBusinessHours() {
             jsonArrayBusinessHours[i] = JSON.parse(json);
         }
     }
-    
+
     return jsonArrayBusinessHours;
 }
 
 function getReservesEvents() {
     var reservesEventsJSON = JSON.parse($("#reservesEventsJSON").val());
     var reservesEventsJSONArray = reservesEventsJSON.jsonArray;
-    
+
     console.log(reservesEventsJSONArray);
-    
+
     var jsonArrayReservesEvents = [];
     if (reservesEventsJSONArray != undefined) {
         for (var i in reservesEventsJSONArray) {
             var json = '{"title":"' + reservesEventsJSONArray[i].title + '",';
+            json += reservesEventsJSONArray[i].description != undefined ? '"description":"Descripció llarga",' : '';
+            json += reservesEventsJSONArray[i].display != undefined ? '"display":"' + reservesEventsJSONArray[i].display + '",' : '';
+            json += reservesEventsJSONArray[i].classNames != undefined ? '"classNames":"' + reservesEventsJSONArray[i].classNames + '",' : '';
+            json += reservesEventsJSONArray[i].allDay != undefined ? '"allDay":"' + reservesEventsJSONArray[i].allDay + '",' : '';
             json += '"start":"' + reservesEventsJSONArray[i].startDateTime + '",';
             json += '"end":"' + reservesEventsJSONArray[i].endDateTime + '"}';
 
             jsonArrayReservesEvents[i] = JSON.parse(json);
         }
     }
-    
+
     return jsonArrayReservesEvents;
 }
