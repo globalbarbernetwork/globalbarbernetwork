@@ -312,7 +312,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
      */
     public void sendListEmployees(HttpServletRequest request, User activeUser) {
         if (activeUser != null) {
-            request.setAttribute("employees", getListEmployees(activeUser.getUID()));
+            try {
+                Thread.sleep(200);
+                request.setAttribute("employees", getListEmployees(activeUser.getUID()));
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ManageHairdressingManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -554,7 +559,12 @@ public class ManageHairdressingManager extends Manager implements ManagerInterfa
      */
     public void sendListServices(HttpServletRequest request, User activeUser) {
         if (activeUser != null) {
-            request.setAttribute("services", getListServices(activeUser.getUID()));
+            try {
+                Thread.sleep(200);
+                request.setAttribute("services", getListServices(activeUser.getUID()));
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ManageHairdressingManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
