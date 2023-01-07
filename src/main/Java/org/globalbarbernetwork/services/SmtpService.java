@@ -26,6 +26,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import org.globalbarbernetwork.constants.Constants;
 
 /**
  *
@@ -45,7 +46,7 @@ public class SmtpService {
 
         props = new Properties();
         try {
-            InputStream is = new FileInputStream("D:/tmp/config.properties");
+            InputStream is = new FileInputStream(Constants.PATH_PROPERTIES);
             props.load(is);
         } catch (IOException ex) {
             ex.printStackTrace();

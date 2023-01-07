@@ -50,4 +50,6 @@ public class Constants {
             + "Global Barber Network";
 
     public static final String SUBJECT_MAIL_VERIFICATION = "Verifica l'adreça electrònica de l'aplicació Global Barber Network";
+    
+    public static final String PATH_PROPERTIES = "C:/tmp/config.properties";
 }

@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import org.globalbarbernetwork.constants.Constants;
 import org.globalbarbernetwork.jobs.StateReserveJob;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import org.quartz.CronTrigger;
@@ -56,7 +57,7 @@ public class QuartzService implements ServletContextListener {
 
         props = new Properties();
         try {
-            InputStream is = new FileInputStream("D:/tmp/config.properties");
+            InputStream is = new FileInputStream(Constants.PATH_PROPERTIES);
             props.load(is);
         } catch (IOException ex) {
             ex.printStackTrace();
