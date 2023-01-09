@@ -6,6 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
+<jsp:useBean id="newUserCreated" scope="request" class="java.lang.Boolean"/>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -43,6 +45,8 @@
                 </div>
             </div>
         </div>
+                        
+        <input id="newUserCreated" name="newUserCreated" type="hidden" value='<%=newUserCreated%>'/>
 
         <!-- Footer -->
         <%@include file="/WEB-INF/jspf/footer.jspf"%>

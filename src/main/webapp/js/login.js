@@ -16,8 +16,7 @@
  */
 
 $(document).ready(function () {
-    var errors = $('#errors_field').val(); 
-    
+    var errors = $('#errors_field').val();
     if(errors != null && errors != ""){
        errors = JSON.parse(errors);
     }
@@ -33,6 +32,14 @@ $(document).ready(function () {
         $('#email').parent().append("<small class='text-danger float-left mt-1 mb-3' style='font-size: 14px !important'>* " + errors[403] + "</small>");
     }
 
+    var newUserCreated = $('#newUserCreated').val() === "true";
+    if (newUserCreated) {
+        Swal.fire({
+            icon: 'success',
+            confirmButtonText: "D'acord!",
+            title: "L'usuari s'ha donat d'alta correctament"
+        });
+    }
 });
 
 

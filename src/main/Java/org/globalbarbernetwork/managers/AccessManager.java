@@ -79,6 +79,7 @@ public class AccessManager extends Manager implements ManagerInterface {
                         Map<String, String> errorsInAuth = authUser(request, email, password);
                         if (!errorsInAuth.isEmpty()) {
                             request.setAttribute("errors", new JSONObject(errorsInAuth));
+                            request.setAttribute("newUserCreated", false);
                             rd = request.getRequestDispatcher("/" + LOGIN_JSP);
                         } else {
                             response.sendRedirect(request.getContextPath() + "/ManagementServlet/index.jsp");
@@ -87,7 +88,7 @@ public class AccessManager extends Manager implements ManagerInterface {
                         Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
-                    
+                    request.setAttribute("newUserCreated", false);
                     rd = request.getRequestDispatcher("/" + LOGIN_JSP);
                 }
                 break;
@@ -156,6 +157,8 @@ public class AccessManager extends Manager implements ManagerInterface {
                     insertUser(client);
                     createEmailVerification(email, displayName);
                 }
+                
+                request.setAttribute("newUserCreated", isCreated);
                 return request.getRequestDispatcher("/" + LOGIN_JSP);
             } else {
                 Client client = new Client(name, surname, null, email, phoneNum, null, null);
@@ -214,6 +217,8 @@ public class AccessManager extends Manager implements ManagerInterface {
                     insertUser(newHairdressing);
                     createEmailVerification(email, displayName);
                 }
+                
+                request.setAttribute("newUserCreated", isCreated);
                 return request.getRequestDispatcher("/" + LOGIN_JSP);
             } else {
                 Hairdressing hairdressing = new Hairdressing(companyName, "", city, address, country, province, zipCode, coordinates, "", "", "", email, phoneNumber, displayName, "hairdressing");

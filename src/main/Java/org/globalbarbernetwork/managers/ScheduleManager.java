@@ -135,6 +135,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                         request.setAttribute("historical", historical);
                         rd = request.getRequestDispatcher("/" + HISTORICAL_CLIENT_JSP);
                     } else {
+                        request.setAttribute("newUserCreated", false);
                         rd = request.getRequestDispatcher("/" + LOGIN_JSP);
                     }
                     break;
