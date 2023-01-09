@@ -9,11 +9,11 @@
 <jsp:useBean id="schedule" scope="request" class="java.util.HashMap"></jsp:useBean>
 <jsp:useBean id="daysOfWeek" scope="request" class="java.util.HashMap"></jsp:useBean>
 
-    <form method="POST" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/updateSchedule">
+    <form method="POST" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/updateSchedule/manageService.jsp">
     <div class="container-fluid pt-5 pb-5">
         <div class="card">
             <div class="card-header">
-                <h4 style="display: inline-block">Assignar horaris</h4>
+                <h4 style="display: inline-block">Definir horaris</h4>
                 <input class="btn btn-success w20 float-right" type="submit" value="Gravar">
             </div>
             <div class="card-body">        

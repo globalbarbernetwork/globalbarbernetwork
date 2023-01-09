@@ -113,7 +113,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <form method="post" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/deleteEmployee">
+                <form method="post" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/deleteEmployee/manageService.jsp">
                     <input type="hidden" id="idNumberEmployeeToDelete" name="idNumberEmployeeToDelete">
                     <button id="confirmDelete" type="submit" class="btn btn-success"><i class="fas fa-check"></i> Si</button>
                 </form>

@@ -55,7 +55,7 @@ public class Manager {
         request.getSession().removeAttribute("user");
 
         try {
-            response.sendRedirect(request.getContextPath() + "/ManagementServlet/");
+            response.sendRedirect(request.getContextPath() + "/ManagementServlet/index.jsp");
         } catch (IOException ex) {
             Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -85,13 +85,13 @@ public class Manager {
         List<Map> options = new ArrayList<Map>();
 
         if (user instanceof Hairdressing) {
-            options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/hairdressing", ""));
-            options.add(addMenuOption("Gestió reserves", "/ManagementServlet/schedule/loadManageReserves", ""));
-            options.add(addMenuOption("Gestió", "/ManagementServlet/menuOption/manageHairdressing/loadListsToManage", ""));
+            options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/hairdressing/editHairdressing.jsp", ""));
+            options.add(addMenuOption("Gestió reserves", "/ManagementServlet/schedule/loadManageReserves/manageReserves.jsp", ""));
+            options.add(addMenuOption("Gestió", "/ManagementServlet/menuOption/manageHairdressing/loadListsToManage/manageService.jsp", ""));
             options.add(addMenuOption("Tancar sessió", "/ManagementServlet/access/logout", ""));
         } else if (user instanceof Client) {
-            options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/client", ""));
-            options.add(addMenuOption("Historial de reserves", "/ManagementServlet/menuOption/schedule/loadClientHistorical", ""));
+            options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/client/editClient.jsp", ""));
+            options.add(addMenuOption("Historial de reserves", "/ManagementServlet/menuOption/schedule/loadClientHistorical/clientHistorical.jsp", ""));
             options.add(addMenuOption("Tancar sessió", "/ManagementServlet/access/logout", ""));
         }
 

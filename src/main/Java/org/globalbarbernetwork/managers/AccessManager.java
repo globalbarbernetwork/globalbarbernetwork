@@ -79,15 +79,16 @@ public class AccessManager extends Manager implements ManagerInterface {
                         Map<String, String> errorsInAuth = authUser(request, email, password);
                         if (!errorsInAuth.isEmpty()) {
                             request.setAttribute("errors", new JSONObject(errorsInAuth));
-                            rd = request.getRequestDispatcher("/login.jsp");
+                            rd = request.getRequestDispatcher("/" + LOGIN_JSP);
                         } else {
-                            response.sendRedirect(request.getContextPath() + "/ManagementServlet");
+                            response.sendRedirect(request.getContextPath() + "/ManagementServlet/index.jsp");
                         }
                     } catch (IOException ex) {
                         Logger.getLogger(AccessManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
-                    rd = request.getRequestDispatcher("/index.jsp");
+                    
+                    rd = request.getRequestDispatcher("/" + LOGIN_JSP);
                 }
                 break;
 

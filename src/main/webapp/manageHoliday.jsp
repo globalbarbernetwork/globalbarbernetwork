@@ -6,7 +6,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<form method="POST" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/updateHolidays">
+<form method="POST" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/updateHolidays/manageService.jsp">
     <input type="hidden" name="holidays" id="holidays" value='<%= request.getAttribute("holidays")%>'>    
     <div class="container-fluid pt-5 pb-5">
         <div class="card">

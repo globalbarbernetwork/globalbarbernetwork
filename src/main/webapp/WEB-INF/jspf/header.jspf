@@ -5,7 +5,7 @@
 
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="${contextPath}/ManagementServlet">
+        <a class="navbar-brand" href="${contextPath}/ManagementServlet/index.jsp">
             <img src="${contextPath}/img/barber-pole.svg" width="30" height="30" class="d-inline-block align-top" alt="logoWeb">
             Global Barber Network
         </a>
@@ -27,13 +27,13 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <a href="${contextPath}/login.jsp">
+                        <a href="${contextPath}/ManagementServlet/access/login/login.jsp">
                             <button class="btn btn-sm btn-outline-secondary" type="button">Iniciar sessió</button>
                         </a>
-                        <a href="${contextPath}/register.jsp">
+                        <a href="${contextPath}/ManagementServlet/access/register/register.jsp">
                             <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se</button>
                         </a>
-                        <a href="${contextPath}/registerHairdressing.jsp">
+                        <a href="${contextPath}/ManagementServlet/access/registerHairdressing/registerHairdressing.jsp">
                             <button class="btn btn-sm btn-outline-secondary" type="button">Registrar-se com empresa</button>
                         </a>
                     </c:otherwise>

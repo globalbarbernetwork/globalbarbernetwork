@@ -23,12 +23,12 @@ $(document).ready(function () {
             if (result.isConfirmed) {
                 $.ajax({
                     type: "POST",
-                    url: contextPath + "/ManagementServlet/menuOptions/editProfile/changePassword",
+                    url: contextPath + "/ManagementServlet/menuOption/editProfile/changePassword",
                     data: {
-                        newPassword: newPassword,
+                        newPassword: newPassword
                     },
                     success: function () {
-                        window.location.replace(contextPath + "/ManagementServlet/");
+                        window.location.replace(contextPath + "/ManagementServlet/index.jsp");
                     },
                     error: function () {
                         alert('error');

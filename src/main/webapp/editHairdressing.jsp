@@ -39,7 +39,7 @@
                             <button id="changePassword" class="btn btn-info float-right">Canviar contrasenya</button>
                         </div>
                         <div class="card-body">
-                            <form action="${contextPath}/ManagementServlet/menuOption/editProfile/hairdressing" method="post">                                  
+                            <form action="${contextPath}/ManagementServlet/menuOption/editProfile/hairdressing/editHairdressing.jsp" method="post">                                  
                                 <div class="form-group row">
                                     <div class="col-md-6">
                                         <label for="labelEmail">Correu electronic</label>

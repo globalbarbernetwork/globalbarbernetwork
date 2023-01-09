@@ -73,7 +73,7 @@ function editEmployee(btnEdit) {
 
     var h4TitleModal = $("#modalEditEmployee").find("h4");
     h4TitleModal.text("Modificant a " + name + " " + surname);
-    $("#formEmployee").attr("action", contextPath + "/ManagementServlet/menuOption/manageHairdressing/editEmployee");
+    $("#formEmployee").attr("action", contextPath + "/ManagementServlet/menuOption/manageHairdressing/editEmployee/manageService.jsp");
     $("#idNumberEmployeeToEdit").val(idNumber);
     $("#idNumber").prop('disabled', true);
 }
@@ -83,7 +83,7 @@ function addEmployee() {
     btnAddModal.removeClass("btn-warning");
     btnAddModal.addClass("btn-info");
     btnAddModal.text("Afegir");
-    $("#formEmployee").attr("action", contextPath + "/ManagementServlet/menuOption/manageHairdressing/addEmployee");
+    $("#formEmployee").attr("action", contextPath + "/ManagementServlet/menuOption/manageHairdressing/addEmployee/manageService.jsp");
 
     var h4TitleModal = $("#modalEditEmployee").find("h4");
     h4TitleModal.text("Afegeix un nou treballador");

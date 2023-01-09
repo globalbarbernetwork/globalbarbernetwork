@@ -103,7 +103,7 @@ function editService(btnEdit) {
 
     var h4TitleModal = $("#modalEditService").find("h4");
     h4TitleModal.text('Modificant el servei "' + $(btnEdit).data("name") + '"');
-    $("#formService").attr("action", contextPath + "/ManagementServlet/menuOption/manageHairdressing/editService");
+    $("#formService").attr("action", contextPath + "/ManagementServlet/menuOption/manageHairdressing/editService/manageService.jsp");
     $("#idServiceToUpdate").val($(btnEdit).data("id"));
     $("#durationService").val($(btnEdit).data("duration"));
 }
@@ -113,7 +113,7 @@ function addService() {
     btnAddModal.removeClass("btn-warning");
     btnAddModal.addClass("btn-info");
     btnAddModal.text("Afegir");
-    $("#formService").attr("action", contextPath + "/ManagementServlet/menuOption/manageHairdressing/addService");
+    $("#formService").attr("action", contextPath + "/ManagementServlet/menuOption/manageHairdressing/addService/manageService.jsp");
     $("#durationService").val($("#timePickerService").val());
 
     var h4TitleModal = $("#modalEditService").find("h4");

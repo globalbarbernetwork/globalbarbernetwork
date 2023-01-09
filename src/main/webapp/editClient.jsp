@@ -38,7 +38,7 @@
                             <button id="changePassword" class="btn btn-info float-right">Canviar contrasenya</button>
                         </div>
                         <div class="card-body">
-                            <form action="${contextPath}/ManagementServlet/menuOption/editProfile/client" method="post">                                  
+                            <form action="${contextPath}/ManagementServlet/menuOption/editProfile/client/editClient.jsp" method="post">                                  
                                 <div class="form-group row">
                                     <div class="col-md-6">
                                         <label for="labelEmail">Correu electronic</label>

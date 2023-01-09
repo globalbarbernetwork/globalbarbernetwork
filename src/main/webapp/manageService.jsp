@@ -89,7 +89,7 @@
                 <div class="alert alert-danger"><i class="fas fa-exclamation-triangle"></i> Estas segur que vols eliminar aquest servei?</div>
             </div>
             <div class="modal-footer">
-                <form method="post" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/deleteService">
+                <form method="post" action="${contextPath}/ManagementServlet/menuOption/manageHairdressing/deleteService/manageService.jsp">
                     <input type="hidden" id="idServiceToDelete" name="idServiceToDelete">
                     <button id="confirmDeleteService" type="submit" class="btn btn-success"><i class="fas fa-check"></i> Si</button>
                 </form>
