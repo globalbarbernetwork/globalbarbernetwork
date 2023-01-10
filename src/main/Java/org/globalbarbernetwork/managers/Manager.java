@@ -86,7 +86,7 @@ public class Manager {
 
         if (user instanceof Hairdressing) {
             options.add(addMenuOption("Editar perfil", "/ManagementServlet/menuOption/editProfile/hairdressing/editHairdressing.jsp", ""));
-            options.add(addMenuOption("Gestió reserves", "/ManagementServlet/schedule/loadManageReserves/manageReserves.jsp", ""));
+            options.add(addMenuOption("Gestió reserves", "/ManagementServlet/menuOption/schedule/loadManageReserves/manageReserves.jsp", ""));
             options.add(addMenuOption("Gestió", "/ManagementServlet/menuOption/manageHairdressing/loadListsToManage/manageService.jsp", ""));
             options.add(addMenuOption("Tancar sessió", "/ManagementServlet/access/logout", ""));
         } else if (user instanceof Client) {
