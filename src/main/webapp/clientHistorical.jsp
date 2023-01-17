@@ -42,9 +42,9 @@
                             <div class="col-12">
                                 <div class="card">
                                     <div class="card-header header-proxims-esdeveniments">
-                                        <h5 class="mb-0"><a data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="true" aria-controls="multiCollapseExample1">Pròxims esdeveniments</a></h5>
-                                    </div>                                    
-                                    <div class="collapse multi-collapse show" id="multiCollapseExample1">                                        
+                                        <h5 class="mb-0"> <i class="fa fa-angle-down"></i> <a data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="true" aria-controls="multiCollapseExample1">Pròxims esdeveniments</a></h5>
+                                    </div>
+                                    <div class="collapse multi-collapse show" id="multiCollapseExample1">
                                         <div class="card-body <%= (((ArrayList) historical.get("pendingReserves")).isEmpty() ? "" : "overflow-auto") %>">
                                             <% Integer loop = 0;%>
                                             <c:forEach var="tmpReserve" items="<%= historical.get("pendingReserves")%>" varStatus="loop">                                                  
@@ -60,11 +60,11 @@
                                                 <c:choose>
                                                     <c:when test="${reserve != null && reserve.state == 'P'}">
                                                         <div class="card d-inline-block ml-2 card-border-pending mb-5" style="width: 18rem;">
-                                                        </c:when>                                                         
-                                                        <c:when test="${reserve != null && reserve.state == 'A'}">
-                                                            <div class="card d-inline-block ml-2 card-border-anuled mb-5" style="width: 18rem;">
-                                                            </c:when>                                                         
-                                                        </c:choose>                                                                  
+                                                    </c:when>                                                         
+                                                    <c:when test="${reserve != null && reserve.state == 'A'}">
+                                                        <div class="card d-inline-block ml-2 card-border-anuled mb-5" style="width: 18rem;">
+                                                    </c:when>                                                         
+                                                </c:choose>                                                                  
                                                         <img class="card-img-top" src="${contextPath}/img/global_logo.png" alt="Card image cap">                                                                                  
                                                         <div class="card-body">
                                                             <h5 class="card-title">${hairdressing}</h5>
@@ -84,8 +84,8 @@
                                                                     <span>Anulat</span>
                                                                 </div>
                                                             </c:when>                                                         
-                                                        </c:choose>                                                               
-                                                    </div>
+                                                        </c:choose>
+                                                        </div>
                                                     <% loop++; %>
                                                 </c:forEach>
                                                 <%  if (((ArrayList) historical.get("pendingReserves")).isEmpty()) { %>                                               
@@ -100,7 +100,7 @@
                                 <div class="col-12 mt-2">
                                     <div class="card">
                                         <div class="card-header header-finalitzats-esdeveniments">
-                                            <h5 class="mb-0"><a data-toggle="collapse" data-target="#multiCollapseExample2" role="button" aria-expanded="false" aria-controls="multiCollapseExample2" style="color: #007bff">Esdeveniments anteriors</a></h5>
+                                            <h5 class="mb-0"> <i class="fa fa-angle-right"></i> <a data-toggle="collapse" data-target="#multiCollapseExample2" role="button" aria-expanded="false" aria-controls="multiCollapseExample2" style="color: #007bff">Esdeveniments anteriors</a></h5>
                                         </div>           
                                         <div class="collapse multi-collapse" id="multiCollapseExample2">
                                             <div class="card-body <%= (((ArrayList) historical.get("completedReserves")).isEmpty() ? "" : " overflow-auto ") %>">
@@ -165,5 +165,6 @@
                 <%@include file="/WEB-INF/jspf/footer.jspf"%>
                 <!-- Scripts comunes -->
                 <%@include file="/WEB-INF/jspf/base_body.jspf"%>
+                <script src="${contextPath}/js/clientHistorical.js"></script>
                 </body>
                 </html>
