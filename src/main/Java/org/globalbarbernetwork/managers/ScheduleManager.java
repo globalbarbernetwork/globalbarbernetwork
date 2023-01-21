@@ -668,14 +668,14 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             } else {
                 formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'del' yyyy 'a les' HH:mm a", Locale.forLanguageTag("ca-ES"));
             }
-
-            jsonOrderedMap.put("message", "Reserva realitzada pel " + ldtReserve.format(formatter));
-
-            json = new JSONObject(jsonOrderedMap);
             
             // Información para extraer
             Hairdressing hairdressing = firebaseDAO.getHairdressing(idHairdressing);
             Employee employee = firebaseDAO.getEmployeeByIDNumber(idHairdressing, idEmployeeFree);
+
+            jsonOrderedMap.put("message", "Reserva realitzada a " + hairdressing.getCompanyName()  +  " pel <br/>" + ldtReserve.format(formatter));
+
+            json = new JSONObject(jsonOrderedMap);
             
             //Generación archivo ICS
             String eventTitle = "Cita en " + hairdressing.getCompanyName();

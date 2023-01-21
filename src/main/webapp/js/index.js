@@ -343,12 +343,17 @@ function doReserve() {
             time: time
         },
         dataType: "json",
+        beforeSend: function () {
+            Swal.fire('Generant reserva...');
+            Swal.showLoading();
+        },
         success: function (data) {
+            Swal.hideLoading();
             $("#modalReserve").modal('hide');
             Swal.fire({
                 icon: 'success',
                 title: 'Gravació correcte',
-                text: data.message
+                html: data.message
             });
         },
         error: function (jqXHR, textStatus, errorThrown) {
