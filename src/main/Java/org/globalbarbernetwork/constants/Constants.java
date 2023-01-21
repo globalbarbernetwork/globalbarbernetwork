@@ -37,6 +37,8 @@ public class Constants {
     public static final String STATE_ANNULLED = "A";
 
     // Email Verified
+    public static final String SUBJECT_MAIL_VERIFICATION = "Verifica l'adreça electrònica de l'aplicació Global Barber Network";
+    
     public static String BODY_MAIL_VERIFICATION = "Hola, %DISPLAY_NAME%,\n"
             + "\n"
             + "Segueix aquest enllaç per verificar la teva adreça electrònica.\n"
@@ -49,7 +51,25 @@ public class Constants {
             + "\n"
             + "Global Barber Network";
 
-    public static final String SUBJECT_MAIL_VERIFICATION = "Verifica l'adreça electrònica de l'aplicació Global Barber Network";
     
     public static final String PATH_PROPERTIES = "C:/tmp/config.properties";
+    
+    // Email reserve confirmation
+    public static final String SUBJECT_MAIL_RESERVE_CONFIRMATION = "Confirmación de la reserva en %COMPANY_NAME%";
+    
+    public static String BODY_MAIL_RESERVE_CONFIRMATION = "Hola, %DISPLAY_NAME%,"
+            + "<br/><br/>"
+            + "La teva reserva a %COMPANY_NAME% esta confirmada."
+            + "<br/><br/>"
+            + "<b><u>Detalls de la reserva</u></b>"
+            + "<br/>"
+            + "Data i hora: %TIME_INIT%"
+            + "<br/>"
+            + "Servei: %SERVICE_NAME%"
+            + "<br/>"
+            + "Empleat: %EMPLOYEE_NAME%"
+            + "<br/>"
+            + "Ubicació: %HAIRDRESSING_ADDRESS% "
+            + "<br/><br/>"
+            + "Gràcies per utilitzar el nostre servei.";
 }

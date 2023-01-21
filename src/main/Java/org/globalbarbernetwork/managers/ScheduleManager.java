@@ -17,9 +17,13 @@
 package org.globalbarbernetwork.managers;
 
 import com.google.cloud.Timestamp;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import static java.lang.Integer.parseInt;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -41,6 +45,20 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.fortuna.ical4j.data.CalendarOutputter;
+import net.fortuna.ical4j.model.Calendar;
+import net.fortuna.ical4j.model.component.VAlarm;
+import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.property.Action;
+import net.fortuna.ical4j.model.property.CalScale;
+import net.fortuna.ical4j.model.property.Contact;
+import net.fortuna.ical4j.model.property.Description;
+import net.fortuna.ical4j.model.property.Location;
+import net.fortuna.ical4j.model.property.ProdId;
+import net.fortuna.ical4j.model.property.Uid;
+import net.fortuna.ical4j.model.property.Version;
+import net.fortuna.ical4j.util.RandomUidGenerator;
+import net.fortuna.ical4j.util.UidGenerator;
 import org.globalbarbernetwork.bo.ReserveBO;
 import org.globalbarbernetwork.firebase.FirebaseDAO;
 import org.globalbarbernetwork.interfaces.ManagerInterface;
@@ -52,7 +70,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import static org.globalbarbernetwork.constants.Constants.*;
 import org.globalbarbernetwork.entities.Employee;
+import org.globalbarbernetwork.entities.Hairdressing;
 import org.globalbarbernetwork.entities.User;
+import org.globalbarbernetwork.services.SmtpService;
 
 /**
  *
@@ -127,7 +147,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
                     LocalDate date2 = LocalDate.parse(request.getParameter("date"), pattern2);
                     Integer time = Integer.valueOf(request.getParameter("time"));
 
-                    addReserve(response, activeUser, idHairdressing3, idHairdresser2, idService2, date2, time);
+                    addReserveAndSendEmailReserveConfirmation(response, activeUser, idHairdressing3, idHairdresser2, idService2, date2, time);
                     break;
                 case RESERVE_HISTORICAL:
                     if (activeUser != null) {
@@ -545,7 +565,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
     }
 
     /**
-     * This method add a new reserve for a hairdressingin Firebase DB
+     * This method add a new reserve for a hairdressingin Firebase DB and send email reserve confirmation to client
      *
      * @param response the response
      * @param activeUser the active user
@@ -556,7 +576,7 @@ public class ScheduleManager extends Manager implements ManagerInterface {
      * @param time the time
      * @throws IOException
      */
-    public void addReserve(HttpServletResponse response, User activeUser, String idHairdressing, String idHairdresser, String idService, LocalDate date, Integer time) throws IOException {
+    public void addReserveAndSendEmailReserveConfirmation(HttpServletResponse response, User activeUser, String idHairdressing, String idHairdresser, String idService, LocalDate date, Integer time) throws IOException {
         Service selectedService = firebaseDAO.getServiceById(idHairdressing, idService);
         DateTimeFormatter formatterWithDash = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         String formattedDateString = date.format(formatterWithDash);
@@ -644,24 +664,115 @@ public class ScheduleManager extends Manager implements ManagerInterface {
             // Devolver datos para printar "Reserva realitzada per el día X a l'hora Y".
             DateTimeFormatter formatter;
             if (ldtReserve.getHour() == 13 || ldtReserve.getHour() == 01) {
-                formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'del' yyyy 'a la' HH:mm", Locale.forLanguageTag("ca-ES"));
+                formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'del' yyyy 'a la' HH:mm a", Locale.forLanguageTag("ca-ES"));
             } else {
-                formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'del' yyyy 'a les' HH:mm", Locale.forLanguageTag("ca-ES"));
+                formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'del' yyyy 'a les' HH:mm a", Locale.forLanguageTag("ca-ES"));
             }
 
             jsonOrderedMap.put("message", "Reserva realitzada pel " + ldtReserve.format(formatter));
 
             json = new JSONObject(jsonOrderedMap);
+            
+            // Información para extraer
+            Hairdressing hairdressing = firebaseDAO.getHairdressing(idHairdressing);
+            Employee employee = firebaseDAO.getEmployeeByIDNumber(idHairdressing, idEmployeeFree);
+            
+            //Generación archivo ICS
+            String eventTitle = "Cita en " + hairdressing.getCompanyName();
+            String description = "Servicio: " + selectedService.getName() + "\nEmpleado: " + employee.getName() + " " + employee.getSurname();
+            
+            File archiveICS = generateICS(reserve.obtainTimeInitLocalDate(), reserve.obtainTimeFinalLocalDate(), eventTitle, description, hairdressing.getAddress(), hairdressing.getPhoneNumber());
+            
+            // Envio mail confirmación de reserva
+            sendEmailReserveConfirmation(activeUser.getEmail(), hairdressing.getCompanyName(), activeUser.getDisplayName(), 
+                                        ldtReserve.format(formatter), selectedService.getName(), employee.getName() + " " + employee.getSurname(), 
+                                hairdressing.getAddress(), archiveICS);
         } else {
             // Devolver el error de solapamiento.
             response.sendError(409, "Hi ha hagut, un solapament amb un altre reserva, si us plau realitza de nou la reserva per les hores disponibles.");
             jsonOrderedMap.put("messageError", "Hi ha hagut, un solapament amb un altre reserva, si us plau realitza de nou la reserva per les hores disponibles.");
             json = new JSONObject(jsonOrderedMap);
         }
-
+        
         try (PrintWriter out = response.getWriter()) {
             out.print(json);
         }
+    }
+    
+    /**
+     * This method will generate archive ICS
+     *
+     * @param dateEvent the reserve date
+     * @param eventTitle the reserve title
+     * @param description the description
+     * @param address the hairdressing address
+     * @param phoneNumber the hairdressing phone number
+     */
+    private File generateICS(LocalDateTime startDateEvent, LocalDateTime finalDateEvent, String eventTitle, String description, String address, String phoneNumber) {
+        // Se crea una alarma que saltara 1 día antes del evento
+        VAlarm reminderAlarm = new VAlarm(Duration.ofDays(-1));
+        reminderAlarm.add(Action.DISPLAY);
+
+        // Se crea una segunda alarma que saltara 2 horas antes del evento
+        VAlarm reminderAlarm2 = new VAlarm(Duration.ofHours(-2));
+        reminderAlarm2.add(Action.DISPLAY);
+
+        // Se genera un id unico para el evento
+        UidGenerator ug = new RandomUidGenerator();
+        Uid uid = ug.generateUid();
+        
+        // Se crea el objeto evento con fecha inicio, titulo evento y su uid
+        VEvent event = new VEvent(startDateEvent, finalDateEvent,eventTitle);
+        event.add(uid);
+        event.add(new Description(description));
+        event.add(new Location(address));
+        event.add(new Contact(phoneNumber));
+        event.add(reminderAlarm);
+        event.add(reminderAlarm2);
+
+        // Se crea un calendario
+        Calendar calendar = new Calendar();
+        calendar.add(new ProdId("Global Barber Network"));
+        calendar.add(Version.VERSION_2_0);
+        calendar.add(CalScale.GREGORIAN);
+
+        // Se añade el evento al calendario
+        calendar.add(event);
+
+        // Se crea el fichero ics
+        File archiveICS = new File("appointment.ics");
+        try (FileOutputStream fos = new FileOutputStream(archiveICS)) {
+            CalendarOutputter outputter = new CalendarOutputter();
+            outputter.output(calendar, fos);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ScheduleManager.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return archiveICS;
+    }
+
+    /**
+     * This method will generate reserve confirmation email.
+     *
+     * @param email the client's email
+     * @param companyName the company name
+     * @param displayName the display name
+     * @param timeInit the time formatted
+     * @param serviceName the service name
+     * @param employeeName the employee name
+     * @param hairdressingAddress the hairdressing address
+     */
+    private void sendEmailReserveConfirmation(String email, String companyName, String displayName, String timeInit, String serviceName, 
+                                                String employeeName, String hairdressingAddress, File archiveICS) {
+        String subjectMailReserveConfirmation = SUBJECT_MAIL_RESERVE_CONFIRMATION.replace("%COMPANY_NAME%", companyName);
+        String bodyMailReserveConfirmation = BODY_MAIL_RESERVE_CONFIRMATION.replace("%DISPLAY_NAME%", displayName).replace("%COMPANY_NAME%", companyName)
+                                                .replace("%TIME_INIT%", timeInit).replace("%SERVICE_NAME%", serviceName)
+                                                .replace("%EMPLOYEE_NAME%", employeeName).replace("%HAIRDRESSING_ADDRESS%", hairdressingAddress);
+        
+        SmtpService stmpService = new SmtpService();
+        stmpService.sendEmailWithAttachment(email, subjectMailReserveConfirmation, bodyMailReserveConfirmation, archiveICS);
     }
 
     /**
