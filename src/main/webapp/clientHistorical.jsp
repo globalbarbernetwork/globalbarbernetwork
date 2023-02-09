@@ -116,7 +116,7 @@
                                                     <javatime:format value="${timeInit}" pattern="HH:mm" var="iniParseDate2"/>
                                                     <javatime:format value="${timeFinal}" pattern="HH:mm" var="finalParseDate2"/>
                                                     <c:choose>
-                                                        <c:when test="${reserve != null && reserve.state == 'C'}">
+                                                        <c:when test="${reserve != null && (reserve.state == 'C' || reserve.state == 'P')}">
                                                             <div class="card d-inline-block ml-2 card-border-closed mb-5" style="width: 18rem;">
                                                             </c:when>                                                         
                                                             <c:when test="${reserve != null && reserve.state == 'A'}">
@@ -132,7 +132,7 @@
                                                                 <span class="card-text">${iniParseDate2} - ${finalParseDate2}</span>
                                                             </div>
                                                             <c:choose>
-                                                                <c:when test="${reserve != null && reserve.state == 'C'}">
+                                                                <c:when test="${reserve != null && (reserve.state == 'C' || reserve.state == 'P')}">
                                                                     <div class="card-footer text-center closed-status">
                                                                         <span>Completat</span>
                                                                     </div>
